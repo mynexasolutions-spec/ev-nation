@@ -1,0 +1,127 @@
+{% extends "admin/base.html" %}
+{% block content %}
+<section class="page-head">
+    <div>
+        <p class="eyebrow">Enquiries</p>
+        <h2>Leads</h2>
+        <p class="muted">Track WhatsApp and call requests, then move them through simple status stages.</p>
+    </div>
+    <form method="get" class="lead-filters" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <input type="search" name="search" placeholder="Search name or phone..." value="{{ search_term }}" style="flex: 1; min-width: 200px; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+        <select name="status" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+            <option value="">All statuses</option>
+            {% for item in lead_statuses %}
+            <option value="{{ item.value }}" {% if selected_status == item.value %}selected{% endif %}>{{ item.value }}</option>
+            {% endfor %}
+        </select>
+        <select name="source" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+            <option value="">All sources</option>
+            {% for item in lead_sources %}
+            <option value="{{ item.value }}" {% if selected_source == item.value %}selected{% endif %}>{{ item.value }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="ghost-button">Filter</button>
+    </form>
+</section>
+
+<section class="panel">
+    <div class="panel-head" style="justify-content: space-between; align-items: center;">
+        <h3>Lead Queue</h3>
+        <span class="pill" style="margin-left: auto;">{{ total_count }} total items</span>
+    </div>
+    {% if leads %}
+    <div class="lead-table">
+        {% for lead in leads %}
+        <article class="lead-card">
+            <div class="lead-card-head">
+                <div>
+                    <strong>{{ lead.name }}</strong>
+                    <p class="muted">{{ lead.phone }}{% if lead.product_name %} · {{ lead.product_name }}{% endif %}{% if lead.variant_name %} · {{ lead.variant_name }}{% endif %}</p>
+                </div>
+                <span class="pill">{{ lead.source.value }}</span>
+            </div>
+            <p class="lead-message">{{ lead.message or "No message provided." }}</p>
+            {% if lead.preferred_contact_time %}
+            <p class="muted">Preferred contact time: {{ lead.preferred_contact_time }}</p>
+            {% endif %}
+            <div class="lead-actions" style="margin-top: 1rem;">
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <select data-lead-status="{{ lead.id }}">
+                        {% for item in lead_statuses %}
+                        <option value="{{ item.value }}" {% if lead.status == item %}selected{% endif %}>{{ item.value }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="primary-button small-button" data-save-lead="{{ lead.id }}">Save Status</button>
+                    <button type="button" class="ghost-button small-button" data-delete-lead="{{ lead.id }}" style="color: var(--error);">Delete</button>
+                </div>
+                <div class="muted" style="font-size: 0.85rem; text-align: right; line-height: 1.4;">
+                    <div>Inquired: {{ to_ist(lead.created_at) }}</div>
+                    {% if lead.contacted_at %}<div>Contacted: {{ to_ist(lead.contacted_at) }}</div>{% endif %}
+                    {% if lead.closed_at %}<div>Closed: {{ to_ist(lead.closed_at) }}</div>{% endif %}
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    </div>
+    
+    <div class="pagination-footer" style="padding: 1rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+        <span class="muted">Page {{ current_page }} of {{ total_pages }}</span>
+        <div style="display: flex; gap: 0.5rem;">
+            {% if current_page > 1 %}
+            <a href="?search={{ search_term }}&status={{ selected_status }}&source={{ selected_source }}&page={{ current_page - 1 }}" class="ghost-button small-button">← Previous</a>
+            {% else %}
+            <button class="ghost-button small-button" disabled style="opacity: 0.5; cursor: not-allowed;">← Previous</button>
+            {% endif %}
+            
+            {% if current_page < total_pages %}
+            <a href="?search={{ search_term }}&status={{ selected_status }}&source={{ selected_source }}&page={{ current_page + 1 }}" class="ghost-button small-button">Next →</a>
+            {% else %}
+            <button class="ghost-button small-button" disabled style="opacity: 0.5; cursor: not-allowed;">Next →</button>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <p class="empty-copy">No leads matching your criteria.</p>
+    {% endif %}
+</section>
+
+<script>
+document.querySelectorAll("[data-save-lead]").forEach((button) => {
+    button.addEventListener("click", async () => {
+        const leadId = button.dataset.saveLead;
+        const select = document.querySelector(`[data-lead-status="${leadId}"]`);
+        const response = await fetch(`/admin/leads/${leadId}/status`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: select.value }),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            window.alert(data.detail || "Failed to update lead status.");
+            return;
+        }
+        button.textContent = "Saved";
+        window.setTimeout(() => {
+            window.location.reload();
+        }, 600);
+    });
+});
+
+document.querySelectorAll("[data-delete-lead]").forEach((button) => {
+    button.addEventListener("click", async () => {
+        if (!confirm("Are you sure you want to permanently delete this lead? This cannot be undone.")) return;
+        
+        const leadId = button.dataset.deleteLead;
+        const response = await fetch(`/admin/leads/${leadId}`, {
+            method: "DELETE"
+        });
+        if (!response.ok) {
+            window.alert("Failed to delete lead.");
+            return;
+        }
+        window.location.reload();
+    });
+});
+</script>
+{% endblock %}

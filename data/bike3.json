@@ -1,0 +1,50 @@
+{
+    "model": "EV-Nation SL",
+    "description": "An exceptional and powerful electric scooter designed with brilliance, vibrancy, and allure. Built to enhance everyday commuting with comfort and a refined riding experience.",
+    "specifications": {
+        "net_weight_with_battery": "90 kg",
+        "top_speed": "25 km/h",
+        "battery": [
+            {
+                "type": "60V/32AH",
+                "range": "70-80 km"
+            },
+            {
+                "type": "60V/42AH",
+                "range": "110-120 km"
+            }
+        ],
+        "carrying_capacity": "150 kg",
+        "motor": "BLDC heavy duty motor",
+        "tyre_specification": "Tubeless",
+        "battery_type": "Lithium",
+        "charging_time": "3-4 hours",
+        "body": "Plastic",
+        "ground_clearance": "270 mm",
+        "seat_height": "750 mm",
+        "wheel_type": "Alloy",
+        "brake_system": "Front disc",
+        "tyre_size": "90.100.12",
+        "speedometer": "LED digital",
+        "head_light": "Stylish LED with DRL",
+        "tail_light": "Stylish LED with DRL",
+        "suspension": {
+            "front": "Hydraulic telescopic",
+            "rear": "Double shocker with dual tube technology"
+        },
+        "charger": "3-4 AMP with autocut"
+    },
+    "warranty": {
+        "motor": "1 year",
+        "controller": "1 year",
+        "battery": "4 years (2+2)"
+    },
+    "colors_available": [
+        "Green",
+        "Ice Blue",
+        "Wine Red",
+        "Metallic Grey",
+        "Metallic Black",
+        "Ivory White"
+    ]
+}

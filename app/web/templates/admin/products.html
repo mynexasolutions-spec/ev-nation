@@ -1,0 +1,459 @@
+{% extends "admin/base.html" %}
+{% block content %}
+<section class="page-head">
+    <div>
+        <p class="eyebrow">Catalog</p>
+        <h2>Products</h2>
+        <p class="muted">Select a product from the list to edit, or create a new one.</p>
+    </div>
+    <button type="button" id="new-product-button" class="primary-button">New Product</button>
+</section>
+
+<section class="admin-grid">
+    <div class="panel">
+        <div class="panel-head">
+            <h3>All Products</h3>
+            <span class="pill">{{ products|length }} items</span>
+        </div>
+        <div class="product-list" id="product-list">
+            {% for product in products %}
+            <button type="button" class="product-list-item" data-product-id="{{ product.id }}">
+                <strong>{{ product.name }}</strong>
+                <span>{{ product.slug }}</span>
+                <span class="status-dot {% if product.is_active %}live{% else %}draft{% endif %}">
+                    {% if product.is_active %}Active{% else %}Inactive{% endif %}
+                </span>
+            </button>
+            {% else %}
+            <p class="empty-copy">No products yet. Create your first entry.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="panel panel-form">
+        <div class="panel-head">
+            <h3 id="form-title">Create Product</h3>
+            <div class="inline-actions">
+                <button type="submit" form="product-form" id="save-product-button" class="primary-button">Save</button>
+                <button type="button" id="delete-product-button" class="ghost-button" hidden>Soft Delete</button>
+            </div>
+        </div>
+
+        <div id="product-feedback" class="feedback" hidden></div>
+
+        <form id="product-form" class="stack-form" onsubmit="return false;">
+            <input type="hidden" id="product-id">
+
+            <!-- ── Basic Info ── -->
+            <fieldset class="form-section">
+                <legend>Basic Info</legend>
+                <div class="two-col">
+                    <label><span>Name</span><input id="name" type="text" required></label>
+                    <label><span>Slug</span><input id="slug" type="text" placeholder="Auto-generated from name"></label>
+                </div>
+                <div class="two-col">
+                    <label><span>Tagline</span><input id="tagline" type="text"></label>
+                    <label><span>Sort Order</span><input id="sort_order" type="number" min="0" value="0"></label>
+                </div>
+                <label class="checkbox-row">
+                    <input id="is_active" type="checkbox" checked>
+                    <span>Active product</span>
+                </label>
+                <label><span>Short Description</span><textarea id="short_description" rows="2"></textarea></label>
+                <label><span>Description</span><textarea id="description" rows="4"></textarea></label>
+            </fieldset>
+
+            <!-- ── Images ── -->
+            <fieldset class="form-section">
+                <legend>Images</legend>
+                <div class="image-gallery" id="image-gallery"></div>
+                <div class="upload-zone" id="upload-zone">
+                    <div class="upload-zone-content">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <p>Click to upload or drag &amp; drop</p>
+                        <p class="upload-hint">JPG, PNG, WebP or SVG — max 5 MB</p>
+                    </div>
+                    <input type="file" id="image-file-input" accept=".jpg,.jpeg,.png,.webp,.svg" hidden>
+                </div>
+                <div id="upload-progress" class="upload-progress" hidden>
+                    <div class="upload-progress-bar" id="upload-progress-bar"></div>
+                    <span id="upload-status">Uploading...</span>
+                </div>
+            </fieldset>
+
+            <!-- ── Core Specifications ── -->
+            <fieldset class="form-section">
+                <legend>Core Specifications</legend>
+                <div class="two-col">
+                    <label><span>Weight</span><input id="spec-weight" type="text" placeholder="e.g. 85 Kg"></label>
+                    <label><span>Top Speed</span><input id="spec-speed" type="text" placeholder="e.g. 55 Km/h"></label>
+                </div>
+                <div class="two-col">
+                    <label><span>Range</span><input id="spec-range" type="text" placeholder="e.g. 70-80 KM"></label>
+                    <label><span>Rated Power</span><input id="spec-rated_power" type="text" placeholder="e.g. 250W"></label>
+                </div>
+                <div class="two-col">
+                    <label><span>Peak Power</span><input id="spec-peak_power" type="text" placeholder="e.g. 500W"></label>
+                    <label><span>Carrying Capacity</span><input id="spec-carrying_capacity" type="text" placeholder="e.g. 150 Kg"></label>
+                </div>
+                <div class="two-col">
+                    <label><span>Motor</span><input id="spec-motor" type="text" placeholder="e.g. BLDC Hub Motor"></label>
+                    <label><span>Battery Type</span><input id="spec-battery_type" type="text" placeholder="e.g. Lithium-ion"></label>
+                </div>
+                <div class="two-col">
+                    <label><span>Charging Time</span><input id="spec-charging_time" type="text" placeholder="e.g. 4-5 Hours"></label>
+                    <label><span>Body</span><input id="spec-body" type="text" placeholder="e.g. PP Body"></label>
+                </div>
+                <div class="two-col">
+                    <label><span>Ground Clearance</span><input id="spec-ground_clearance" type="text" placeholder="e.g. 170mm"></label>
+                    <label><span>Seat Height</span><input id="spec-seat_height" type="text" placeholder="e.g. 780mm"></label>
+                </div>
+                <div class="two-col">
+                    <label><span>Wheel Type</span><input id="spec-wheel_type" type="text" placeholder="e.g. Alloy Wheels"></label>
+                    <label><span>Brake System</span><input id="spec-brake_system" type="text" placeholder="e.g. Disc + Drum"></label>
+                </div>
+                <label><span>Tyre Size</span><input id="spec-tyre_size" type="text" placeholder="e.g. 90/90-12"></label>
+            </fieldset>
+
+            <!-- ── Battery Options ── -->
+            <fieldset class="form-section">
+                <legend>Battery Options</legend>
+                <div id="battery-options-list" class="repeatable-list"></div>
+                <button type="button" class="ghost-button small-button" id="add-battery-btn">+ Add Battery Option</button>
+            </fieldset>
+
+            <!-- ── Color Variants ── -->
+            <fieldset class="form-section">
+                <legend>Color Variants</legend>
+                <div id="variants-list" class="repeatable-list"></div>
+                <button type="button" class="ghost-button small-button" id="add-variant-btn">+ Add Variant</button>
+            </fieldset>
+
+            <!-- ── Extra Specs ── -->
+            <fieldset class="form-section">
+                <legend>Extra Specs</legend>
+                <p class="muted" style="margin:0 0 8px">For specs that don't fit above (e.g. Charger, Display, USB Port).</p>
+                <div id="extra-specs-list" class="repeatable-list"></div>
+                <button type="button" class="ghost-button small-button" id="add-extra-spec-btn">+ Add Extra Spec</button>
+            </fieldset>
+        </form>
+    </div>
+</section>
+
+<script>
+/* ============================================================
+   Element references
+   ============================================================ */
+const feedback       = document.getElementById("product-feedback");
+const formTitle      = document.getElementById("form-title");
+const deleteButton   = document.getElementById("delete-product-button");
+const imageGallery   = document.getElementById("image-gallery");
+const uploadZone     = document.getElementById("upload-zone");
+const fileInput      = document.getElementById("image-file-input");
+const uploadProgress = document.getElementById("upload-progress");
+const uploadProgressBar = document.getElementById("upload-progress-bar");
+const uploadStatus   = document.getElementById("upload-status");
+
+const SPEC_FIELDS = [
+    "weight","speed","range","rated_power","peak_power","carrying_capacity",
+    "motor","battery_type","charging_time","body","ground_clearance",
+    "seat_height","wheel_type","brake_system","tyre_size"
+];
+
+/* ============================================================
+   Feedback helpers
+   ============================================================ */
+function setFeedback(msg, type = "info") {
+    feedback.textContent = msg;
+    feedback.className = `feedback ${type}`;
+    feedback.hidden = false;
+}
+function clearFeedback() { feedback.hidden = true; }
+
+/* ============================================================
+   Image gallery
+   ============================================================ */
+function renderImageGallery(images) {
+    imageGallery.innerHTML = "";
+    if (!images || images.length === 0) {
+        imageGallery.innerHTML = '<p class="empty-copy" style="margin:0">No images yet. Save the product first, then upload.</p>';
+        return;
+    }
+    images.forEach((img) => {
+        const card = document.createElement("div");
+        card.className = "image-thumb" + (img.is_primary ? " primary" : "");
+        card.innerHTML = `
+            <img src="${img.image_path}" alt="${img.alt_text || ''}" loading="lazy">
+            <div class="image-thumb-overlay">
+                ${img.is_primary ? '<span class="image-badge">Primary</span>' : ''}
+                <button type="button" class="image-delete-btn" data-image-id="${img.id}" title="Delete">&times;</button>
+            </div>`;
+        imageGallery.appendChild(card);
+    });
+    imageGallery.querySelectorAll(".image-delete-btn").forEach((btn) => {
+        btn.addEventListener("click", (e) => { e.stopPropagation(); deleteImage(Number(btn.dataset.imageId)); });
+    });
+}
+
+async function uploadImage(file) {
+    const productId = document.getElementById("product-id").value;
+    if (!productId) { setFeedback("Save the product first before uploading images.", "error"); return; }
+    uploadProgress.hidden = false;
+    uploadProgressBar.style.width = "30%";
+    uploadStatus.textContent = "Uploading...";
+    clearFeedback();
+    const fd = new FormData(); fd.append("file", file);
+    try {
+        uploadProgressBar.style.width = "60%";
+        const r = await fetch(`/admin/products/${productId}/upload-image`, { method: "POST", body: fd });
+        let data; try { data = await r.json(); } catch(_){ throw new Error(`Server error ${r.status}`); }
+        if (!r.ok) throw new Error(data.detail || "Upload failed.");
+        uploadProgressBar.style.width = "100%";
+        uploadStatus.textContent = "Done!";
+        const rr = await fetch(`/admin/products/${productId}/json`);
+        const rd = await rr.json();
+        if (rr.ok) renderImageGallery(rd.images || []);
+        setFeedback("Image uploaded.", "success");
+    } catch(e) { console.error(e); setFeedback(e.message, "error"); }
+    finally { setTimeout(() => { uploadProgress.hidden = true; uploadProgressBar.style.width = "0"; }, 1000); }
+}
+
+async function deleteImage(imageId) {
+    const productId = document.getElementById("product-id").value;
+    if (!productId || !confirm("Delete this image?")) return;
+    try {
+        const r = await fetch(`/admin/products/${productId}/delete-image/${imageId}`, { method: "POST" });
+        const d = await r.json(); if (!r.ok) throw new Error(d.detail || "Delete failed.");
+        const rr = await fetch(`/admin/products/${productId}/json`);
+        const rd = await rr.json(); if (rr.ok) renderImageGallery(rd.images || []);
+        setFeedback("Image deleted.", "success");
+    } catch(e) { setFeedback(e.message, "error"); }
+}
+
+uploadZone.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", () => { if (fileInput.files.length) { uploadImage(fileInput.files[0]); fileInput.value = ""; } });
+uploadZone.addEventListener("dragover", (e) => { e.preventDefault(); uploadZone.classList.add("dragover"); });
+uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("dragover"));
+uploadZone.addEventListener("drop", (e) => { e.preventDefault(); uploadZone.classList.remove("dragover"); if (e.dataTransfer.files.length) uploadImage(e.dataTransfer.files[0]); });
+
+/* ============================================================
+   Repeatable rows — Battery Options
+   ============================================================ */
+const batteryList = document.getElementById("battery-options-list");
+
+function addBatteryRow(data = {}) {
+    const row = document.createElement("div");
+    row.className = "repeatable-row";
+    row.innerHTML = `
+        <div class="two-col" style="flex:1">
+            <label><span>Capacity</span><input type="text" class="bat-capacity" value="${data.capacity || ''}" placeholder="e.g. 60V32AH"></label>
+            <label><span>Range</span><input type="text" class="bat-range" value="${data.range || ''}" placeholder="e.g. 70-80 KM"></label>
+        </div>
+        <button type="button" class="remove-row-btn" title="Remove">&times;</button>`;
+    row.querySelector(".remove-row-btn").addEventListener("click", () => row.remove());
+    batteryList.appendChild(row);
+}
+document.getElementById("add-battery-btn").addEventListener("click", () => addBatteryRow());
+
+function collectBatteryOptions() {
+    return [...batteryList.querySelectorAll(".repeatable-row")].map((row, i) => ({
+        capacity: row.querySelector(".bat-capacity").value.trim(),
+        range: row.querySelector(".bat-range").value.trim(),
+        sort_order: i,
+    })).filter(b => b.capacity && b.range);
+}
+
+/* ============================================================
+   Repeatable rows — Color Variants
+   ============================================================ */
+const variantsList = document.getElementById("variants-list");
+
+function addVariantRow(data = {}) {
+    const row = document.createElement("div");
+    row.className = "repeatable-row";
+    row.innerHTML = `
+        <div class="two-col" style="flex:1">
+            <label><span>Color Name</span><input type="text" class="var-name" value="${data.color_name || ''}" placeholder="e.g. Matte Black"></label>
+            <label><span>Color Code</span><input type="text" class="var-code" value="${data.color_code || ''}" placeholder="e.g. #1F1F1F" maxlength="7"></label>
+        </div>
+        <button type="button" class="remove-row-btn" title="Remove">&times;</button>`;
+    row.querySelector(".remove-row-btn").addEventListener("click", () => row.remove());
+    variantsList.appendChild(row);
+}
+document.getElementById("add-variant-btn").addEventListener("click", () => addVariantRow());
+
+function collectVariants() {
+    return [...variantsList.querySelectorAll(".repeatable-row")].map((row, i) => ({
+        color_name: row.querySelector(".var-name").value.trim(),
+        color_code: row.querySelector(".var-code").value.trim() || null,
+        sort_order: i,
+        is_active: true,
+    })).filter(v => v.color_name);
+}
+
+/* ============================================================
+   Repeatable rows — Extra Specs
+   ============================================================ */
+const extraSpecsList = document.getElementById("extra-specs-list");
+
+function addExtraSpecRow(data = {}) {
+    const row = document.createElement("div");
+    row.className = "repeatable-row";
+    row.innerHTML = `
+        <div class="three-col" style="flex:1">
+            <label><span>Label</span><input type="text" class="es-label" value="${data.label || ''}" placeholder="e.g. USB Port"></label>
+            <label><span>Value</span><input type="text" class="es-value" value="${data.value || ''}" placeholder="e.g. Yes"></label>
+            <input type="hidden" class="es-key" value="${data.key || ''}">
+        </div>
+        <button type="button" class="remove-row-btn" title="Remove">&times;</button>`;
+    row.querySelector(".remove-row-btn").addEventListener("click", () => row.remove());
+    extraSpecsList.appendChild(row);
+}
+document.getElementById("add-extra-spec-btn").addEventListener("click", () => addExtraSpecRow());
+
+function collectExtraSpecs() {
+    return [...extraSpecsList.querySelectorAll(".repeatable-row")].map((row, i) => {
+        const label = row.querySelector(".es-label").value.trim();
+        const value = row.querySelector(".es-value").value.trim();
+        let key = row.querySelector(".es-key").value.trim();
+        if (!key && label) key = label.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
+        return { key, label, value, sort_order: i };
+    }).filter(s => s.label && s.value);
+}
+
+/* ============================================================
+   Core Specs helpers
+   ============================================================ */
+function getSpecValue(field) { return document.getElementById("spec-" + field).value.trim() || null; }
+function setSpecValue(field, val) { document.getElementById("spec-" + field).value = val || ""; }
+
+function collectSpec() {
+    const spec = {};
+    let hasAny = false;
+    SPEC_FIELDS.forEach(f => { const v = getSpecValue(f); if (v) { spec[f] = v; hasAny = true; } });
+    return hasAny ? spec : null;
+}
+
+/* ============================================================
+   Form: reset / populate / save
+   ============================================================ */
+function resetForm() {
+    document.getElementById("product-id").value = "";
+    document.getElementById("name").value = "";
+    document.getElementById("slug").value = "";
+    document.getElementById("tagline").value = "";
+    document.getElementById("sort_order").value = 0;
+    document.getElementById("is_active").checked = true;
+    document.getElementById("short_description").value = "";
+    document.getElementById("description").value = "";
+    SPEC_FIELDS.forEach(f => setSpecValue(f, ""));
+    batteryList.innerHTML = "";
+    variantsList.innerHTML = "";
+    extraSpecsList.innerHTML = "";
+    formTitle.textContent = "Create Product";
+    deleteButton.hidden = true;
+    renderImageGallery([]);
+    document.querySelectorAll(".product-list-item").forEach(i => i.classList.remove("active"));
+    clearFeedback();
+}
+
+function populateForm(product) {
+    document.getElementById("product-id").value = product.id ?? "";
+    document.getElementById("name").value = product.name ?? "";
+    document.getElementById("slug").value = product.slug ?? "";
+    document.getElementById("tagline").value = product.tagline ?? "";
+    document.getElementById("sort_order").value = product.sort_order ?? 0;
+    document.getElementById("is_active").checked = product.is_active ?? true;
+    document.getElementById("short_description").value = product.short_description ?? "";
+    document.getElementById("description").value = product.description ?? "";
+
+    // Specs
+    SPEC_FIELDS.forEach(f => setSpecValue(f, product.spec?.[f] ?? ""));
+
+    // Battery options
+    batteryList.innerHTML = "";
+    (product.battery_options || []).forEach(b => addBatteryRow(b));
+
+    // Variants
+    variantsList.innerHTML = "";
+    (product.variants || []).forEach(v => addVariantRow(v));
+
+    // Extra specs
+    extraSpecsList.innerHTML = "";
+    (product.extra_specs || []).forEach(s => addExtraSpecRow(s));
+
+    formTitle.textContent = `Edit Product #${product.id}`;
+    deleteButton.hidden = false;
+    renderImageGallery(product.images || []);
+    clearFeedback();
+}
+
+async function loadProduct(productId, button) {
+    const r = await fetch(`/admin/products/${productId}/json`);
+    const d = await r.json();
+    if (!r.ok) { setFeedback(d.detail || "Failed to load product.", "error"); return; }
+    document.querySelectorAll(".product-list-item").forEach(i => i.classList.remove("active"));
+    button.classList.add("active");
+    populateForm(d);
+}
+
+async function saveProduct() {
+    try {
+        const payload = {
+            id: document.getElementById("product-id").value ? Number(document.getElementById("product-id").value) : null,
+            name: document.getElementById("name").value,
+            slug: document.getElementById("slug").value || null,
+            tagline: document.getElementById("tagline").value || null,
+            short_description: document.getElementById("short_description").value || null,
+            description: document.getElementById("description").value || null,
+            is_active: document.getElementById("is_active").checked,
+            sort_order: Number(document.getElementById("sort_order").value || 0),
+            // Images are NOT included — they're managed via upload/delete
+            variants: collectVariants(),
+            spec: collectSpec(),
+            battery_options: collectBatteryOptions(),
+            extra_specs: collectExtraSpecs(),
+        };
+
+        const response = await fetch("/admin/products/save", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || "Failed to save product.");
+        populateForm(data.product);
+        setFeedback("Product saved. Refreshing list...", "success");
+        window.setTimeout(() => window.location.reload(), 700);
+    } catch (error) {
+        setFeedback(error.message, "error");
+    }
+}
+
+async function deleteProduct() {
+    const productId = document.getElementById("product-id").value;
+    if (!productId) return;
+    if (!confirm("Soft delete this product? It will become inactive.")) return;
+    const r = await fetch(`/admin/products/${productId}/delete`, { method: "POST" });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) { setFeedback(d.detail || "Failed to delete.", "error"); return; }
+    setFeedback("Product marked inactive. Refreshing...", "success");
+    setTimeout(() => window.location.reload(), 700);
+}
+
+/* ============================================================
+   Event bindings
+   ============================================================ */
+document.getElementById("new-product-button").addEventListener("click", resetForm);
+document.getElementById("product-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    saveProduct();
+});
+deleteButton.addEventListener("click", deleteProduct);
+document.querySelectorAll(".product-list-item").forEach((btn) => {
+    btn.addEventListener("click", () => loadProduct(btn.dataset.productId, btn));
+});
+
+renderImageGallery([]);
+</script>
+{% endblock %}

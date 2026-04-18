@@ -1,0 +1,33 @@
+{
+    "model": "Thunderbolt",
+    "specifications": {
+        "net_weight_with_battery": "110 kg",
+        "rated_power": "4 kW",
+        "peak_power": "8 kW",
+        "top_speed": "80 km/h",
+        "range_per_charge": "135 km",
+        "motor": "Mid drive motor with chain",
+        "tyre_specification": "Tubeless",
+        "battery_type": "Lithium",
+        "charging_time": "3-4 hours (2 battery)",
+        "body": "FRP",
+        "ground_clearance": "270 mm",
+        "seat_height": "750 mm",
+        "wheel_type": "Alloy",
+        "brake_system": "Combi disc brake",
+        "tyre_size": "F-2.75-17, R-3.00-17",
+        "speedometer": "LED digital",
+        "head_light": "Stylish LED with DRL",
+        "tail_light": "Stylish LED with DRL",
+        "suspension": {
+            "front": "Hydraulic telescopic",
+            "rear": "Double shocker with dual tube"
+        },
+        "charger": "15 AMP with autocut"
+    },
+    "warranty": {
+        "motor": "3 years",
+        "controller": "3 years",
+        "battery": "3 years"
+    }
+}

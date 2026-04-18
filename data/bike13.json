@@ -1,0 +1,41 @@
+{
+    "model": "EV-Load Master",
+    "description": "A premium electric loader designed with a mix of sophistication, efficiency, and comfort. Built to deliver excellent performance with innovation and focus, making it a strong contender among electric cargo vehicles.",
+    "specifications": {
+        "net_weight_with_battery": "90 kg",
+        "top_speed": "25 km/h",
+        "battery": [
+            {
+                "type": "60V/32AH",
+                "range": "50-60 km"
+            },
+            {
+                "type": "60V/42AH",
+                "range": "70-80 km"
+            }
+        ],
+        "carrying_capacity": "300 kg",
+        "motor": "BLDC heavy duty motor",
+        "tyre_specification": "Tubeless",
+        "battery_type": "Lithium",
+        "charging_time": "3-4 hours",
+        "body": "Iron body",
+        "ground_clearance": "150 mm",
+        "wheel_type": "Alloy",
+        "brake_system": "Front disc",
+        "tyre_size": "90.100.12",
+        "speedometer": "LED digital",
+        "head_light": "Stylish LED with DRL",
+        "tail_light": "Stylish LED with DRL",
+        "suspension": {
+            "front": "Hydraulic telescopic",
+            "rear": "Double shocker with dual tube technology"
+        },
+        "charger": "3-4 AMP with autocut"
+    },
+    "warranty": {
+        "motor": "1 year",
+        "controller": "1 year",
+        "battery": "4 years (2+2)"
+    }
+}

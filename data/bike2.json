@@ -1,0 +1,33 @@
+{
+    "model": "Tubro Volt",
+    "specifications": {
+        "net_weight_with_battery": "95 kg",
+        "rated_power": "2 kW",
+        "peak_power": "4 kW",
+        "top_speed": "25 km/h",
+        "range_per_charge": "80 km",
+        "motor": "BLDC (Hub Motor)",
+        "tyre_specification": "Tubeless",
+        "battery_type": "Lithium",
+        "charging_time": "5-6 hours",
+        "body": "FRP",
+        "ground_clearance": "270 mm",
+        "seat_height": "750 mm",
+        "wheel_type": "Alloy",
+        "brake_system": "Front disc & rear disc",
+        "tyre_size": "F-2.75-17, R-3.00-17",
+        "speedometer": "LED digital",
+        "head_light": "Stylish LED with DRL",
+        "tail_light": "Stylish LED with DRL",
+        "suspension": {
+            "front": "Hydraulic",
+            "rear": "Double shocker with dual tube technology"
+        },
+        "charger": "5 AMP with autocut"
+    },
+    "warranty": {
+        "motor": "1 year",
+        "controller": "1 year",
+        "battery": "4 years (2+2)"
+    }
+}

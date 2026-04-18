@@ -1,0 +1,47 @@
+{% extends "admin/base.html" %}
+{% block content %}
+<section class="auth-card">
+    <p class="eyebrow">Internal Access</p>
+    <h2>Sign In to EV Nation Admin</h2>
+    <p class="muted">Use the bootstrap admin account for now. We can tighten this later once the catalog is entered.</p>
+    <form id="login-form" class="stack-form">
+        <label>
+            <span>Email</span>
+            <input type="email" name="email" value="admin@evnation.local" required>
+        </label>
+        <label>
+            <span>Password</span>
+            <input type="password" name="password" value="Admin12345" required>
+        </label>
+        <button type="submit" class="primary-button">Login</button>
+        <p id="login-error" class="error-text" hidden></p>
+    </form>
+</section>
+<script>
+const loginForm = document.getElementById("login-form");
+const loginError = document.getElementById("login-error");
+
+loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    loginError.hidden = true;
+
+    const formData = new FormData(loginForm);
+    const payload = Object.fromEntries(formData.entries());
+
+    const response = await fetch("/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+    });
+
+    const data = await response.json().catch(() => ({ detail: "Login failed." }));
+    if (!response.ok) {
+        loginError.textContent = data.detail || "Login failed.";
+        loginError.hidden = false;
+        return;
+    }
+
+    window.location.href = data.redirect_url || "/admin/products";
+});
+</script>
+{% endblock %}

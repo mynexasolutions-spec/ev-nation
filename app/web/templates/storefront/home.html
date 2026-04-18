@@ -1,0 +1,58 @@
+{% extends "storefront/base.html" %}
+{% block content %}
+
+<section class="hero">
+    <div class="container hero-inner">
+        <p class="hero-eyebrow">Made for Indian Roads</p>
+        <h1 class="hero-title">Ride Electric.<br>Ride Smart.</h1>
+        <p class="hero-sub">Discover our range of powerful, affordable electric bikes designed for everyday commuting.</p>
+        <a href="#bikes" class="btn btn-primary">Explore Bikes</a>
+    </div>
+    <div class="hero-glow"></div>
+</section>
+
+<section class="bikes-section" id="bikes">
+    <div class="container">
+        <div class="section-head">
+            <h2>Our Bikes</h2>
+            <p class="muted">{{ products | length }} models available</p>
+        </div>
+        {% if products %}
+        <div class="bikes-grid">
+            {% for product in products %}
+            <a href="/bikes/{{ product.slug }}" class="bike-card">
+                <div class="bike-card-image">
+                    {% if product.primary_image %}
+                    <img src="{{ product.primary_image.image_path }}" alt="{{ product.primary_image.alt_text or product.name }}" loading="lazy">
+                    {% else %}
+                    <div class="bike-card-placeholder">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                    </div>
+                    {% endif %}
+                    {% if product.variants %}
+                    <div class="bike-card-variants">
+                        {% for variant in product.variants[:5] %}
+                        <span class="color-dot" style="background: {{ variant.color_code or '#888' }}" title="{{ variant.color_name }}"></span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="bike-card-body">
+                    <h3 class="bike-card-name">{{ product.name }}</h3>
+                    {% if product.tagline %}
+                    <p class="bike-card-tagline">{{ product.tagline }}</p>
+                    {% endif %}
+                    <span class="bike-card-cta">View Details →</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>No bikes available yet. Check back soon!</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}
