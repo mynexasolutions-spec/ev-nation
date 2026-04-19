@@ -12,6 +12,16 @@ service = LeadService()
 
 @router.post("", response_model=LeadCreateResponse, status_code=status.HTTP_201_CREATED, summary="Create a lead")
 def create_lead(payload: LeadCreate, db: Session = Depends(get_db)) -> LeadCreateResponse:
+    if payload.bot_check:
+        from app.models.enums import LeadStatus
+        return LeadCreateResponse(
+            id=99999,
+            source=payload.source,
+            status=LeadStatus.NEW,
+            whatsapp_url=None,
+            detail="Lead created successfully."
+        )
+
     try:
         return service.create_lead(db, payload)
     except NotFoundError as exc:

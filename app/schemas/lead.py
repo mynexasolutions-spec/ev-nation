@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import html
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.core.normalization import compact_whitespace, normalize_phone
@@ -14,11 +15,15 @@ class LeadCreate(BaseModel):
     message: str | None = Field(default=None, max_length=2000)
     source: LeadSource
     preferred_contact_time: str | None = Field(default=None, max_length=255)
+    bot_check: str | None = None
 
-    @field_validator("name", "message", "preferred_contact_time")
+    @field_validator("name", "preferred_contact_time", "message")
     @classmethod
-    def normalize_text(cls, value: str | None) -> str | None:
-        return compact_whitespace(value)
+    def sanitize_and_normalize_text(cls, value: str | None) -> str | None:
+        if not value:
+            return value
+        compacted = compact_whitespace(value)
+        return html.escape(compacted) if compacted else None
 
     @field_validator("phone")
     @classmethod

@@ -198,6 +198,7 @@ function renderImageGallery(images) {
 async function uploadImage(file) {
     const productId = document.getElementById("product-id").value;
     if (!productId) { setFeedback("Save the product first before uploading images.", "error"); return; }
+    if (file.size > 5 * 1024 * 1024) { setFeedback("File is too large! Maximum allowed size is 5 MB.", "error"); return; }
     uploadProgress.hidden = false;
     uploadProgressBar.style.width = "30%";
     uploadStatus.textContent = "Uploading...";
