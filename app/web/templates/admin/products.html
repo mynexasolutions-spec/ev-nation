@@ -186,12 +186,18 @@ function renderImageGallery(images) {
             <img src="${img.image_path}" alt="${img.alt_text || ''}" loading="lazy">
             <div class="image-thumb-overlay">
                 ${img.is_primary ? '<span class="image-badge">Primary</span>' : ''}
-                <button type="button" class="image-delete-btn" data-image-id="${img.id}" title="Delete">&times;</button>
+                <div style="display: flex; gap: 4px;">
+                    ${!img.is_primary ? `<button type="button" class="image-primary-btn" data-image-id="${img.id}" title="Make Primary">★</button>` : ''}
+                    <button type="button" class="image-delete-btn" data-image-id="${img.id}" title="Delete">&times;</button>
+                </div>
             </div>`;
         imageGallery.appendChild(card);
     });
     imageGallery.querySelectorAll(".image-delete-btn").forEach((btn) => {
         btn.addEventListener("click", (e) => { e.stopPropagation(); deleteImage(Number(btn.dataset.imageId)); });
+    });
+    imageGallery.querySelectorAll(".image-primary-btn").forEach((btn) => {
+        btn.addEventListener("click", (e) => { e.stopPropagation(); setPrimaryImage(Number(btn.dataset.imageId)); });
     });
 }
 
@@ -228,6 +234,18 @@ async function deleteImage(imageId) {
         const rr = await fetch(`/admin/products/${productId}/json`);
         const rd = await rr.json(); if (rr.ok) renderImageGallery(rd.images || []);
         setFeedback("Image deleted.", "success");
+    } catch(e) { setFeedback(e.message, "error"); }
+}
+
+async function setPrimaryImage(imageId) {
+    const productId = document.getElementById("product-id").value;
+    if (!productId) return;
+    try {
+        const r = await fetch(`/admin/products/${productId}/images/${imageId}/primary`, { method: "POST" });
+        const d = await r.json(); if (!r.ok) throw new Error(d.detail || "Failed to set primary image.");
+        const rr = await fetch(`/admin/products/${productId}/json`);
+        const rd = await rr.json(); if (rr.ok) renderImageGallery(rd.images || []);
+        setFeedback("Primary image updated.", "success");
     } catch(e) { setFeedback(e.message, "error"); }
 }
 

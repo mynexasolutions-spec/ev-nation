@@ -495,6 +495,26 @@ textarea {
     background: var(--error);
 }
 
+.image-primary-btn {
+    width: 26px;
+    height: 26px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 166, 0, 0.85);
+    color: #fff;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background 120ms ease;
+    margin-right: 4px;
+}
+
+.image-primary-btn:hover {
+    background: #ff9900;
+}
+
 .upload-zone {
     border: 2px dashed var(--border);
     border-radius: 14px;

@@ -266,12 +266,55 @@ def admin_delete_image(
     if image is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image not found.")
 
+    was_primary = image.is_primary
+
     relative = image.image_path.removeprefix("/media/")
     file_path = Path(settings.media_dir) / relative
     if file_path.exists():
         file_path.unlink()
 
     db.delete(image)
+    
+    # If the deleted image was primary, nominate a new one automatically
+    if was_primary:
+        next_image = db.query(ProductImage).filter(ProductImage.product_id == product_id).order_by(ProductImage.sort_order).first()
+        if next_image:
+            next_image.is_primary = True
+
+    db.commit()
+
+    return JSONResponse({"ok": True})
+
+
+@router.post("/products/{product_id}/images/{image_id}/primary")
+def admin_set_primary_image(
+    product_id: int,
+    image_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+) -> JSONResponse:
+    try:
+        _require_admin(request, db)
+    except HTTPException:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required.")
+
+    # Find target image
+    target = db.query(ProductImage).filter(
+        ProductImage.id == image_id,
+        ProductImage.product_id == product_id,
+    ).first()
+
+    if target is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image not found.")
+
+    # Remove primary flag from all other images for this product
+    db.query(ProductImage).filter(
+        ProductImage.product_id == product_id,
+        ProductImage.id != image_id
+    ).update({"is_primary": False})
+
+    # Set new primary
+    target.is_primary = True
     db.commit()
 
     return JSONResponse({"ok": True})
