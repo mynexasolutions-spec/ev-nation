@@ -157,10 +157,19 @@ select {
     display: grid;
     grid-template-columns: 320px 1fr;
     gap: 24px;
+    align-items: start;
 }
 
 .panel {
     padding: 24px;
+}
+
+.admin-grid > .panel:first-child {
+    position: sticky;
+    top: 24px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 120px);
 }
 
 .panel-form {
@@ -245,9 +254,9 @@ textarea {
     margin-top: 18px;
     display: grid;
     gap: 10px;
-    max-height: calc(100vh - 200px);
     overflow-y: auto;
     padding-right: 6px;
+    flex: 1;
 }
 
 .product-list-item {
