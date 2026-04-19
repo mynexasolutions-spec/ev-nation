@@ -275,7 +275,10 @@ function addVariantRow(data = {}) {
     row.innerHTML = `
         <div class="two-col" style="flex:1">
             <label><span>Color Name</span><input type="text" class="var-name" value="${data.color_name || ''}" placeholder="e.g. Matte Black"></label>
-            <label><span>Color Code</span><input type="text" class="var-code" value="${data.color_code || ''}" placeholder="e.g. #1F1F1F" maxlength="7"></label>
+            <label style="display: flex; flex-direction: column; gap: 4px;">
+                <span>Color Picker</span>
+                <input type="color" class="var-code" value="${data.color_code || '#ffffff'}" style="height: 48px; width: 100%; cursor: pointer; padding: 2px;">
+            </label>
         </div>
         <button type="button" class="remove-row-btn" title="Remove">&times;</button>`;
     row.querySelector(".remove-row-btn").addEventListener("click", () => row.remove());
