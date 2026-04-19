@@ -3,9 +3,9 @@
    ============================================================ */
 
 :root {
-    --orange:      #d84e22;
-    --orange-dark: #b53d18;
-    --orange-bg:   rgba(216, 78, 34, 0.08);
+    --primary:      #84cc16;
+    --primary-dark: #65a30d;
+    --primary-bg:   rgba(132, 204, 22, 0.08);
     --text:        #111827;
     --text-muted:  #6b7280;
     --border:      #e5e7eb;
@@ -65,21 +65,21 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 .btn:active { transform: translateY(0); }
 
 .btn-primary {
-    background: var(--orange);
+    background: var(--primary);
     color: #fff;
-    box-shadow: 0 4px 14px rgba(216,78,34,0.35);
+    box-shadow: 0 4px 14px rgba(132,204,22,0.35);
 }
 .btn-primary:hover {
-    background: var(--orange-dark);
-    box-shadow: 0 6px 20px rgba(216,78,34,0.45);
+    background: var(--primary-dark);
+    box-shadow: 0 6px 20px rgba(132,204,22,0.45);
 }
 
 .btn-outline {
     background: transparent;
-    color: var(--orange);
-    border: 2px solid var(--orange);
+    color: var(--primary);
+    border: 2px solid var(--primary);
 }
-.btn-outline:hover { background: var(--orange-bg); }
+.btn-outline:hover { background: var(--primary-bg); }
 
 .btn-whatsapp {
     background: var(--green);
@@ -122,7 +122,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 }
 
 .logo-mark {
-    background: var(--orange);
+    background: var(--primary);
     color: #fff;
     padding: 3px 8px;
     border-radius: 6px;
@@ -146,14 +146,14 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 .site-nav a:hover { color: var(--text); }
 
 .nav-cta {
-    background: var(--orange);
+    background: var(--primary);
     color: #fff !important;
     padding: 9px 20px;
     border-radius: 999px;
     font-weight: 600 !important;
     transition: background 150ms !important;
 }
-.nav-cta:hover { background: var(--orange-dark) !important; }
+.nav-cta:hover { background: var(--primary-dark) !important; }
 
 /* ============================================================
    Hero
@@ -162,8 +162,8 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 .hero {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, #1a0f0a 0%, #2d1510 50%, #1a0f0a 100%);
-    color: #fff;
+    background: #ffffff;
+    color: var(--text);
     padding: 100px 0 90px;
 }
 
@@ -171,7 +171,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
     position: absolute;
     top: -60px; right: -80px;
     width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(216,78,34,0.4) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(132,204,22,0.4) 0%, transparent 70%);
     pointer-events: none;
 }
 
@@ -183,7 +183,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.14em;
-    color: var(--orange);
+    color: var(--primary);
     margin-bottom: 16px;
 }
 
@@ -197,7 +197,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 
 .hero-sub {
     font-size: 1.1rem;
-    color: rgba(255,255,255,0.72);
+    color: var(--text-muted);
     max-width: 520px;
     margin-bottom: 36px;
 }
@@ -304,7 +304,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 .bike-card-cta {
     font-size: 0.88rem;
     font-weight: 600;
-    color: var(--orange);
+    color: var(--primary);
     margin-top: 8px;
 }
 
@@ -330,7 +330,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
     margin-bottom: 32px;
     transition: color 150ms;
 }
-.back-link:hover { color: var(--orange); }
+.back-link:hover { color: var(--primary); }
 
 .product-layout {
     display: grid;
@@ -372,7 +372,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 }
 .thumb-btn img { width: 100%; height: 100%; object-fit: cover; }
 .thumb-btn.active,
-.thumb-btn:hover { border-color: var(--orange); }
+.thumb-btn:hover { border-color: var(--primary); }
 
 .gallery-placeholder {
     border-radius: var(--radius);
@@ -396,7 +396,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 
 .product-tagline {
     font-size: 1.05rem;
-    color: var(--orange);
+    color: var(--primary);
     font-weight: 600;
     margin-bottom: 16px;
 }
@@ -436,7 +436,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
     font-weight: 500;
     transition: border-color 150ms, background 150ms;
 }
-.variant-btn:hover { border-color: var(--orange); background: var(--orange-bg); }
+.variant-btn:hover { border-color: var(--primary); background: var(--primary-bg); }
 
 .variant-swatch {
     width: 18px; height: 18px;
@@ -459,11 +459,11 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
     align-items: center;
     gap: 7px;
     padding: 8px 14px;
-    background: var(--orange-bg);
+    background: var(--primary-bg);
     border-radius: 999px;
     font-size: 0.84rem;
     font-weight: 600;
-    color: var(--orange-dark);
+    color: var(--primary-dark);
 }
 
 /* CTA buttons */
@@ -511,7 +511,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 .call-form input:focus,
 .call-form textarea:focus {
     outline: none;
-    border-color: var(--orange);
+    border-color: var(--primary);
     background: var(--white);
 }
 
@@ -656,7 +656,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 .error-page h1 {
     font-size: 6rem;
     font-weight: 800;
-    color: var(--orange);
+    color: var(--primary);
     line-height: 1;
     margin-bottom: 16px;
 }
@@ -679,7 +679,13 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 }
 
 @media (max-width: 640px) {
-    .hero { padding: 64px 0 60px; }
+    .hero {
+    position: relative;
+    overflow: hidden;
+    background: #ffffff;
+    color: var(--text);
+    padding: 100px 0 90px;
+}
     .bikes-section { padding: 56px 0; }
     .section-head { flex-direction: column; gap: 4px; }
     .bikes-grid { grid-template-columns: 1fr 1fr; gap: 16px; }

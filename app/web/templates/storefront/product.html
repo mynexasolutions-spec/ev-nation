@@ -197,7 +197,7 @@
                     {% if rec.variants %}
                     <div class="bike-card-variants">
                         {% for variant in rec.variants[:5] %}
-                        <span class="color-dot" style="background: {{ variant.color_code or '#888' }}" title="{{ variant.color_name }}"></span>
+                        <span class="color-dot" style="--bg: {{ variant.color_code or '#888' }}; background: var(--bg);" title="{{ variant.color_name }}"></span>
                         {% endfor %}
                     </div>
                     {% endif %}
