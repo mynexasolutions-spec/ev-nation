@@ -177,6 +177,45 @@
     </div>
 </div>
 
+{% if recommendations %}
+<section class="bikes-section" style="padding-top: 2rem; border-top: 1px solid var(--border);">
+    <div class="container">
+        <div class="section-head" style="margin-bottom: 24px;">
+            <h2 style="font-size: 1.5rem;">You might also like</h2>
+        </div>
+        <div class="bikes-grid">
+            {% for rec in recommendations %}
+            <a href="/bikes/{{ rec.slug }}" class="bike-card">
+                <div class="bike-card-image">
+                    {% if rec.primary_image %}
+                    <img src="{{ rec.primary_image.image_path }}" alt="{{ rec.primary_image.alt_text or rec.name }}" loading="lazy">
+                    {% else %}
+                    <div class="bike-card-placeholder">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                    </div>
+                    {% endif %}
+                    {% if rec.variants %}
+                    <div class="bike-card-variants">
+                        {% for variant in rec.variants[:5] %}
+                        <span class="color-dot" style="background: {{ variant.color_code or '#888' }}" title="{{ variant.color_name }}"></span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="bike-card-body">
+                    <h3 class="bike-card-name">{{ rec.name }}</h3>
+                    {% if rec.tagline %}
+                    <p class="bike-card-tagline">{{ rec.tagline }}</p>
+                    {% endif %}
+                    <span class="bike-card-cta">View Details →</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
 <script>
 // Gallery thumbnail switcher
 document.querySelectorAll(".thumb-btn").forEach(btn => {

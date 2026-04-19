@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session, selectinload
 
 from app.models.product import Product, Variant
@@ -20,6 +20,16 @@ class ProductRepository:
             .where(Product.is_active.is_(True))
             .options(*self._product_load_options())
             .order_by(Product.sort_order.asc(), Product.id.asc())
+        )
+        return list(db.scalars(statement).unique())
+
+    def get_random_active_exclude(self, db: Session, exclude_id: int, limit: int = 3) -> list[Product]:
+        statement = (
+            select(Product)
+            .where(Product.is_active.is_(True), Product.id != exclude_id)
+            .options(*self._product_load_options())
+            .order_by(func.random())
+            .limit(limit)
         )
         return list(db.scalars(statement).unique())
 

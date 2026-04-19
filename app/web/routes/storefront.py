@@ -32,6 +32,7 @@ def home(request: Request, db: Session = Depends(get_db)):
 def product_detail(slug: str, request: Request, db: Session = Depends(get_db)):
     try:
         product = product_service.get_public_product(db, slug)
+        recommendations = product_service.get_public_recommendations(db, exclude_id=product.id, limit=3)
     except NotFoundError:
         return templates.TemplateResponse(
             "storefront/404.html",
@@ -43,6 +44,7 @@ def product_detail(slug: str, request: Request, db: Session = Depends(get_db)):
         {
             "request": request,
             "product": product,
+            "recommendations": recommendations,
             "page_title": f"{product.name} – EV Nation",
             "whatsapp_number": settings.whatsapp_number,
         },

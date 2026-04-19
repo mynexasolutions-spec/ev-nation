@@ -27,6 +27,10 @@ class ProductService:
         products = self.repository.list_active(db)
         return [self._to_product_list_item(product) for product in products]
 
+    def get_public_recommendations(self, db: Session, exclude_id: int, limit: int = 3) -> list[ProductListItem]:
+        products = self.repository.get_random_active_exclude(db, exclude_id, limit)
+        return [self._to_product_list_item(product) for product in products]
+
     def list_admin_products(self, db: Session) -> list[AdminProductListItem]:
         products = self.repository.list_all(db)
         return [
