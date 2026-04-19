@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api.v1.router import api_router
 from app.core.bootstrap import bootstrap_application
 from app.core.config import settings
+from app.core.errors import DomainValidationError, NotFoundError
 from app.web.router import router as web_router
 from app.web.templating import templates
 
@@ -39,6 +40,17 @@ def create_application() -> FastAPI:
         if exc.status_code == 404:
             return templates.TemplateResponse("storefront/404.html", {"request": request, "page_title": "Not Found"}, status_code=404)
         return HTMLResponse(content=f"<h1>Error {exc.status_code}</h1><p>{exc.detail}</p>", status_code=exc.status_code)
+
+    @app.exception_handler(DomainValidationError)
+    async def domain_validation_exception_handler(request: Request, exc: DomainValidationError):
+        # We always return JSON for domain validation errors as they are usually handled by JS forms
+        return JSONResponse({"detail": str(exc)}, status_code=400)
+
+    @app.exception_handler(NotFoundError)
+    async def not_found_exception_handler(request: Request, exc: NotFoundError):
+        if request.url.path.startswith("/api") or request.url.path.startswith("/admin/api"):
+            return JSONResponse({"detail": str(exc)}, status_code=404)
+        return templates.TemplateResponse("storefront/404.html", {"request": request, "page_title": "Not Found"}, status_code=404)
 
     @app.exception_handler(Exception)
     async def custom_server_error_handler(request: Request, exc: Exception):
