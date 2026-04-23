@@ -110,6 +110,7 @@ class ProductService:
             short_description=payload.short_description,
             description=payload.description,
             is_active=payload.is_active,
+            base_price=payload.base_price,
             sort_order=payload.sort_order,
         )
         self._apply_product_children(product, payload)
@@ -128,7 +129,7 @@ class ProductService:
         if "slug" in update_data:
             product.slug = self._resolve_unique_slug(db, update_data.get("slug"), product.name, exclude_product_id=product.id)
 
-        scalar_fields = ("name", "tagline", "short_description", "description", "is_active", "sort_order")
+        scalar_fields = ("name", "tagline", "short_description", "description", "is_active", "base_price", "sort_order")
         for field in scalar_fields:
             if field in update_data:
                 setattr(product, field, update_data[field])
@@ -159,6 +160,7 @@ class ProductService:
             slug=product.slug,
             tagline=product.tagline,
             short_description=product.short_description,
+            base_price=product.base_price,
             sort_order=product.sort_order,
             primary_image=ProductImageRead.model_validate(primary_image) if primary_image else None,
             variants=[VariantRead.model_validate(variant) for variant in active_variants],
@@ -175,6 +177,7 @@ class ProductService:
             tagline=product.tagline,
             short_description=product.short_description,
             description=product.description,
+            base_price=product.base_price,
             sort_order=product.sort_order,
             images=[ProductImageRead.model_validate(image) for image in product.images],
             variants=[VariantRead.model_validate(variant) for variant in active_variants],

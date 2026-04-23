@@ -60,6 +60,9 @@
                         <input id="is_active" type="checkbox" checked>
                         <span>Active product</span>
                     </label>
+                    <label><span>Base Price (₹)</span><input id="base_price" type="number" min="0" value="0"></label>
+                </div>
+                <div class="two-col">
                     <label>
                         <span>Category</span>
                         <select id="category_id">
@@ -419,6 +422,7 @@ function resetForm() {
     document.getElementById("sort_order").value = "0";
     document.getElementById("category_id").value = "";
     document.getElementById("is_active").checked = true;
+    document.getElementById("base_price").value = "0";
     document.getElementById("short_description").value = "";
     document.getElementById("description").value = "";
     SPEC_FIELDS.forEach(f => setSpecValue(f, ""));
@@ -443,6 +447,7 @@ function populateForm(product) {
     document.getElementById("sort_order").value = product.sort_order ?? 0;
     document.getElementById("category_id").value = product.category_id ?? "";
     document.getElementById("is_active").checked = product.is_active ?? true;
+    document.getElementById("base_price").value = product.base_price ?? 0;
     document.getElementById("short_description").value = product.short_description ?? "";
     document.getElementById("description").value = product.description ?? "";
 
@@ -499,6 +504,7 @@ async function saveProduct() {
             short_description: document.getElementById("short_description").value || null,
             description: document.getElementById("description").value || null,
             is_active: document.getElementById("is_active").checked,
+            base_price: parseInt(document.getElementById("base_price").value) || 0,
             sort_order: parseInt(document.getElementById("sort_order").value) || 0,
             category_id: parseInt(document.getElementById("category_id").value) || null,
             // Images are NOT included — they're managed via upload/delete

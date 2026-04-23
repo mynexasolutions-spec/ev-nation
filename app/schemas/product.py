@@ -168,6 +168,7 @@ class ProductBase(BaseModel):
     short_description: str | None = None
     description: str | None = None
     is_active: bool = True
+    base_price: int = Field(default=0, ge=0)
     sort_order: int = Field(default=0, ge=0)
     category_id: int | None = None
 
@@ -193,6 +194,7 @@ class ProductListItem(BaseModel):
     slug: str
     tagline: str | None = None
     short_description: str | None = None
+    base_price: int = 0
     sort_order: int
     category: CategoryRead | None = None
     primary_image: ProductImageRead | None = None
@@ -207,6 +209,7 @@ class ProductDetailRead(BaseModel):
     tagline: str | None = None
     short_description: str | None = None
     description: str | None = None
+    base_price: int = 0
     sort_order: int
     category: CategoryRead | None = None
     images: list[ProductImageRead] = Field(default_factory=list)
@@ -231,6 +234,7 @@ class AdminProductUpdate(BaseModel):
     short_description: str | None = None
     description: str | None = None
     is_active: bool | None = None
+    base_price: int | None = Field(default=None, ge=0)
     sort_order: int | None = Field(default=None, ge=0)
     category_id: int | None = None
     images: list[ProductImageWrite] | None = None

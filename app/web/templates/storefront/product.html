@@ -9,6 +9,18 @@
     margin: 0 auto;
     background-color: var(--off-white);
   }
+  
+  /* Ensure navbar is visible on product page (light bg) */
+  nav:not(.scrolled) .nav-logo,
+  nav:not(.scrolled) .nav-links a {
+    color: var(--green-deep) !important;
+  }
+  nav:not(.scrolled) .nav-logo img {
+    filter: brightness(0) saturate(100%) invert(20%) sepia(45%) saturate(545%) hue-rotate(101deg) brightness(93%) contrast(93%);
+  }
+  nav:not(.scrolled) .hamburger span {
+    background: var(--green-deep) !important;
+  }
   .back-link {
     display: inline-block;
     margin-bottom: 24px;
@@ -81,6 +93,38 @@
     height: 100%;
     object-fit: contain;
   }
+
+  /* Gallery Arrows */
+  .gallery-main {
+    position: relative;
+    overflow: hidden;
+  }
+  .gallery-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    z-index: 10;
+    color: var(--green-deep);
+  }
+  .gallery-arrow:hover {
+    background: #fff;
+    color: var(--green-mid);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  }
+  .arrow-prev { left: 16px; }
+  .arrow-next { right: 16px; }
+  .gallery-arrow svg { width: 24px; height: 24px; }
   
   .product-details {
     padding-top: 20px;
@@ -101,6 +145,15 @@
     margin-bottom: 20px;
     text-transform: uppercase;
     letter-spacing: 1px;
+  }
+  .product-price-large {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--green-deep);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
   .product-short-desc {
     font-size: 1.1rem;
@@ -357,6 +410,12 @@
             {% if product.images %}
             <div class="gallery-main" id="gallery-main">
                 <img src="{{ product.images[0].image_path }}" alt="{{ product.images[0].alt_text or product.name }}" id="main-img">
+                <button class="gallery-arrow arrow-prev" onclick="swipeGallery(-1)" aria-label="Previous">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <button class="gallery-arrow arrow-next" onclick="swipeGallery(1)" aria-label="Next">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
             </div>
             {% if product.images | length > 1 %}
             <div class="gallery-thumbs" id="gallery-thumbs">
@@ -370,6 +429,12 @@
             {% else %}
             <div class="gallery-main" id="gallery-main">
                 <img src="{{ url_for('static', path='/images/products/product_1.png') }}" alt="{{ product.name }}" id="main-img">
+                <button class="gallery-arrow arrow-prev" onclick="swipeGallery(-1)" aria-label="Previous">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <button class="gallery-arrow arrow-next" onclick="swipeGallery(1)" aria-label="Next">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
             </div>
             {% endif %}
         </div>
@@ -380,6 +445,8 @@
             {% if product.tagline %}
             <p class="product-tagline">{{ product.tagline }}</p>
             {% endif %}
+
+            <div class="product-price-large">₹{{ "{:,}".format(product.base_price) }}</div>
             
             <p class="product-short-desc">{{ product.short_description or product.description }}</p>
 
@@ -548,6 +615,20 @@ document.querySelectorAll(".thumb-btn").forEach(btn => {
         btn.classList.add("active");
     });
 });
+
+// Gallery swipe function
+function swipeGallery(direction) {
+    const thumbs = Array.from(document.querySelectorAll(".thumb-btn")).filter(t => t.style.display !== 'none');
+    if (thumbs.length <= 1) return;
+    
+    const activeIndex = thumbs.findIndex(t => t.classList.contains("active"));
+    let nextIndex = activeIndex + direction;
+    
+    if (nextIndex < 0) nextIndex = thumbs.length - 1;
+    if (nextIndex >= thumbs.length) nextIndex = 0;
+    
+    thumbs[nextIndex].click();
+}
 
 // Variant color image swapper
 document.querySelectorAll(".variant-btn").forEach(btn => {

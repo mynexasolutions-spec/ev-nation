@@ -1,5 +1,6 @@
 """Seed database from JSON files in data/ folder."""
 import json
+import random
 import re
 from pathlib import Path
 
@@ -111,6 +112,7 @@ def seed():
                 tagline=tagline,
                 short_description=short_desc,
                 description=description or f"The {model_name} — an advanced electric scooter by EV Nation.",
+                base_price=random.choice([65000, 75000, 85000, 95000, 110000, 125000, 145000]),
                 is_active=True,
                 sort_order=i,
             )

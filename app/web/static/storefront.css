@@ -2010,6 +2010,14 @@ footer {
   letter-spacing: 0.02em;
 }
 
+.p-price {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  color: var(--green-mid);
+  font-size: 1.2rem;
+  margin-top: 4px;
+}
+
 .p-specs {
   display: grid;
   grid-template-columns: 1fr 1fr;

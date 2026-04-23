@@ -35,6 +35,7 @@
         <div class="p-body">
           <div class="p-title-row">
             <h3>{{ product.name | upper }}</h3>
+            <div class="p-price">₹{{ "{:,}".format(product.base_price) }}</div>
           </div>
           <div class="p-specs">
             {% if product.spec %}
