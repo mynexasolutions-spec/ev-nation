@@ -1,0 +1,40 @@
+<footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" class="nav-logo" style="color:white;"><img src="{{ url_for('static', path='/images/logo.png') }}" alt="EV Nation Logo">EV <em
+            style="color:var(--green-bright);">NATION</em></a>
+        <p>India's leading electric scooter brand built for those who believe the future is electric.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="/collection">Our Collection</a></li>
+          <li><a href="/#models">Models</a></li>
+          <li><a href="/#charging">Charging</a></li>
+          <li><a href="/#gallery">Gallery</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="/#contact">Get in Touch</a></li>
+          {% if whatsapp_number %}
+          <li><a href="https://wa.me/{{ whatsapp_number }}" target="_blank" rel="noopener">WhatsApp Us</a></li>
+          {% endif %}
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About EV Nation</a></li>
+          <li><a href="#">Sustainability</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 <em>EV Nation</em> — Electric Reimagined</span>
+      <span>Privacy · Terms · Cookies</span>
+    </div>
+  </footer>

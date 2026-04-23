@@ -1,0 +1,19 @@
+<nav id="navbar">
+    <a href="/" class="nav-logo"><img src="{{ url_for('static', path='/images/logo.png') }}" alt="EV Nation Logo">EV <em>NATION</em></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/collection">Collection</a></li>
+      <li><a href="/#models">Models</a></li>
+      <li><a href="/#charging">Charging</a></li>
+      <li><a href="/#gallery">Gallery</a></li>
+      <li><a href="/#contact">Contact</a></li>
+      {% if user %}
+        <li><a href="/profile" class="nav-cta" style="background: var(--green-deep); color: var(--green-lime);">Profile</a></li>
+      {% else %}
+        <li><a href="/login" class="nav-cta">Login</a></li>
+      {% endif %}
+    </ul>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>

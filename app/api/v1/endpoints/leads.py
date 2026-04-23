@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.errors import DomainValidationError, NotFoundError
-from app.db.session import get_db
+from app.api.deps import get_db, get_current_user_web
 from app.schemas.lead import LeadCreate, LeadCreateResponse
 from app.services.lead_service import LeadService
 
@@ -11,7 +11,14 @@ service = LeadService()
 
 
 @router.post("", response_model=LeadCreateResponse, status_code=status.HTTP_201_CREATED, summary="Create a lead")
-def create_lead(payload: LeadCreate, db: Session = Depends(get_db)) -> LeadCreateResponse:
+def create_lead(
+    payload: LeadCreate, 
+    db: Session = Depends(get_db),
+    user = Depends(get_current_user_web)
+) -> LeadCreateResponse:
+    # Associate user if logged in
+    if user:
+        payload.user_id = user.id
     if payload.bot_check:
         from app.models.enums import LeadStatus
         return LeadCreateResponse(

@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.core.normalization import compact_whitespace, normalize_hex_color, normalize_slug, normalize_spec_key
+from app.schemas.category import CategoryRead
 
 
 class ProductImageBase(BaseModel):
@@ -8,6 +9,7 @@ class ProductImageBase(BaseModel):
     alt_text: str | None = Field(default=None, max_length=255)
     is_primary: bool = False
     sort_order: int = Field(default=0, ge=0)
+    variant_id: int | None = None
 
     @field_validator("image_path", "alt_text")
     @classmethod
@@ -167,6 +169,7 @@ class ProductBase(BaseModel):
     description: str | None = None
     is_active: bool = True
     sort_order: int = Field(default=0, ge=0)
+    category_id: int | None = None
 
     @field_validator("name", "tagline", "short_description", "description")
     @classmethod
@@ -191,8 +194,10 @@ class ProductListItem(BaseModel):
     tagline: str | None = None
     short_description: str | None = None
     sort_order: int
+    category: CategoryRead | None = None
     primary_image: ProductImageRead | None = None
     variants: list[VariantRead] = Field(default_factory=list)
+    spec: ProductSpecRead | None = None
 
 
 class ProductDetailRead(BaseModel):
@@ -203,6 +208,7 @@ class ProductDetailRead(BaseModel):
     short_description: str | None = None
     description: str | None = None
     sort_order: int
+    category: CategoryRead | None = None
     images: list[ProductImageRead] = Field(default_factory=list)
     variants: list[VariantRead] = Field(default_factory=list)
     spec: ProductSpecRead | None = None
@@ -226,6 +232,7 @@ class AdminProductUpdate(BaseModel):
     description: str | None = None
     is_active: bool | None = None
     sort_order: int | None = Field(default=None, ge=0)
+    category_id: int | None = None
     images: list[ProductImageWrite] | None = None
     variants: list[VariantWrite] | None = None
     spec: ProductSpecWrite | None = None

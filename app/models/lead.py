@@ -16,6 +16,12 @@ class Lead(IDMixin, TimestampMixin, Base):
         Index("ix_leads_created_at", "created_at"),
     )
 
+    user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     phone: Mapped[str] = mapped_column(String(32), nullable=False)
     product_id: Mapped[int | None] = mapped_column(
@@ -47,3 +53,4 @@ class Lead(IDMixin, TimestampMixin, Base):
 
     product: Mapped["Product | None"] = relationship(back_populates="leads")
     variant: Mapped["Variant | None"] = relationship(back_populates="leads")
+    user: Mapped["User | None"] = relationship(backref="leads")

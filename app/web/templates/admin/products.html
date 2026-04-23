@@ -55,10 +55,21 @@
                     <label><span>Tagline</span><input id="tagline" type="text"></label>
                     <label><span>Sort Order</span><input id="sort_order" type="number" min="0" value="0"></label>
                 </div>
-                <label class="checkbox-row">
-                    <input id="is_active" type="checkbox" checked>
-                    <span>Active product</span>
-                </label>
+                <div class="two-col">
+                    <label class="checkbox-row">
+                        <input id="is_active" type="checkbox" checked>
+                        <span>Active product</span>
+                    </label>
+                    <label>
+                        <span>Category</span>
+                        <select id="category_id">
+                            <option value="">Uncategorized</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                </div>
                 <label><span>Short Description</span><textarea id="short_description" rows="2"></textarea></label>
                 <label><span>Description</span><textarea id="description" rows="4"></textarea></label>
             </fieldset>
@@ -66,7 +77,16 @@
             <!-- ── Images ── -->
             <fieldset class="form-section">
                 <legend>Images</legend>
-                <div class="image-gallery" id="image-gallery"></div>
+                <div style="margin-bottom: 20px;">
+                    <label>
+                        <span>Upload to Color Variant</span>
+                        <select id="upload-variant-id">
+                            <option value="">General (All Colors)</option>
+                        </select>
+                    </label>
+                    <p class="muted" style="margin-top: 4px; font-size: 0.85em;">Save the product first to make new variants available here.</p>
+                </div>
+                <div class="image-gallery" id="image-gallery" style="display: flex; flex-direction: column; gap: 20px;"></div>
                 <div class="upload-zone" id="upload-zone">
                     <div class="upload-zone-content">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -173,26 +193,52 @@ function clearFeedback() { feedback.hidden = true; }
 /* ============================================================
    Image gallery
    ============================================================ */
-function renderImageGallery(images) {
+function renderImageGallery(images, variants = []) {
     imageGallery.innerHTML = "";
     if (!images || images.length === 0) {
         imageGallery.innerHTML = '<p class="empty-copy" style="margin:0">No images yet. Save the product first, then upload.</p>';
         return;
     }
-    images.forEach((img) => {
-        const card = document.createElement("div");
-        card.className = "image-thumb" + (img.is_primary ? " primary" : "");
-        card.innerHTML = `
-            <img src="${img.image_path}" alt="${img.alt_text || ''}" loading="lazy">
-            <div class="image-thumb-overlay">
-                ${img.is_primary ? '<span class="image-badge">Primary</span>' : ''}
-                <div style="display: flex; gap: 4px;">
-                    ${!img.is_primary ? `<button type="button" class="image-primary-btn" data-image-id="${img.id}" title="Make Primary">★</button>` : ''}
-                    <button type="button" class="image-delete-btn" data-image-id="${img.id}" title="Delete">&times;</button>
-                </div>
-            </div>`;
-        imageGallery.appendChild(card);
+
+    const groups = { "general": { label: "General Images", images: [] } };
+    variants.forEach(v => { groups[v.id] = { label: v.color_name, images: [] }; });
+    
+    images.forEach(img => {
+        const key = img.variant_id || "general";
+        if (!groups[key]) groups[key] = { label: "Unknown Variant", images: [] };
+        groups[key].images.push(img);
     });
+
+    Object.keys(groups).forEach(key => {
+        const group = groups[key];
+        if (group.images.length === 0) return;
+
+        const section = document.createElement("div");
+        section.innerHTML = `<h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--color-text-light); text-transform: uppercase;">${group.label}</h4>`;
+        const grid = document.createElement("div");
+        grid.style.display = "flex";
+        grid.style.flexWrap = "wrap";
+        grid.style.gap = "10px";
+
+        group.images.forEach((img) => {
+            const card = document.createElement("div");
+            card.className = "image-thumb" + (img.is_primary ? " primary" : "");
+            card.innerHTML = `
+                <img src="${img.image_path}" alt="${img.alt_text || ''}" loading="lazy">
+                <div class="image-thumb-overlay">
+                    ${img.is_primary ? '<span class="image-badge">Primary</span>' : ''}
+                    <div style="display: flex; gap: 4px;">
+                        ${!img.is_primary ? `<button type="button" class="image-primary-btn" data-image-id="${img.id}" title="Make Primary">★</button>` : ''}
+                        <button type="button" class="image-delete-btn" data-image-id="${img.id}" title="Delete">&times;</button>
+                    </div>
+                </div>`;
+            grid.appendChild(card);
+        });
+
+        section.appendChild(grid);
+        imageGallery.appendChild(section);
+    });
+
     imageGallery.querySelectorAll(".image-delete-btn").forEach((btn) => {
         btn.addEventListener("click", (e) => { e.stopPropagation(); deleteImage(Number(btn.dataset.imageId)); });
     });
@@ -209,7 +255,13 @@ async function uploadImage(file) {
     uploadProgressBar.style.width = "30%";
     uploadStatus.textContent = "Uploading...";
     clearFeedback();
-    const fd = new FormData(); fd.append("file", file);
+    const fd = new FormData(); 
+    fd.append("file", file);
+    
+    const variantSelect = document.getElementById("upload-variant-id");
+    if (variantSelect && variantSelect.value) {
+        fd.append("variant_id", variantSelect.value);
+    }
     try {
         uploadProgressBar.style.width = "60%";
         const r = await fetch(`/admin/products/${productId}/upload-image`, { method: "POST", body: fd });
@@ -219,7 +271,7 @@ async function uploadImage(file) {
         uploadStatus.textContent = "Done!";
         const rr = await fetch(`/admin/products/${productId}/json`);
         const rd = await rr.json();
-        if (rr.ok) renderImageGallery(rd.images || []);
+        if (rr.ok) renderImageGallery(rd.images || [], rd.variants || []);
         setFeedback("Image uploaded.", "success");
     } catch(e) { console.error(e); setFeedback(e.message, "error"); }
     finally { setTimeout(() => { uploadProgress.hidden = true; uploadProgressBar.style.width = "0"; }, 1000); }
@@ -232,7 +284,7 @@ async function deleteImage(imageId) {
         const r = await fetch(`/admin/products/${productId}/delete-image/${imageId}`, { method: "POST" });
         const d = await r.json(); if (!r.ok) throw new Error(d.detail || "Delete failed.");
         const rr = await fetch(`/admin/products/${productId}/json`);
-        const rd = await rr.json(); if (rr.ok) renderImageGallery(rd.images || []);
+        const rd = await rr.json(); if (rr.ok) renderImageGallery(rd.images || [], rd.variants || []);
         setFeedback("Image deleted.", "success");
     } catch(e) { setFeedback(e.message, "error"); }
 }
@@ -244,7 +296,7 @@ async function setPrimaryImage(imageId) {
         const r = await fetch(`/admin/products/${productId}/images/${imageId}/primary`, { method: "POST" });
         const d = await r.json(); if (!r.ok) throw new Error(d.detail || "Failed to set primary image.");
         const rr = await fetch(`/admin/products/${productId}/json`);
-        const rd = await rr.json(); if (rr.ok) renderImageGallery(rd.images || []);
+        const rd = await rr.json(); if (rr.ok) renderImageGallery(rd.images || [], rd.variants || []);
         setFeedback("Primary image updated.", "success");
     } catch(e) { setFeedback(e.message, "error"); }
 }
@@ -364,7 +416,8 @@ function resetForm() {
     document.getElementById("name").value = "";
     document.getElementById("slug").value = "";
     document.getElementById("tagline").value = "";
-    document.getElementById("sort_order").value = 0;
+    document.getElementById("sort_order").value = "0";
+    document.getElementById("category_id").value = "";
     document.getElementById("is_active").checked = true;
     document.getElementById("short_description").value = "";
     document.getElementById("description").value = "";
@@ -374,17 +427,21 @@ function resetForm() {
     extraSpecsList.innerHTML = "";
     formTitle.textContent = "Create Product";
     deleteButton.hidden = true;
+    
+    document.getElementById("upload-variant-id").innerHTML = '<option value="">General (All Colors)</option>';
     renderImageGallery([]);
     document.querySelectorAll(".product-list-item").forEach(i => i.classList.remove("active"));
     clearFeedback();
 }
 
 function populateForm(product) {
+    document.getElementById("form-title").textContent = "Edit Product";
     document.getElementById("product-id").value = product.id ?? "";
     document.getElementById("name").value = product.name ?? "";
     document.getElementById("slug").value = product.slug ?? "";
     document.getElementById("tagline").value = product.tagline ?? "";
     document.getElementById("sort_order").value = product.sort_order ?? 0;
+    document.getElementById("category_id").value = product.category_id ?? "";
     document.getElementById("is_active").checked = product.is_active ?? true;
     document.getElementById("short_description").value = product.short_description ?? "";
     document.getElementById("description").value = product.description ?? "";
@@ -406,7 +463,20 @@ function populateForm(product) {
 
     formTitle.textContent = `Edit Product #${product.id}`;
     deleteButton.hidden = false;
-    renderImageGallery(product.images || []);
+    
+    // Populate variant selector for uploads
+    const uSelect = document.getElementById("upload-variant-id");
+    uSelect.innerHTML = '<option value="">General (All Colors)</option>';
+    (product.variants || []).forEach(v => {
+        if (v.id) {
+            const opt = document.createElement("option");
+            opt.value = v.id;
+            opt.textContent = v.color_name;
+            uSelect.appendChild(opt);
+        }
+    });
+
+    renderImageGallery(product.images || [], product.variants || []);
     clearFeedback();
 }
 
@@ -429,7 +499,8 @@ async function saveProduct() {
             short_description: document.getElementById("short_description").value || null,
             description: document.getElementById("description").value || null,
             is_active: document.getElementById("is_active").checked,
-            sort_order: Number(document.getElementById("sort_order").value || 0),
+            sort_order: parseInt(document.getElementById("sort_order").value) || 0,
+            category_id: parseInt(document.getElementById("category_id").value) || null,
             // Images are NOT included — they're managed via upload/delete
             variants: collectVariants(),
             spec: collectSpec(),

@@ -15,8 +15,9 @@
                     <strong style="margin-right:0.5rem;font-size:1.2rem;">EV Nation <span style="font-weight:400;color:var(--accent);">Admin</span></strong>
                 </div>
                 <nav class="admin-nav">
-                    <a href="/admin/products" class="{% if page_title == 'Products' %}active{% endif %}">Products</a>
-                    <a href="/admin/leads" class="{% if page_title == 'Leads' %}active{% endif %}">Leads</a>
+                    <a href="/admin/products" class="{% if 'Products' in page_title %}active{% endif %}">Products</a>
+                    <a href="/admin/categories" class="{% if 'Categories' in page_title %}active{% endif %}">Categories</a>
+                    <a href="/admin/leads" class="{% if 'Leads' in page_title %}active{% endif %}">Leads</a>
                 </nav>
                 <div class="navbar-user">
                     <span class="muted" style="margin-right: 1rem;">{{ current_admin.full_name or current_admin.email }}</span>

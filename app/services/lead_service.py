@@ -53,6 +53,7 @@ class LeadService:
             message=payload.message,
             source=payload.source,
             preferred_contact_time=payload.preferred_contact_time,
+            user_id=payload.user_id,
         )
         created_lead = self.lead_repository.create(db, lead)
 

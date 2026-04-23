@@ -35,8 +35,11 @@ def create_application() -> FastAPI:
 
     @app.exception_handler(StarletteHTTPException)
     async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
-        if request.url.path.startswith("/api") or request.url.path.startswith("/admin/api"):
+        if request.url.path.startswith("/api") or \
+           request.url.path.startswith("/admin/") or \
+           request.headers.get("accept") == "application/json":
             return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
+        
         if exc.status_code == 404:
             return templates.TemplateResponse("storefront/404.html", {"request": request, "page_title": "Not Found"}, status_code=404)
         return HTMLResponse(content=f"<h1>Error {exc.status_code}</h1><p>{exc.detail}</p>", status_code=exc.status_code)
@@ -54,10 +57,14 @@ def create_application() -> FastAPI:
 
     @app.exception_handler(Exception)
     async def custom_server_error_handler(request: Request, exc: Exception):
-        if request.url.path.startswith("/api") or request.url.path.startswith("/admin/api"):
-            return JSONResponse({"detail": "Internal Server Error"}, status_code=500)
         import traceback
         traceback.print_exc()
+
+        if request.url.path.startswith("/api") or \
+           request.url.path.startswith("/admin/") or \
+           request.headers.get("accept") == "application/json":
+            return JSONResponse({"detail": str(exc) if settings.debug else "Internal Server Error"}, status_code=500)
+        
         return templates.TemplateResponse("storefront/500.html", {"request": request, "page_title": "Server Error"}, status_code=500)
 
     return app

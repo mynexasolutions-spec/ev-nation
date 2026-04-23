@@ -1,58 +1,468 @@
-{% extends "storefront/base.html" %}
+{% extends 'storefront/base.html' %}
+
 {% block content %}
-
-<section class="hero">
-    <div class="container hero-inner">
-        <p class="hero-eyebrow">Made for Indian Roads</p>
-        <h1 class="hero-title">Ride Electric.<br>Ride Smart.</h1>
-        <p class="hero-sub">Discover our range of powerful, affordable electric bikes designed for everyday commuting.</p>
-        <a href="#bikes" class="btn btn-primary">Explore Bikes</a>
+<!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-slider">
+      <div class="hero-slide active" style="background-image: url('{{ url_for('static', path='/images/banner/banner_1.png') }}');"></div>
+      <div class="hero-slide" style="background-image: url('{{ url_for('static', path='/images/banner/banner_2.png') }}');"></div>
+      <div class="hero-slide" style="background-image: url('{{ url_for('static', path='/images/banner/banner_3.png') }}');"></div>
     </div>
-    <div class="hero-glow"></div>
-</section>
+    <div class="hero-overlay"></div>
+    <div class="hero-watermark">EV NATION</div>
+    <div class="hero-fade-bottom"></div>
+    <div class="hero-content">
+      <div class="hero-tag">⚡ Zero Emissions Future</div>
+      <h1 class="hero-h1">RIDE<em>THE FUTURE</em></h1>
+      <p class="hero-sub">Experience India's most advanced electric scooters — built for performance, designed for the
+        streets, and engineered for a cleaner planet.</p>
+      <div class="hero-actions">
+        <a href="#models" class="btn-primary">Explore Models</a>
+        <a href="#gallery" class="btn-ghost">View Gallery</a>
+      </div>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">150<sup>km</sup></div>
+        <div class="stat-label">Max Range</div>
+      </div>
+      <div>
+        <div class="stat-num">85<sup>km/h</sup></div>
+        <div class="stat-label">Top Speed</div>
+      </div>
+      <div>
+        <div class="stat-num">6.5<sup>kW</sup></div>
+        <div class="stat-label">Peak Power</div>
+      </div>
+      <div>
+        <div class="stat-num">3<sup>sec</sup></div>
+        <div class="stat-label">Battery Swap</div>
+      </div>
+    </div>
+  </section>
 
-<section class="bikes-section" id="bikes">
-    <div class="container">
-        <div class="section-head">
-            <h2>Our Bikes</h2>
-            <p class="muted">{{ products | length }} models available</p>
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span class="ticker-item">Zero Emissions</span>
+      <span class="ticker-item">150km Range</span>
+      <span class="ticker-item">3-Sec Battery Swap</span>
+      <span class="ticker-item">Mid-Drive Motor</span>
+      <span class="ticker-item">Smart Navigation</span>
+      <span class="ticker-item">Anti-Theft System</span>
+      <span class="ticker-item">Regen Braking</span>
+      <span class="ticker-item">OTA Updates</span>
+      <span class="ticker-item">Zero Emissions</span>
+      <span class="ticker-item">150km Range</span>
+      <span class="ticker-item">3-Sec Battery Swap</span>
+      <span class="ticker-item">Mid-Drive Motor</span>
+      <span class="ticker-item">Smart Navigation</span>
+      <span class="ticker-item">Anti-Theft System</span>
+      <span class="ticker-item">Regen Braking</span>
+      <span class="ticker-item">OTA Updates</span>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE SECTION -->
+  <section class="performance reveal">
+    <div class="performance-grid">
+      <div class="perf-left">
+        <img src="{{ url_for('static', path='/images/after_banner/img1.png') }}" alt="Performance Portrait">
+      </div>
+      <div class="perf-right">
+        <div class="section-eyebrow">Taking Rides to a Newer Level</div>
+        <h2 class="section-title">GREAT PERFORMANCE<br>THAT MATTERS IN FUTURE</h2>
+        <p class="section-desc">Experience unmatched power and efficiency. Our electric powertrain is engineered to
+          deliver instantaneous torque and a whisper-quiet ride, ensuring every journey is as sustainable as it is
+          thrilling.</p>
+
+        <div class="perf-features">
+          <div class="perf-feat">
+            <div class="perf-icon">🔋</div>
+            <div>
+              <h3>Cutting Edge Tech</h3>
+              <p>Advanced battery management systems for peak efficiency and longevity.</p>
+            </div>
+          </div>
+          <div class="perf-feat">
+            <div class="perf-icon">🏍️</div>
+            <div>
+              <h3>Perfect Styling</h3>
+              <p>Aerodynamic design meets futuristic aesthetics for a bold road presence.</p>
+            </div>
+          </div>
+          <div class="perf-feat">
+            <div class="perf-icon">💎</div>
+            <div>
+              <h3>Distinctive Beauty</h3>
+              <p>Precision-crafted details that define the next generation of EV mobility.</p>
+            </div>
+          </div>
+          <div class="perf-feat">
+            <div class="perf-icon">✨</div>
+            <div>
+              <h3>Radiance Polishing</h3>
+              <p>Premium finishes that maintain their showroom glow for years to come.</p>
+            </div>
+          </div>
         </div>
+
+        <div class="perf-bottom-imgs">
+          <img src="{{ url_for('static', path='/images/after_banner/img2.png') }}" alt="Performance Detail 1">
+          <img src="{{ url_for('static', path='/images/after_banner/img3.png') }}" alt="Performance Detail 2">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS SECTION — DYNAMIC -->
+  <section class="products reveal" id="models">
+    <div class="products-head">
+      <div class="section-eyebrow">TAKING RIDES TO A NEWER LEVEL</div>
+      <h2 class="section-title">CHOOSE A SCOOTER</h2>
+      <p>Select from our range of high-performance electric scooters, each designed with precision engineering and
+        sustainable technology.</p>
+    </div>
+
+    <div class="product-grid">
+      {% if products %}
+        {% for product in products[:3] %}
+        <div class="product-card">
+          <div class="p-img-box">
+            {% if product.primary_image %}
+            <img src="{{ product.primary_image.image_path }}" alt="{{ product.primary_image.alt_text or product.name }}">
+            {% else %}
+            <img src="{{ url_for('static', path='/images/products/product_1.png') }}" alt="{{ product.name }}">
+            {% endif %}
+          </div>
+          <div class="p-body">
+            <div class="p-title-row">
+              <div>
+                <h3>{{ product.name | upper }}</h3>
+                <p style="font-size: 0.75rem; color: #aaa;">POWERED BY EV NATION</p>
+              </div>
+            </div>
+            <div class="p-specs">
+              {% if product.variants %}
+              <div class="p-spec-item"><label>COLORS</label><value>{{ product.variants | length }}</value></div>
+              {% endif %}
+              {% if product.tagline %}
+              <div class="p-spec-item"><label>TYPE</label><value>{{ product.tagline }}</value></div>
+              {% endif %}
+            </div>
+            {% if product.variants %}
+            <div class="p-features-list">
+              {% for variant in product.variants[:4] %}
+              <div class="p-feat-item"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:{{ variant.color_code or '#888' }};margin-right:6px;vertical-align:middle;"></span> {{ variant.color_name }}</div>
+              {% endfor %}
+            </div>
+            {% endif %}
+            <div class="p-footer">
+              <a href="/bikes/{{ product.slug }}" class="btn-product">View Details</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <!-- Fallback: show placeholder cards if no products in DB -->
+        {% for i in range(1, 4) %}
+        <div class="product-card">
+          <div class="p-img-box">
+            <img src="{{ url_for('static', path='/images/products/product_' ~ i ~ '.png') }}" alt="EV Scooter Model {{ i }}">
+          </div>
+          <div class="p-body">
+            <div class="p-title-row">
+              <div>
+                <h3>EV NATION MODEL {{ i }}</h3>
+                <p style="font-size: 0.75rem; color: #aaa;">POWERED BY EV NATION</p>
+              </div>
+            </div>
+            <div class="p-specs">
+              <div class="p-spec-item"><label>TYPE</label><value>Sport</value></div>
+            </div>
+            <div class="p-footer">
+              <a href="/collection" class="btn-product">Coming Soon</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    <div class="collection-btn-container" style="margin-top: 40px; text-align: center;">
+      <a href="/collection" class="btn-primary" style="padding: 20px 60px; font-size: 1rem;">SEE COLLECTION</a>
+    </div>
+  </section>
+
+  <!-- TEST RIDE / ENQUIRY SECTION -->
+  <section class="test-ride-section" style="padding: 40px 56px 40px; background: var(--charcoal);">
+    <div style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: stretch;">
+      <!-- Left: Changing Scooter Carousel -->
+      <div class="test-ride-carousel reveal" style="position: relative; overflow: hidden; min-height: 500px; display: flex; align-items: center; justify-content: center;">
         {% if products %}
-        <div class="bikes-grid">
-            {% for product in products %}
-            <a href="/bikes/{{ product.slug }}" class="bike-card">
-                <div class="bike-card-image">
-                    {% if product.primary_image %}
-                    <img src="{{ product.primary_image.image_path }}" alt="{{ product.primary_image.alt_text or product.name }}" loading="lazy">
-                    {% else %}
-                    <div class="bike-card-placeholder">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
-                    </div>
-                    {% endif %}
-                    {% if product.variants %}
-                    <div class="bike-card-variants">
-                        {% for variant in product.variants[:5] %}
-                        <span class="color-dot" style="--bg: {{ variant.color_code or '#888' }}; background: var(--bg);" title="{{ variant.color_name }}"></span>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                </div>
-                <div class="bike-card-body">
-                    <h3 class="bike-card-name">{{ product.name }}</h3>
-                    {% if product.tagline %}
-                    <p class="bike-card-tagline">{{ product.tagline }}</p>
-                    {% endif %}
-                    <span class="bike-card-cta">View Details →</span>
-                </div>
-            </a>
-            {% endfor %}
-        </div>
+          {% for product in products[:3] %}
+          <div class="tr-slide {% if loop.first %}active{% endif %}" style="position: absolute; width: 100%; height: 100%; transition: opacity 0.6s ease-in-out; opacity: {% if loop.first %}1{% else %}0{% endif %};">
+            {% if product.primary_image %}
+            <img src="{{ product.primary_image.image_path }}" style="width: 100%; height: 100%; object-fit: contain;">
+            {% else %}
+            <img src="{{ url_for('static', path='/images/products/product_' ~ loop.index ~ '.png') }}" style="width: 100%; height: 100%; object-fit: contain;">
+            {% endif %}
+          </div>
+          {% endfor %}
         {% else %}
-        <div class="empty-state">
-            <p>No bikes available yet. Check back soon!</p>
-        </div>
+          {% for i in range(1, 4) %}
+          <div class="tr-slide {% if loop.first %}active{% endif %}" style="position: absolute; width: 100%; height: 100%; transition: opacity 0.6s ease-in-out; opacity: {% if loop.first %}1{% else %}0{% endif %};">
+            <img src="{{ url_for('static', path='/images/products/product_' ~ i ~ '.png') }}" style="width: 100%; height: 100%; object-fit: contain;">
+          </div>
+          {% endfor %}
         {% endif %}
+      </div>
+      
+      <!-- Right: Enquiry Form -->
+      <div class="test-ride-content reveal reveal-d1">
+        <div class="section-eyebrow" style="color: var(--green-lime);">Experience the thrill</div>
+        <h2 class="section-title" style="color: var(--white);">BOOK A<br>TEST RIDE</h2>
+        <p style="font-size: 1.15rem; color: rgba(255,255,255,0.6); margin-bottom: 40px; line-height: 1.7;">Feel the instant torque, seamless handling, and unmatched comfort. Schedule a test ride at your nearest EV Nation hub today.</p>
+        
+        <form id="test-ride-form" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div style="grid-column: 1 / -1;">
+            <select id="tr-product" style="width: 100%; padding: 16px; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem; color: var(--white); background: rgba(255,255,255,0.05);">
+              <option value="" disabled selected style="color: #000;">Select Model</option>
+              {% for product in products %}
+              <option value="{{ product.id }}" style="color: #000;">{{ product.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <input id="tr-name" type="text" placeholder="Your Name" required style="width: 100%; padding: 16px; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem; background: rgba(255,255,255,0.05); color: var(--white);">
+          </div>
+          <div>
+            <input id="tr-phone" type="text" placeholder="Phone Number" required style="width: 100%; padding: 16px; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem; background: rgba(255,255,255,0.05); color: var(--white);">
+          </div>
+          <!-- Bot trap -->
+          <div style="display: none;" aria-hidden="true">
+            <input type="text" id="tr-bot-check" name="bot_check" tabindex="-1" autocomplete="off">
+          </div>
+          <div id="tr-feedback" style="grid-column: 1 / -1; display: none; padding: 12px; border-radius: 4px; font-size: 0.95rem;"></div>
+          <div style="grid-column: 1 / -1; margin-top: 10px;">
+            <button type="submit" class="btn-primary" style="width: 100%; font-size: 1rem; padding: 18px;">SCHEDULE NOW</button>
+          </div>
+        </form>
+      </div>
     </div>
-</section>
+  </section>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Test ride carousel
+      const trSlides = document.querySelectorAll('.tr-slide');
+      if(trSlides.length > 0) {
+        let trCurrent = 0;
+        setInterval(() => {
+          trSlides[trCurrent].style.opacity = '0';
+          trCurrent = (trCurrent + 1) % trSlides.length;
+          trSlides[trCurrent].style.opacity = '1';
+        }, 3000);
+      }
+
+      // Test ride form submission → Lead API
+      const trForm = document.getElementById('test-ride-form');
+      if (trForm) {
+        trForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const fb = document.getElementById('tr-feedback');
+          const btn = trForm.querySelector('button[type="submit"]');
+          btn.disabled = true;
+          btn.textContent = 'Sending...';
+          fb.style.display = 'none';
+
+          try {
+            const payload = {
+              name: document.getElementById('tr-name').value.trim(),
+              phone: document.getElementById('tr-phone').value.trim(),
+              product_id: parseInt(document.getElementById('tr-product').value) || null,
+              source: 'call',
+              message: 'Test ride enquiry from homepage',
+              bot_check: document.getElementById('tr-bot-check').value.trim() || null,
+            };
+            const r = await fetch('/api/v1/leads', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.detail || 'Something went wrong.');
+            fb.textContent = '✓ Request sent! We will reach out soon.';
+            fb.style.background = 'rgba(61,186,111,0.2)';
+            fb.style.color = 'var(--green-lime)';
+            fb.style.display = 'block';
+            trForm.reset();
+          } catch (err) {
+            fb.textContent = err.message;
+            fb.style.background = 'rgba(255,0,0,0.15)';
+            fb.style.color = '#ff6b6b';
+            fb.style.display = 'block';
+          } finally {
+            btn.textContent = 'SCHEDULE NOW';
+            btn.disabled = false;
+          }
+        });
+      }
+    });
+  </script>
+
+  <!-- CHARGING -->
+  <div class="charging-section" id="charging">
+    <div class="charge-img-col">
+      <img src="{{ url_for('static', path='/images/change.png') }}" alt="EV charging station" loading="lazy">
+    </div>
+    <div class="charge-text-col">
+      <div class="section-eyebrow reveal">Charging Network</div>
+      <h2 class="section-title reveal">CHARGE<br>ANYWHERE</h2>
+      <p class="reveal">Built for the Indian roads. Rapidly expanding swap network across major cities. From 0% to 100%
+        in 3 seconds with battery swapping — or 4 hours via home charging.</p>
+      <div class="charge-bars reveal">
+        <div>
+          <div class="charge-label"><span>Standard AC Home</span><span>7.4 kW</span></div>
+          <div class="charge-bar">
+            <div class="charge-fill" data-width="32"></div>
+          </div>
+        </div>
+        <div>
+          <div class="charge-label"><span>Fast DC Public</span><span>50 kW</span></div>
+          <div class="charge-bar">
+            <div class="charge-fill" data-width="58"></div>
+          </div>
+        </div>
+        <div>
+          <div class="charge-label"><span>Hyper DC Network</span><span>350 kW</span></div>
+          <div class="charge-bar">
+            <div class="charge-fill" data-width="95"></div>
+          </div>
+        </div>
+      </div>
+      <div class="charge-cta reveal">
+        <a href="#contact" class="btn-primary">Contact Us</a>
+        <a href="/collection" class="btn-outline-white">View Models</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- GALLERY -->
+  <section class="gallery" id="gallery">
+    <div class="gallery-head">
+      <div class="section-eyebrow reveal">Visual Journey</div>
+      <h2 class="section-title reveal">THE WORLD<br>IN MOTION</h2>
+    </div>
+    <div class="gallery-grid">
+      {% if products %}
+        {% for product in products[:6] %}
+        <div class="g-cell reveal {% if loop.index % 3 == 2 %}reveal-d1{% elif loop.index % 3 == 0 %}reveal-d2{% endif %}">
+          {% if product.primary_image %}
+          <a href="/bikes/{{ product.slug }}"><img src="{{ product.primary_image.image_path }}" alt="{{ product.name }}" loading="lazy"></a>
+          {% else %}
+          <img src="{{ url_for('static', path='/images/products/product_' ~ loop.index ~ '.png') }}" alt="{{ product.name }}" loading="lazy">
+          {% endif %}
+        </div>
+        {% endfor %}
+      {% else %}
+        {% for i in range(1, 7) %}
+        <div class="g-cell reveal {% if i % 3 == 2 %}reveal-d1{% elif i % 3 == 0 %}reveal-d2{% endif %}">
+          <img src="{{ url_for('static', path='/images/products/product_' ~ i ~ '.png') }}" alt="EV Scooter" loading="lazy">
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- QUOTE -->
+  <div class="quote-band">
+    <div class="quote-text reveal">"The most exciting two-wheeler in years — EV Nation has redefined urban commuting for the
+      next generation."</div>
+    <div class="quote-attr reveal">— EV India Magazine · 2025 Scooter of the Year</div>
+  </div>
+
+  <!-- CONTACT SECTION -->
+  <section class="contact-section" id="contact" style="background: var(--off-white); padding: 100px 56px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+      <div class="contact-text reveal">
+        <div class="section-eyebrow">Get in Touch</div>
+        <h2 class="section-title">READY TO RIDE?</h2>
+        <p style="font-size: 1.1rem; color: var(--gray); margin-bottom: 30px; line-height: 1.6;">Our team is here to answer any questions about our models, charging solutions, or corporate fleets. Drop us a line.</p>
+        <div style="margin-bottom: 20px;">
+          <h4 style="font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--green-deep); margin-bottom: 5px;">EV NATIONAL PVT. LTD.</h4>
+          <p style="color: var(--gray);">Sarak Doodhli, Near Reliance Petrol Pump<br>Dehradun Road, Saharanpur (U.P.)</p>
+        </div>
+        <div>
+          <h4 style="font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--green-deep); margin-bottom: 5px;">Contact Numbers</h4>
+          <p style="color: var(--gray);">9045263337, 8650555588</p>
+        </div>
+      </div>
+      <div class="contact-form reveal reveal-d1" style="background: var(--white); padding: 40px; border-radius: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); border: 1px solid #eee;">
+        <form id="contact-form">
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: var(--green-mid); margin-bottom: 8px;">Full Name</label>
+            <input id="cf-name" type="text" required style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem;">
+          </div>
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: var(--green-mid); margin-bottom: 8px;">Phone Number</label>
+            <input id="cf-phone" type="text" required style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem;">
+          </div>
+          <!-- Bot trap -->
+          <div style="display: none;" aria-hidden="true">
+            <input type="text" id="cf-bot-check" name="bot_check" tabindex="-1" autocomplete="off">
+          </div>
+          <div style="margin-bottom: 30px;">
+            <label style="display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: var(--green-mid); margin-bottom: 8px;">Message</label>
+            <textarea id="cf-message" rows="4" style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem; resize: vertical;"></textarea>
+          </div>
+          <div id="cf-feedback" style="display: none; padding: 12px; border-radius: 4px; font-size: 0.95rem; margin-bottom: 16px;"></div>
+          <button type="submit" class="btn-primary" style="width: 100%; font-size: 1rem; padding: 16px;">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Contact form → Lead API
+    document.getElementById('contact-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fb = document.getElementById('cf-feedback');
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      fb.style.display = 'none';
+
+      try {
+        const payload = {
+          name: document.getElementById('cf-name').value.trim(),
+          phone: document.getElementById('cf-phone').value.trim(),
+          source: 'call',
+          message: document.getElementById('cf-message').value.trim() || null,
+          bot_check: document.getElementById('cf-bot-check').value.trim() || null,
+        };
+        const r = await fetch('/api/v1/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.detail || 'Something went wrong.');
+        fb.textContent = '✓ Message sent! We will get back to you soon.';
+        fb.style.background = '#d6f5e3';
+        fb.style.color = 'var(--green-deep)';
+        fb.style.display = 'block';
+        e.target.reset();
+      } catch (err) {
+        fb.textContent = err.message;
+        fb.style.background = '#ffe0e0';
+        fb.style.color = '#c00';
+        fb.style.display = 'block';
+      } finally {
+        btn.textContent = 'Send Message';
+        btn.disabled = false;
+      }
+    });
+  </script>
 {% endblock %}

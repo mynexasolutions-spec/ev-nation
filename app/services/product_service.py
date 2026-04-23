@@ -1,3 +1,4 @@
+import re
 from sqlalchemy.orm import Session
 
 from app.core.errors import DomainValidationError, NotFoundError
@@ -23,9 +24,52 @@ class ProductService:
     def __init__(self, repository: ProductRepository | None = None) -> None:
         self.repository = repository or ProductRepository()
 
-    def list_public_products(self, db: Session) -> list[ProductListItem]:
+    def list_public_products(
+        self, 
+        db: Session, 
+        battery_type: str | None = None,
+        body_material: str | None = None,
+        range_min: int | None = None,
+        range_max: int | None = None,
+        speed_min: int | None = None,
+        speed_max: int | None = None
+    ) -> list[ProductListItem]:
         products = self.repository.list_active(db)
-        return [self._to_product_list_item(product) for product in products]
+        
+        filtered = []
+        for p in products:
+            # Filter by Battery Type
+            if battery_type and (not p.spec or battery_type.lower() not in (p.spec.battery_type or "").lower()):
+                continue
+
+            # Filter by Body Material
+            if body_material and (not p.spec or body_material.lower() not in (p.spec.body or "").lower()):
+                continue
+            
+            # Filter by Range
+            if (range_min is not None or range_max is not None) and p.spec and p.spec.range:
+                try:
+                    # Extract the first number from the range string
+                    match = re.search(r'\d+', p.spec.range)
+                    val = int(match.group()) if match else 0
+                    if range_min is not None and val < range_min: continue
+                    if range_max is not None and val > range_max: continue
+                except (ValueError, TypeError):
+                    if range_min is not None: continue
+            
+            # Filter by Speed
+            if (speed_min is not None or speed_max is not None) and p.spec and p.spec.speed:
+                try:
+                    match = re.search(r'\d+', p.spec.speed)
+                    val = int(match.group()) if match else 0
+                    if speed_min is not None and val < speed_min: continue
+                    if speed_max is not None and val > speed_max: continue
+                except (ValueError, TypeError):
+                    if speed_min is not None: continue
+            
+            filtered.append(self._to_product_list_item(p))
+            
+        return filtered
 
     def get_public_recommendations(self, db: Session, exclude_id: int, limit: int = 3) -> list[ProductListItem]:
         products = self.repository.get_random_active_exclude(db, exclude_id, limit)
@@ -118,6 +162,7 @@ class ProductService:
             sort_order=product.sort_order,
             primary_image=ProductImageRead.model_validate(primary_image) if primary_image else None,
             variants=[VariantRead.model_validate(variant) for variant in active_variants],
+            spec=ProductSpecRead.model_validate(product.spec) if product.spec else None,
         )
 
     def _to_product_detail(self, product: Product) -> ProductDetailRead:
@@ -167,8 +212,6 @@ class ProductService:
         if db:
             if not replace_only_provided or payload.images is not None:
                 product.images.clear()
-            if not replace_only_provided or payload.variants is not None:
-                product.variants.clear()
             if not replace_only_provided or payload.battery_options is not None:
                 product.battery_options.clear()
             if not replace_only_provided or payload.extra_specs is not None:
@@ -188,16 +231,34 @@ class ProductService:
 
         if not replace_only_provided or payload.variants is not None:
             self._validate_variant_names(payload.variants or [])
-            product.variants = [
-                Variant(
-                    color_name=variant.color_name,
-                    color_code=variant.color_code,
-                    image_path=variant.image_path,
-                    sort_order=variant.sort_order,
-                    is_active=variant.is_active,
-                )
-                for variant in (payload.variants or [])
-            ]
+            existing_variants = {v.color_name.casefold(): v for v in product.variants}
+            new_variants = []
+            for v_data in (payload.variants or []):
+                v_key = v_data.color_name.casefold()
+                if v_key in existing_variants:
+                    v = existing_variants[v_key]
+                    v.color_name = v_data.color_name
+                    v.color_code = v_data.color_code
+                    v.image_path = v_data.image_path
+                    v.sort_order = v_data.sort_order
+                    v.is_active = v_data.is_active
+                    new_variants.append(v)
+                    del existing_variants[v_key]
+                else:
+                    new_variants.append(
+                        Variant(
+                            color_name=v_data.color_name,
+                            color_code=v_data.color_code,
+                            image_path=v_data.image_path,
+                            sort_order=v_data.sort_order,
+                            is_active=v_data.is_active,
+                        )
+                    )
+            # Remove un-sent variants
+            if db:
+                for v in existing_variants.values():
+                    db.delete(v)
+            product.variants = new_variants
 
         if not replace_only_provided or payload.spec is not None:
             if payload.spec:

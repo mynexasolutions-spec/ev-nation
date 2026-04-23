@@ -1,0 +1,67 @@
+{% extends 'storefront/base.html' %}
+
+{% block content %}
+<style>
+  .collection-banner {
+    background-image: url("{{ url_for('static', path='/images/banner/banner_2.png') }}");
+  }
+</style>
+
+<main class="collection-page">
+  <!-- BANNER -->
+  <div class="collection-banner">
+    <div class="collection-banner-content">
+      <h1>EV NATION COLLECTION</h1>
+      <p>Find Your Perfect Ride</p>
+    </div>
+  </div>
+
+  <div class="collection-layout">
+    <!-- PRODUCT GRID -->
+    <div class="product-grid">
+      {% if products %}
+      {% for product in products %}
+      <div class="product-card">
+        <div class="p-img-box">
+          {% if product.primary_image %}
+          <img src="{{ product.primary_image.image_path }}" alt="{{ product.name }}">
+          {% elif product.variants and product.variants[0].image_path %}
+          <img src="{{ product.variants[0].image_path }}" alt="{{ product.name }}">
+          {% else %}
+          <img src="{{ url_for('static', path='/images/products/product_' ~ (loop.index0 % 6 + 1) ~ '.png') }}"
+            alt="{{ product.name }}">
+          {% endif %}
+        </div>
+        <div class="p-body">
+          <div class="p-title-row">
+            <h3>{{ product.name | upper }}</h3>
+          </div>
+          <div class="p-specs">
+            {% if product.spec %}
+            <div class="p-spec-item"><label>RANGE</label><span>{{ product.spec.range or 'N/A' }}</span></div>
+            <div class="p-spec-item"><label>SPEED</label><span>{{ product.spec.speed or 'N/A' }}</span></div>
+            {% if product.spec.motor %}
+            <div class="p-spec-item"><label>MOTOR</label><span>{{ product.spec.motor.split(' ')[0] if ' ' in product.spec.motor else product.spec.motor }}</span></div>
+            {% endif %}
+            {% if product.spec.charging_time %}
+            <div class="p-spec-item"><label>CHARGE</label><span>{{ product.spec.charging_time }}</span></div>
+            {% endif %}
+            {% endif %}
+          </div>
+
+          <div class="p-footer">
+            <a href="/bikes/{{ product.slug }}" class="btn-product">View Details</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div style="grid-column: 1/-1; text-align: center; padding: 100px 0;">
+        <p style="color: var(--gray); font-size: 1.2rem;">No models available right now.</p>
+        <a href="/" style="color: var(--green-mid); text-decoration: underline;">Back to Home</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</main>
+{% endblock %}

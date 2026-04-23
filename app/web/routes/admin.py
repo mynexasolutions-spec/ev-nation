@@ -6,8 +6,9 @@ import uuid
 from json import JSONDecodeError
 from pathlib import Path
 
-from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, UploadFile, status
+from fastapi import APIRouter, Cookie, Depends, Form, HTTPException, Request, UploadFile, status
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -19,9 +20,11 @@ from app.models.enums import LeadSource, LeadStatus
 from app.schemas.admin_auth import AdminLoginRequest
 from app.schemas.lead import AdminLeadStatusUpdate
 from app.schemas.product import AdminProductCreate, AdminProductUpdate
+from app.schemas.category import CategoryCreate, CategoryUpdate
 from app.services.admin_auth_service import AdminAuthService
 from app.services.lead_service import LeadService
 from app.services.product_service import ProductService
+from app.services.category_service import category_service
 from app.web.templating import templates
 
 router = APIRouter(prefix="/admin")
@@ -120,6 +123,7 @@ def admin_products_page(request: Request, db: Session = Depends(get_db)):
         return _redirect_to_login()
 
     products = product_service.list_admin_products(db)
+    categories = category_service.get_all_admin(db)
     return templates.TemplateResponse(
         "admin/products.html",
         _base_context(
@@ -127,6 +131,7 @@ def admin_products_page(request: Request, db: Session = Depends(get_db)):
             current_admin,
             page_title="Products",
             products=products,
+            categories=categories,
         ),
     )
 
@@ -185,6 +190,7 @@ async def admin_upload_image(
     product_id: int,
     request: Request,
     file: UploadFile,
+    variant_id: int | None = Form(None),
     db: Session = Depends(get_db),
 ) -> JSONResponse:
     try:
@@ -225,6 +231,7 @@ async def admin_upload_image(
 
     image_record = ProductImage(
         product_id=product_id,
+        variant_id=variant_id,
         image_path=media_path,
         alt_text=product.name,
         is_primary=is_primary,
@@ -238,6 +245,7 @@ async def admin_upload_image(
         "ok": True,
         "image": {
             "id": image_record.id,
+            "variant_id": image_record.variant_id,
             "image_path": image_record.image_path,
             "alt_text": image_record.alt_text,
             "is_primary": image_record.is_primary,
@@ -395,3 +403,76 @@ async def admin_lead_delete(lead_id: int, request: Request, db: Session = Depend
     except NotFoundError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
     return JSONResponse({"ok": True})
+
+
+# ── Categories ──
+
+@router.get("/categories", response_class=HTMLResponse)
+def admin_categories_ui(request: Request, db: Session = Depends(get_db)):
+    try:
+        current_admin = _require_admin(request, db)
+    except HTTPException:
+        return _redirect_to_login()
+    return templates.TemplateResponse(
+        "admin/categories.html", 
+        _base_context(request, current_admin, page_title="Admin - Categories")
+    )
+
+
+@router.get("/categories/json")
+def admin_categories_json(request: Request, db: Session = Depends(get_db)) -> JSONResponse:
+    try:
+        _require_admin(request, db)
+    except HTTPException:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required.")
+    
+    categories = category_service.get_all_admin(db)
+    return JSONResponse({"ok": True, "categories": [c.slug for c in categories]})  # Dummy for now, actual serialization later if needed
+
+
+@router.get("/categories/list-json")
+def admin_categories_list_json(request: Request, db: Session = Depends(get_db)) -> JSONResponse:
+    # Used by the frontend tables
+    try:
+        _require_admin(request, db)
+    except HTTPException:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required.")
+    
+    from app.schemas.category import CategoryRead
+    categories = category_service.get_all_admin(db)
+    return JSONResponse({"ok": True, "categories": [CategoryRead.model_validate(c).model_dump(mode="json") for c in categories]})
+
+
+@router.post("/categories/save")
+async def admin_category_save(request: Request, db: Session = Depends(get_db)) -> JSONResponse:
+    try:
+        _require_admin(request, db)
+    except HTTPException:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required.")
+
+    payload = await request.json()
+    category_id = payload.pop("id", None)
+    
+    try:
+        if category_id is None:
+            created = category_service.create(db, CategoryCreate.model_validate(payload))
+            return JSONResponse({"ok": True, "id": created.id})
+        updated = category_service.update(db, int(category_id), CategoryUpdate.model_validate(payload))
+        return JSONResponse({"ok": True, "id": updated.id})
+    except (DomainValidationError, ValidationError, ValueError, TypeError, JSONDecodeError) as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+    except NotFoundError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+
+
+@router.post("/categories/{category_id}/delete")
+def admin_category_delete(category_id: int, request: Request, db: Session = Depends(get_db)) -> JSONResponse:
+    try:
+        _require_admin(request, db)
+        category_service.delete(db, category_id)
+    except HTTPException:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required.")
+    except NotFoundError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+    return JSONResponse({"ok": True})
+

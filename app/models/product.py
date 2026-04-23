@@ -5,6 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import expression
 
 from app.db.base_class import Base
+from app.models.category import Category
 from app.models.mixins import IDMixin, TimestampMixin
 
 
@@ -30,6 +31,13 @@ class Product(IDMixin, TimestampMixin, Base):
         server_default="0",
         index=True,
     )
+    category_id: Mapped[int | None] = mapped_column(
+        ForeignKey("categories.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
+    category: Mapped[Category | None] = relationship(back_populates="products")
 
     images: Mapped[list[ProductImage]] = relationship(
         back_populates="product",
@@ -75,6 +83,11 @@ class ProductImage(IDMixin, TimestampMixin, Base):
         nullable=False,
         index=True,
     )
+    variant_id: Mapped[int | None] = mapped_column(
+        ForeignKey("variants.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
     image_path: Mapped[str] = mapped_column(String(500), nullable=False)
     alt_text: Mapped[str | None] = mapped_column(String(255), nullable=True)
     is_primary: Mapped[bool] = mapped_column(
@@ -91,6 +104,7 @@ class ProductImage(IDMixin, TimestampMixin, Base):
     )
 
     product: Mapped[Product] = relationship(back_populates="images")
+    variant: Mapped[Variant | None] = relationship(back_populates="images")
 
 
 class Variant(IDMixin, TimestampMixin, Base):
@@ -122,6 +136,11 @@ class Variant(IDMixin, TimestampMixin, Base):
     )
 
     product: Mapped[Product] = relationship(back_populates="variants")
+    images: Mapped[list[ProductImage]] = relationship(
+        back_populates="variant",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
     leads: Mapped[list["Lead"]] = relationship(back_populates="variant")
 
 

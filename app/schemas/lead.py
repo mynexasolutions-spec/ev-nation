@@ -16,6 +16,7 @@ class LeadCreate(BaseModel):
     source: LeadSource
     preferred_contact_time: str | None = Field(default=None, max_length=255)
     bot_check: str | None = None
+    user_id: int | None = None
 
     @field_validator("name", "preferred_contact_time", "message")
     @classmethod

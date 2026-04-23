@@ -1,217 +1,539 @@
 {% extends "storefront/base.html" %}
 {% block content %}
 
+<style>
+  /* Product Page Specific Styles matching the new theme */
+  .product-page {
+    padding: 140px 56px 80px;
+    max-width: 1440px;
+    margin: 0 auto;
+    background-color: var(--off-white);
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 24px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--green-mid);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+  }
+  .back-link:hover {
+    color: var(--green-deep);
+  }
+  .product-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 60px;
+    align-items: flex-start;
+  }
+  .product-gallery {
+    background: #fff;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    width: 100%;
+    overflow: hidden;
+  }
+  #gallery-main {
+    width: 100%;
+    height: 420px;
+    max-height: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  #gallery-main img {
+    display: block;
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    max-height: 420px;
+    object-fit: contain;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
+  }
+  .gallery-thumbs {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+  .thumb-btn {
+    width: 80px;
+    height: 60px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: var(--off-white);
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  .thumb-btn.active, .thumb-btn:hover {
+    border-color: var(--green-lime);
+    background: #fff;
+  }
+  .thumb-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  
+  .product-details {
+    padding-top: 20px;
+    min-width: 0; /* prevent grid blowout */
+  }
+  .product-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem;
+    line-height: 0.9;
+    color: var(--green-deep);
+    margin-bottom: 8px;
+  }
+  .product-tagline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    color: var(--green-mid);
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .product-short-desc {
+    font-size: 1.1rem;
+    color: var(--gray);
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+  
+  .variants-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    color: var(--charcoal);
+  }
+  .variants-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  .variant-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1px solid var(--light-gray);
+    border-radius: 30px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 600;
+  }
+  .variant-btn.active, .variant-btn:hover {
+    border-color: var(--green-mid);
+    background: var(--green-mist);
+  }
+  .variant-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--color);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+  }
+  
+  .spec-highlights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .spec-chip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid var(--light-gray);
+    font-weight: 600;
+    color: var(--charcoal);
+  }
+  .spec-chip svg {
+    color: var(--green-mid);
+    flex-shrink: 0;
+  }
+  
+  .product-ctas {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--green-lime);
+    color: var(--charcoal);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    padding: 16px 32px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: transform 0.3s;
+    white-space: nowrap;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--charcoal);
+    border: 2px solid var(--charcoal);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    padding: 14px 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+  .btn-outline:hover {
+    background: var(--charcoal);
+    color: #fff;
+  }
+  
+  .call-form-wrap {
+    background: var(--green-deep);
+    color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+  }
+  .call-form label {
+    display: block;
+    margin-bottom: 16px;
+  }
+  .call-form span {
+    display: block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+    color: var(--green-lime);
+  }
+  .call-form input, .call-form textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    font-family: 'Barlow', sans-serif;
+  }
+  
+  /* Additional Info Tabs/Sections */
+  .info-section {
+    max-width: 1440px;
+    margin: 60px auto 0;
+    padding: 60px 56px;
+    background: var(--charcoal);
+    color: #fff;
+  }
+  .info-section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--green-lime);
+    margin-bottom: 24px;
+  }
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  .spec-row {
+    background: rgba(255,255,255,0.05);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .spec-row span {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--light-gray);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .spec-row strong {
+    color: #fff;
+    font-size: 1.1rem;
+  }
+  
+  .battery-cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .battery-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    min-width: 200px;
+    text-align: center;
+  }
+  .battery-card .battery-icon {
+    font-size: 2rem;
+    margin-bottom: 12px;
+    color: var(--green-lime);
+  }
+  .battery-card strong {
+    display: block;
+    font-size: 1.5rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    margin-bottom: 4px;
+  }
+  .battery-card span {
+    color: var(--green-lime);
+    font-weight: 600;
+  }
+
+  /* Recommendations */
+  .bikes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 30px;
+  }
+  .bike-rec-card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid var(--light-gray);
+  }
+  .bike-rec-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  @media (max-width: 992px) {
+    .product-layout {
+      grid-template-columns: 1fr;
+    }
+    .product-name {
+      font-size: 4rem;
+    }
+    .product-page, .info-section {
+      padding: 60px 24px;
+    }
+    .product-page {
+      padding-top: 120px;
+    }
+    .bikes-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
 <div class="product-page">
-    <div class="container">
+    <!-- Back link -->
+    <a href="/collection" class="back-link">← Back to Collection</a>
 
-        <!-- Back link -->
-        <a href="/" class="back-link">← All Bikes</a>
+    <div class="product-layout">
 
-        <div class="product-layout">
+        <!-- LEFT: Image gallery -->
+        <div class="product-gallery">
+            {% if product.images %}
+            <div class="gallery-main" id="gallery-main">
+                <img src="{{ product.images[0].image_path }}" alt="{{ product.images[0].alt_text or product.name }}" id="main-img">
+            </div>
+            {% if product.images | length > 1 %}
+            <div class="gallery-thumbs" id="gallery-thumbs">
+                {% for img in product.images %}
+                <button class="thumb-btn {% if loop.first %}active{% endif %}" data-src="{{ img.image_path }}" data-alt="{{ img.alt_text or product.name }}" data-variant-id="{{ img.variant_id or '' }}">
+                    <img src="{{ img.image_path }}" alt="{{ img.alt_text or product.name }}" loading="lazy">
+                </button>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="gallery-main" id="gallery-main">
+                <img src="{{ url_for('static', path='/images/products/product_1.png') }}" alt="{{ product.name }}" id="main-img">
+            </div>
+            {% endif %}
+        </div>
 
-            <!-- LEFT: Image gallery -->
-            <div class="product-gallery">
-                {% if product.images %}
-                <div class="gallery-main" id="gallery-main">
-                    <img src="{{ product.images[0].image_path }}" alt="{{ product.images[0].alt_text or product.name }}" id="main-img">
-                </div>
-                {% if product.images | length > 1 %}
-                <div class="gallery-thumbs">
-                    {% for img in product.images %}
-                    <button class="thumb-btn {% if loop.first %}active{% endif %}" data-src="{{ img.image_path }}" data-alt="{{ img.alt_text or product.name }}">
-                        <img src="{{ img.image_path }}" alt="{{ img.alt_text or product.name }}" loading="lazy">
+        <!-- RIGHT: Details -->
+        <div class="product-details">
+            <h1 class="product-name">{{ product.name }}</h1>
+            {% if product.tagline %}
+            <p class="product-tagline">{{ product.tagline }}</p>
+            {% endif %}
+            
+            <p class="product-short-desc">{{ product.short_description or product.description }}</p>
+
+            <!-- Color Variants -->
+            {% if product.variants %}
+            <div class="product-variants">
+                <p class="variants-label">Available Colors</p>
+                <div class="variants-row">
+                    {% for variant in product.variants %}
+                    <button class="variant-btn {% if loop.first %}active{% endif %}" style="--color: {{ variant.color_code or '#888888' }}" title="{{ variant.color_name }}" data-variant-id="{{ variant.id }}" {% if variant.image_path %}data-image="{{ variant.image_path }}"{% endif %}>
+                        <span class="variant-swatch"></span>
+                        <span class="variant-name">{{ variant.color_name }}</span>
                     </button>
                     {% endfor %}
                 </div>
+            </div>
+            {% endif %}
+
+            <!-- Quick spec highlights -->
+            {% if product.spec %}
+            <div class="spec-highlights">
+                {% if product.spec.range %}
+                <div class="spec-chip">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+                    <span>{{ product.spec.range }} Range</span>
+                </div>
                 {% endif %}
-                {% else %}
-                <div class="gallery-placeholder">
-                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-                    <p>Image coming soon</p>
+                {% if product.spec.speed %}
+                <div class="spec-chip">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 1-7.07 2.93"/><path d="M12 6v6l4 2"/></svg>
+                    <span>{{ product.spec.speed }} Top Speed</span>
+                </div>
+                {% endif %}
+                {% if product.spec.charging_time %}
+                <div class="spec-chip">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    <span>{{ product.spec.charging_time }}</span>
+                </div>
+                {% endif %}
+                {% if product.spec.motor %}
+                <div class="spec-chip">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                    <span>{{ product.spec.motor.split(' ')[0] if ' ' in product.spec.motor else product.spec.motor }} Motor</span>
                 </div>
                 {% endif %}
             </div>
+            {% endif %}
 
-            <!-- RIGHT: Details -->
-            <div class="product-details">
-                <h1 class="product-name">{{ product.name }}</h1>
-                {% if product.tagline %}
-                <p class="product-tagline">{{ product.tagline }}</p>
+            <!-- CTA Buttons -->
+            <div class="product-ctas">
+                <button class="btn-primary" id="call-toggle">Book Test Ride</button>
+                {% if whatsapp_number %}
+                <button class="btn-outline" id="whatsapp-toggle">
+                    WhatsApp Us
+                </button>
                 {% endif %}
-                {% if product.short_description %}
-                <p class="product-short-desc">{{ product.short_description }}</p>
-                {% endif %}
+            </div>
 
-                <!-- Color Variants -->
-                {% if product.variants %}
-                <div class="product-variants">
-                    <p class="variants-label">Available Colors</p>
-                    <div class="variants-row">
-                        {% for variant in product.variants %}
-                        <button class="variant-btn" style="--color: {{ variant.color_code or '#888888' }}" title="{{ variant.color_name }}">
-                            <span class="variant-swatch"></span>
-                            <span class="variant-name">{{ variant.color_name }}</span>
-                        </button>
-                        {% endfor %}
+            <!-- Call form (hidden by default) -->
+            <div class="call-form-wrap" id="call-form-wrap" hidden>
+                <form class="call-form" id="call-form">
+                    <input type="hidden" id="lead-product-id" value="{{ product.id }}">
+                    <input type="hidden" id="lead-source" value="call">
+                    <!-- Bot trap -->
+                    <div style="display: none;" aria-hidden="true">
+                        <input type="text" id="lead-bot-check" name="bot_check" tabindex="-1" autocomplete="off">
                     </div>
-                </div>
-                {% endif %}
-
-                <!-- Quick spec highlights -->
-                {% if product.spec %}
-                <div class="spec-highlights">
-                    {% if product.spec.range %}
-                    <div class="spec-chip">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
-                        <span>{{ product.spec.range }} Range</span>
+                    <div id="form-heading-container" style="margin-bottom: 1rem;">
+                        <h3 id="form-heading" style="margin: 0; font-size: 1.5rem; font-family: 'Bebas Neue'; color: var(--green-lime);">Request a Test Ride</h3>
                     </div>
-                    {% endif %}
-                    {% if product.spec.speed %}
-                    <div class="spec-chip">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 1-7.07 2.93"/><path d="M12 6v6l4 2"/></svg>
-                        <span>{{ product.spec.speed }} Top Speed</span>
+                    <label><span>Your Name</span><input type="text" id="lead-name" required placeholder="Enter your name"></label>
+                    <label><span>Phone Number</span><input type="tel" id="lead-phone" required pattern="[+0-9\-\s]{10,20}" title="Enter a valid phone number" placeholder="+91 98765 43210"></label>
+                    <div id="scheduling-container">
+                        <label><span>Preferred Test Ride Date</span><input type="datetime-local" id="lead-time"></label>
                     </div>
-                    {% endif %}
-                    {% if product.spec.charging_time %}
-                    <div class="spec-chip">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                        <span>{{ product.spec.charging_time }} Charge</span>
-                    </div>
-                    {% endif %}
-                    {% if product.spec.weight %}
-                    <div class="spec-chip">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><path d="M6.5 8a2 2 0 0 0-1.905 2.588L6.5 19h11l1.905-8.412A2 2 0 0 0 17.5 8z"/></svg>
-                        <span>{{ product.spec.weight }}</span>
-                    </div>
-                    {% endif %}
-                </div>
-                {% endif %}
-
-                <!-- CTA Buttons -->
-                <div class="product-ctas">
-                    {% if whatsapp_number %}
-                    <button class="btn btn-whatsapp" id="whatsapp-toggle">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                        WhatsApp Us
-                    </button>
-                    {% endif %}
-                    <button class="btn btn-outline" id="call-toggle">Book a Call</button>
-                </div>
-
-                <!-- Call form (hidden by default) -->
-                <div class="call-form-wrap" id="call-form-wrap" hidden>
-                    <form class="call-form" id="call-form">
-                        <input type="hidden" id="lead-product-id" value="{{ product.id }}">
-                        <input type="hidden" id="lead-source" value="call">
-                        <!-- Bot trap -->
-                        <div style="display: none;" aria-hidden="true">
-                            <input type="text" id="lead-bot-check" name="bot_check" tabindex="-1" autocomplete="off">
-                        </div>
-                        <div id="form-heading-container" style="margin-bottom: 1rem;">
-                            <h3 id="form-heading" style="margin: 0; font-size: 1.125rem;">Request a Call</h3>
-                        </div>
-                        <label><span>Your Name</span><input type="text" id="lead-name" required placeholder="Enter your name"></label>
-                        <label><span>Phone Number</span><input type="tel" id="lead-phone" required pattern="[+0-9\-\s]{10,20}" title="Enter a valid phone number (e.g. +91 98765 43210)" placeholder="+91 98765 43210"></label>
-                        <div id="scheduling-container">
-                            <label><span>Best time to call (optional)</span><input type="datetime-local" id="lead-time"></label>
-                        </div>
-                        <label><span>Message (optional)</span><textarea id="lead-message" rows="2" placeholder="Any specific questions?"></textarea></label>
-                        <button type="submit" class="btn btn-primary" id="call-submit">Send Request</button>
-                        <div id="call-feedback" class="call-feedback" hidden></div>
-                    </form>
-                </div>
+                    <label><span>Questions?</span><textarea id="lead-message" rows="2" placeholder="Any specific questions?"></textarea></label>
+                    <button type="submit" class="btn-primary" id="call-submit" style="width: 100%; border: 2px solid var(--green-lime);">Submit Request</button>
+                    <div id="call-feedback" style="margin-top: 10px; font-weight: bold;" hidden></div>
+                </form>
             </div>
         </div>
-
-        <!-- Full Description -->
-        {% if product.description %}
-        <div class="product-description">
-            <h2>About This Bike</h2>
-            <p>{{ product.description }}</p>
-        </div>
-        {% endif %}
-
-        <!-- Specs Table -->
-        {% if product.spec %}
-        <div class="specs-section">
-            <h2>Specifications</h2>
-            <div class="specs-grid">
-                {% if product.spec.weight %}<div class="spec-row"><span>Weight</span><strong>{{ product.spec.weight }}</strong></div>{% endif %}
-                {% if product.spec.speed %}<div class="spec-row"><span>Top Speed</span><strong>{{ product.spec.speed }}</strong></div>{% endif %}
-                {% if product.spec.range %}<div class="spec-row"><span>Range</span><strong>{{ product.spec.range }}</strong></div>{% endif %}
-                {% if product.spec.rated_power %}<div class="spec-row"><span>Rated Power</span><strong>{{ product.spec.rated_power }}</strong></div>{% endif %}
-                {% if product.spec.peak_power %}<div class="spec-row"><span>Peak Power</span><strong>{{ product.spec.peak_power }}</strong></div>{% endif %}
-                {% if product.spec.carrying_capacity %}<div class="spec-row"><span>Carrying Capacity</span><strong>{{ product.spec.carrying_capacity }}</strong></div>{% endif %}
-                {% if product.spec.motor %}<div class="spec-row"><span>Motor</span><strong>{{ product.spec.motor }}</strong></div>{% endif %}
-                {% if product.spec.battery_type %}<div class="spec-row"><span>Battery Type</span><strong>{{ product.spec.battery_type }}</strong></div>{% endif %}
-                {% if product.spec.charging_time %}<div class="spec-row"><span>Charging Time</span><strong>{{ product.spec.charging_time }}</strong></div>{% endif %}
-                {% if product.spec.body %}<div class="spec-row"><span>Body</span><strong>{{ product.spec.body }}</strong></div>{% endif %}
-                {% if product.spec.ground_clearance %}<div class="spec-row"><span>Ground Clearance</span><strong>{{ product.spec.ground_clearance }}</strong></div>{% endif %}
-                {% if product.spec.seat_height %}<div class="spec-row"><span>Seat Height</span><strong>{{ product.spec.seat_height }}</strong></div>{% endif %}
-                {% if product.spec.wheel_type %}<div class="spec-row"><span>Wheel Type</span><strong>{{ product.spec.wheel_type }}</strong></div>{% endif %}
-                {% if product.spec.brake_system %}<div class="spec-row"><span>Brake System</span><strong>{{ product.spec.brake_system }}</strong></div>{% endif %}
-                {% if product.spec.tyre_size %}<div class="spec-row"><span>Tyre Size</span><strong>{{ product.spec.tyre_size }}</strong></div>{% endif %}
-                {% for es in product.extra_specs %}
-                <div class="spec-row"><span>{{ es.label }}</span><strong>{{ es.value }}</strong></div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Battery Options -->
-        {% if product.battery_options %}
-        <div class="battery-section">
-            <h2>Battery Options</h2>
-            <div class="battery-cards">
-                {% for bat in product.battery_options %}
-                <div class="battery-card">
-                    <div class="battery-icon">⚡</div>
-                    <strong>{{ bat.capacity }}</strong>
-                    <span>{{ bat.range }} range</span>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-
     </div>
 </div>
 
+<!-- Battery Options -->
+{% if product.battery_options %}
+<div class="info-section">
+    <h2>Battery Options</h2>
+    <div class="battery-cards">
+        {% for bat in product.battery_options %}
+        <div class="battery-card">
+            <div class="battery-icon">⚡</div>
+            <strong>{{ bat.capacity }}</strong>
+            <span>{{ bat.range }} range</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+    <!-- Full Description Section -->
+    {% if product.description %}
+    <section class="info-section">
+        <h2>Product Overview</h2>
+        <div class="product-full-desc" style="font-size: 1.1rem; line-height: 1.8; color: rgba(255,255,255,0.7); max-width: 900px;">
+            {{ product.description | safe }}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Specs Table -->
+
+{% if product.spec %}
+<div class="info-section" style="margin-top: 0; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1);">
+    <h2>Full Specifications</h2>
+    <div class="specs-grid">
+        {% if product.spec.weight %}<div class="spec-row"><span>Weight</span><strong>{{ product.spec.weight }}</strong></div>{% endif %}
+        {% if product.spec.speed %}<div class="spec-row"><span>Top Speed</span><strong>{{ product.spec.speed }}</strong></div>{% endif %}
+        {% if product.spec.range %}<div class="spec-row"><span>Range</span><strong>{{ product.spec.range }}</strong></div>{% endif %}
+        {% if product.spec.rated_power %}<div class="spec-row"><span>Rated Power</span><strong>{{ product.spec.rated_power }}</strong></div>{% endif %}
+        {% if product.spec.peak_power %}<div class="spec-row"><span>Peak Power</span><strong>{{ product.spec.peak_power }}</strong></div>{% endif %}
+        {% if product.spec.carrying_capacity %}<div class="spec-row"><span>Capacity</span><strong>{{ product.spec.carrying_capacity }}</strong></div>{% endif %}
+        {% if product.spec.motor %}<div class="spec-row"><span>Motor</span><strong>{{ product.spec.motor }}</strong></div>{% endif %}
+        {% if product.spec.battery_type %}<div class="spec-row"><span>Battery Type</span><strong>{{ product.spec.battery_type }}</strong></div>{% endif %}
+        {% if product.spec.charging_time %}<div class="spec-row"><span>Charging Time</span><strong>{{ product.spec.charging_time }}</strong></div>{% endif %}
+        {% if product.spec.brake_system %}<div class="spec-row"><span>Brakes</span><strong>{{ product.spec.brake_system }}</strong></div>{% endif %}
+        {% for es in product.extra_specs %}
+        <div class="spec-row"><span>{{ es.label }}</span><strong>{{ es.value }}</strong></div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
 {% if recommendations %}
-<section class="bikes-section" style="padding-top: 2rem; border-top: 1px solid var(--border);">
-    <div class="container">
-        <div class="section-head" style="margin-bottom: 24px;">
-            <h2 style="font-size: 1.5rem;">You might also like</h2>
-        </div>
-        <div class="bikes-grid">
-            {% for rec in recommendations %}
-            <a href="/bikes/{{ rec.slug }}" class="bike-card">
-                <div class="bike-card-image">
-                    {% if rec.primary_image %}
-                    <img src="{{ rec.primary_image.image_path }}" alt="{{ rec.primary_image.alt_text or rec.name }}" loading="lazy">
-                    {% else %}
-                    <div class="bike-card-placeholder">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
-                    </div>
-                    {% endif %}
-                    {% if rec.variants %}
-                    <div class="bike-card-variants">
-                        {% for variant in rec.variants[:5] %}
-                        <span class="color-dot" style="--bg: {{ variant.color_code or '#888' }}; background: var(--bg);" title="{{ variant.color_name }}"></span>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                </div>
-                <div class="bike-card-body">
-                    <h3 class="bike-card-name">{{ rec.name }}</h3>
-                    {% if rec.tagline %}
-                    <p class="bike-card-tagline">{{ rec.tagline }}</p>
-                    {% endif %}
-                    <span class="bike-card-cta">View Details →</span>
-                </div>
-            </a>
-            {% endfor %}
-        </div>
+<section class="info-section" style="margin-top: 0; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1);">
+    <h2>Explore More Models</h2>
+    <div class="bikes-grid">
+        {% for rec in recommendations %}
+        <a href="/bikes/{{ rec.slug }}" class="bike-rec-card">
+            <div style="height: 200px; display: flex; align-items: center; justify-content: center; padding: 20px;">
+                {% if rec.primary_image %}
+                <img src="{{ rec.primary_image.image_path }}" style="max-height: 100%;" alt="{{ rec.name }}" loading="lazy">
+                {% else %}
+                <img src="{{ url_for('static', path='/images/products/product_' ~ (loop.index0 % 6 + 1) ~ '.png') }}" style="max-height: 100%;" alt="{{ rec.name }}">
+                {% endif %}
+            </div>
+            <div style="padding: 20px; border-top: 1px solid var(--light-gray);">
+                <h3 style="font-family: 'Bebas Neue'; font-size: 2rem; color: var(--green-deep);">{{ rec.name }}</h3>
+                {% if rec.tagline %}
+                <p style="font-size: 0.9rem; color: var(--gray); font-weight: 700;">{{ rec.tagline }}</p>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
     </div>
 </section>
 {% endif %}
@@ -224,6 +546,42 @@ document.querySelectorAll(".thumb-btn").forEach(btn => {
         document.getElementById("main-img").alt = btn.dataset.alt;
         document.querySelectorAll(".thumb-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
+    });
+});
+
+// Variant color image swapper
+document.querySelectorAll(".variant-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll(".variant-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const targetVariantId = btn.dataset.variantId;
+        const thumbs = document.querySelectorAll(".thumb-btn");
+        
+        let firstVisibleThumb = null;
+        thumbs.forEach(thumb => {
+            const thumbVariantId = thumb.dataset.variantId;
+            if (thumbVariantId === targetVariantId || thumbVariantId === "") {
+                thumb.style.display = 'block';
+                if (!firstVisibleThumb && thumbVariantId === targetVariantId) {
+                    firstVisibleThumb = thumb;
+                } else if (!firstVisibleThumb && thumbVariantId === "") {
+                    firstVisibleThumb = thumb;
+                }
+            } else {
+                thumb.style.display = 'none';
+            }
+        });
+
+        if (firstVisibleThumb) {
+            firstVisibleThumb.click();
+        } else {
+            const imgPath = btn.dataset.image;
+            if (imgPath) {
+                document.getElementById("main-img").src = imgPath;
+                document.getElementById("main-img").alt = btn.title;
+            }
+        }
     });
 });
 
@@ -241,12 +599,14 @@ function toggleForm(sourceType) {
         if (sourceType === "whatsapp") {
             heading.textContent = "WhatsApp Us";
             submitBtn.textContent = "Continue to Chat";
-            submitBtn.style.backgroundColor = "var(--color-success)";
+            submitBtn.style.backgroundColor = "var(--green-mid)";
+            submitBtn.style.color = "#fff";
             schedulingContainer.hidden = true;
         } else {
-            heading.textContent = "Request a Call";
-            submitBtn.textContent = "Send Request";
-            submitBtn.style.backgroundColor = "var(--color-primary)";
+            heading.textContent = "Request a Test Ride";
+            submitBtn.textContent = "Submit Request";
+            submitBtn.style.backgroundColor = "var(--green-lime)";
+            submitBtn.style.color = "var(--charcoal)";
             schedulingContainer.hidden = false;
         }
         wrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -258,11 +618,10 @@ function toggleForm(sourceType) {
 document.getElementById("call-toggle")?.addEventListener("click", () => toggleForm("call"));
 document.getElementById("whatsapp-toggle")?.addEventListener("click", () => toggleForm("whatsapp"));
 
-// Set minimum datetime for scheduling input to "now" to prevent past-date selection
+// Set minimum datetime
 const leadTimeInput = document.getElementById("lead-time");
 if (leadTimeInput) {
     const now = new Date();
-    // Offset by timezone locally
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     leadTimeInput.min = now.toISOString().slice(0, 16);
 }
@@ -275,7 +634,7 @@ document.getElementById("call-form")?.addEventListener("submit", async (e) => {
     const source = document.getElementById("lead-source").value;
     
     btn.disabled = true;
-    btn.textContent = "Saving...";
+    btn.textContent = "Sending...";
     feedbackEl.hidden = true;
 
     try {
@@ -304,22 +663,22 @@ document.getElementById("call-form")?.addEventListener("submit", async (e) => {
 
         if (source === "whatsapp" && d.whatsapp_url) {
             feedbackEl.textContent = "✓ Opening WhatsApp...";
-            feedbackEl.className = "call-feedback success";
+            feedbackEl.style.color = "var(--green-lime)";
             window.open(d.whatsapp_url, "_blank");
         } else {
             feedbackEl.textContent = "✓ Request sent! We'll reach out soon.";
-            feedbackEl.className = "call-feedback success";
+            feedbackEl.style.color = "var(--green-lime)";
         }
         feedbackEl.hidden = false;
         e.target.reset();
         
-        setTimeout(() => { wrap.hidden = true; }, 3000);
+        setTimeout(() => { document.getElementById("call-form-wrap").hidden = true; }, 3000);
     } catch (err) {
-        feedbackEl.textContent = err.message;
-        feedbackEl.className = "call-feedback error";
+        feedbackEl.textContent = "❌ " + err.message;
+        feedbackEl.style.color = "#ff4d4d";
         feedbackEl.hidden = false;
     } finally {
-        btn.textContent = source === "whatsapp" ? "Continue to Chat" : "Send Request";
+        btn.textContent = source === "whatsapp" ? "Continue to Chat" : "Submit Request";
         btn.disabled = false;
     }
 });
