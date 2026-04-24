@@ -1,0 +1,292 @@
+{% extends "storefront/base.html" %}
+{% block content %}
+
+<style>
+  .about-page {
+    padding: 110px 24px 60px;
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: var(--off-white);
+  }
+
+  .about-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .about-header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--green-deep);
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .about-header p {
+    font-size: 1.1rem;
+    color: var(--gray);
+  }
+
+  /* Slideshow container */
+  .slideshow-container {
+    max-width: 900px;
+    height: 500px;
+    position: relative;
+    margin: auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    background-color: #000; /* Black background to avoid gaps */
+  }
+
+  @media (max-width: 768px) {
+    .slideshow-container {
+      height: 300px;
+    }
+  }
+
+  /* The strip that actually moves */
+  .slides-wrapper {
+    display: flex;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    height: 100%;
+  }
+
+  .mySlides {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .mySlides img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+  }
+
+  /* Next & previous buttons */
+  .prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -22px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.3s ease;
+    border-radius: 50%;
+    user-select: none;
+    background-color: rgba(0,0,0,0.3);
+    margin: 0 10px;
+    z-index: 10;
+  }
+
+  .next {
+    right: 0;
+  }
+
+  .prev:hover, .next:hover {
+    background-color: rgba(0,0,0,0.8);
+  }
+
+  /* Number text (1/7 etc) */
+  .numbertext {
+    color: #f2f2f2;
+    font-size: 12px;
+    padding: 8px 12px;
+    position: absolute;
+    top: 0;
+    text-shadow: 1px 1px 2px black;
+    z-index: 11;
+  }
+
+  /* The dots/bullets/indicators */
+  .dot-container {
+    text-align: center;
+    padding: 10px;
+  }
+
+  .dot {
+    cursor: pointer;
+    height: 10px;
+    width: 10px;
+    margin: 0 4px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+  }
+
+  .dot.active {
+    background-color: var(--green-deep);
+  }
+
+  /* Contact Section */
+  .contact-info {
+    margin-top: 30px;
+    padding: 30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 32px;
+    text-align: center;
+  }
+
+  .contact-item h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--green-deep);
+    margin-bottom: 12px;
+  }
+
+  .contact-item p {
+    color: var(--gray);
+    line-height: 1.6;
+  }
+  
+  /* Ensure navbar is visible on light bg */
+  nav:not(.scrolled) .nav-logo,
+  nav:not(.scrolled) .nav-links a {
+    color: var(--green-deep) !important;
+  }
+  nav:not(.scrolled) .nav-logo img {
+    filter: brightness(0) saturate(100%) invert(20%) sepia(45%) saturate(545%) hue-rotate(101deg) brightness(93%) contrast(93%);
+  }
+  nav:not(.scrolled) .hamburger span {
+    background: var(--green-deep) !important;
+  }
+</style>
+
+<div class="about-page">
+  <div class="about-header">
+    <h1>About EV Nation</h1>
+    <p>Your trusted partner in electric mobility. Experience the future of transportation.</p>
+  </div>
+
+  <div class="slideshow-container">
+    <div class="slides-wrapper" id="slides-wrapper">
+        <!-- Replace these src attributes with your actual image paths once uploaded -->
+        <div class="mySlides">
+        <div class="numbertext">1 / 7</div>
+        <img src="{{ url_for('static', path='/images/about/about_1.jpg') }}" onerror="this.src='https://placehold.co/1000x562?text=Shop+Image+1'">
+        </div>
+
+        <div class="mySlides">
+        <div class="numbertext">2 / 7</div>
+        <img src="{{ url_for('static', path='/images/about/about_2.jpg') }}" onerror="this.src='https://placehold.co/1000x562?text=Shop+Image+2'">
+        </div>
+
+        <div class="mySlides">
+        <div class="numbertext">3 / 7</div>
+        <img src="{{ url_for('static', path='/images/about/about_3.jpg') }}" onerror="this.src='https://placehold.co/1000x562?text=Shop+Image+3'">
+        </div>
+
+        <div class="mySlides">
+        <div class="numbertext">4 / 7</div>
+        <img src="{{ url_for('static', path='/images/about/about_4.jpg') }}" onerror="this.src='https://placehold.co/1000x562?text=Shop+Image+4'">
+        </div>
+
+        <div class="mySlides">
+        <div class="numbertext">5 / 7</div>
+        <img src="{{ url_for('static', path='/images/about/about_5.jpg') }}" onerror="this.src='https://placehold.co/1000x562?text=Shop+Image+5'">
+        </div>
+
+        <div class="mySlides">
+        <div class="numbertext">6 / 7</div>
+        <img src="{{ url_for('static', path='/images/about/about_6.jpg') }}" onerror="this.src='https://placehold.co/1000x562?text=Shop+Image+6'">
+        </div>
+
+        <div class="mySlides">
+        <div class="numbertext">7 / 7</div>
+        <img src="{{ url_for('static', path='/images/about/about_7.jpg') }}" onerror="this.src='https://placehold.co/1000x562?text=Shop+Image+7'">
+        </div>
+    </div>
+
+    <a class="prev" onclick="plusSlides(-1)">❮</a>
+    <a class="next" onclick="plusSlides(1)">❯</a>
+
+  </div>
+  <br>
+
+  <div class="dot-container">
+    <span class="dot" onclick="currentSlide(1)"></span> 
+    <span class="dot" onclick="currentSlide(2)"></span> 
+    <span class="dot" onclick="currentSlide(3)"></span> 
+    <span class="dot" onclick="currentSlide(4)"></span> 
+    <span class="dot" onclick="currentSlide(5)"></span> 
+    <span class="dot" onclick="currentSlide(6)"></span> 
+    <span class="dot" onclick="currentSlide(7)"></span> 
+  </div>
+
+  <div class="contact-info">
+    <div class="contact-item">
+      <h3>Visit Us</h3>
+      <p>123 EV Boulevard<br>Tech Park Area<br>City Center, State 12345</p>
+    </div>
+    <div class="contact-item">
+      <h3>Call Us</h3>
+      <p>+1 (555) 019-8372<br>Mon-Sat: 9AM - 7PM</p>
+    </div>
+    <div class="contact-item">
+      <h3>Email Us</h3>
+      <p>hello@evnation-shop.com<br>support@evnation-shop.com</p>
+    </div>
+  </div>
+</div>
+
+<script>
+let slideIndex = 1;
+const totalSlides = 7;
+const wrapper = document.getElementById("slides-wrapper");
+
+function plusSlides(n) {
+  slideIndex += n;
+  if (slideIndex > totalSlides) slideIndex = 1;
+  if (slideIndex < 1) slideIndex = totalSlides;
+  updateSlides();
+}
+
+function currentSlide(n) {
+  slideIndex = n;
+  updateSlides();
+}
+
+function updateSlides() {
+  wrapper.style.transform = `translateX(-${(slideIndex - 1) * 100}%)`;
+  
+  const dots = document.getElementsByClassName("dot");
+  for (let i = 0; i < dots.length; i++) {
+    dots[i].classList.remove("active");
+  }
+  dots[slideIndex-1].classList.add("active");
+}
+
+// Auto slideshow
+let autoSlide = setInterval(function() {
+    plusSlides(1);
+}, 5000);
+
+// Reset timer on manual click
+function resetTimer() {
+    clearInterval(autoSlide);
+    autoSlide = setInterval(function() {
+        plusSlides(1);
+    }, 5000);
+}
+
+document.querySelectorAll('.prev, .next, .dot').forEach(el => {
+    el.addEventListener('click', resetTimer);
+});
+
+updateSlides(); // Init
+</script>
+
+{% endblock %}

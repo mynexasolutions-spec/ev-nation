@@ -15,6 +15,17 @@ from app.web.templating import templates
 router = APIRouter()
 product_service = ProductService()
 
+@router.get("/about", response_class=HTMLResponse)
+def about(request: Request, user=Depends(get_current_user_web)):
+    return templates.TemplateResponse(
+        "storefront/about.html",
+        {
+            "request": request,
+            "user": user,
+            "page_title": "About Us — EV Nation",
+        },
+    )
+
 
 @router.get("/", response_class=HTMLResponse)
 def home(request: Request, db: Session = Depends(get_db), user=Depends(get_current_user_web)):
