@@ -5,6 +5,7 @@ from app.core.errors import DomainValidationError, NotFoundError
 from app.core.normalization import normalize_slug
 from app.models.product import BatteryOption, ExtraSpec, Product, ProductImage, ProductSpec, Variant
 from app.repositories.product_repository import ProductRepository
+from app.schemas.category import CategoryRead
 from app.schemas.product import (
     AdminProductCreate,
     AdminProductDetailRead,
@@ -32,12 +33,17 @@ class ProductService:
         range_min: int | None = None,
         range_max: int | None = None,
         speed_min: int | None = None,
-        speed_max: int | None = None
+        speed_max: int | None = None,
+        category_slug: str | None = None
     ) -> list[ProductListItem]:
         products = self.repository.list_active(db)
         
         filtered = []
         for p in products:
+            # Filter by Category Slug
+            if category_slug and (not p.category or p.category.slug != category_slug):
+                continue
+
             # Filter by Battery Type
             if battery_type and (not p.spec or battery_type.lower() not in (p.spec.battery_type or "").lower()):
                 continue
@@ -112,6 +118,7 @@ class ProductService:
             is_active=payload.is_active,
             base_price=payload.base_price,
             sort_order=payload.sort_order,
+            category_id=payload.category_id,
         )
         self._apply_product_children(product, payload)
         saved = self.repository.save(db, product)
@@ -129,7 +136,7 @@ class ProductService:
         if "slug" in update_data:
             product.slug = self._resolve_unique_slug(db, update_data.get("slug"), product.name, exclude_product_id=product.id)
 
-        scalar_fields = ("name", "tagline", "short_description", "description", "is_active", "base_price", "sort_order")
+        scalar_fields = ("name", "tagline", "short_description", "description", "is_active", "base_price", "sort_order", "category_id")
         for field in scalar_fields:
             if field in update_data:
                 setattr(product, field, update_data[field])
@@ -162,6 +169,7 @@ class ProductService:
             short_description=product.short_description,
             base_price=product.base_price,
             sort_order=product.sort_order,
+            category=CategoryRead.model_validate(product.category) if product.category else None,
             primary_image=ProductImageRead.model_validate(primary_image) if primary_image else None,
             variants=[VariantRead.model_validate(variant) for variant in active_variants],
             spec=ProductSpecRead.model_validate(product.spec) if product.spec else None,
@@ -179,6 +187,7 @@ class ProductService:
             description=product.description,
             base_price=product.base_price,
             sort_order=product.sort_order,
+            category=CategoryRead.model_validate(product.category) if product.category else None,
             images=[ProductImageRead.model_validate(image) for image in product.images],
             variants=[VariantRead.model_validate(variant) for variant in active_variants],
             spec=ProductSpecRead.model_validate(product.spec) if product.spec else None,

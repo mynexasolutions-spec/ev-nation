@@ -24,6 +24,39 @@
     </table>
 </div>
 
+<h2 class="page-title" style="margin-top: 3rem; font-size: 1.5rem;">Products Overview</h2>
+<p class="muted" style="margin-bottom: 1rem;">A quick reference of all your products and their assigned categories.</p>
+<div class="card p-0">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width: 50px;">ID</th>
+                <th>Product Name</th>
+                <th>Assigned Category</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.id }}</td>
+                <td><strong>{{ product.name }}</strong><br><small class="muted">{{ product.slug }}</small></td>
+                <td>
+                    {% if product.category %}
+                        <span class="tag">{{ product.category.name }}</span>
+                    {% else %}
+                        <span class="muted" style="font-style: italic;">Uncategorized</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3" style="text-align:center;padding:2rem;" class="muted">No products found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 <!-- Modal -->
 <div class="modal-backdrop" id="category-modal" hidden>
     <div class="modal-content" style="max-width: 500px;">

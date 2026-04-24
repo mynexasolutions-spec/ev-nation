@@ -413,9 +413,17 @@ def admin_categories_ui(request: Request, db: Session = Depends(get_db)):
         current_admin = _require_admin(request, db)
     except HTTPException:
         return _redirect_to_login()
+        
+    products = product_service.list_admin_products(db)
+        
     return templates.TemplateResponse(
         "admin/categories.html", 
-        _base_context(request, current_admin, page_title="Admin - Categories")
+        _base_context(
+            request, 
+            current_admin, 
+            page_title="Admin - Categories",
+            products=products
+        )
     )
 
 

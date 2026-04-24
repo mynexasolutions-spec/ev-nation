@@ -12,6 +12,7 @@ class ProductRepository:
             selectinload(Product.spec),
             selectinload(Product.battery_options),
             selectinload(Product.extra_specs),
+            selectinload(Product.category),
         )
 
     def list_active(self, db: Session) -> list[Product]:

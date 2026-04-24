@@ -17,6 +17,25 @@
   </div>
 
   <div class="collection-layout">
+    <!-- FILTER SIDEBAR -->
+    <aside class="filter-sidebar">
+      <h3>Categories</h3>
+      <ul class="filter-list">
+        <li>
+          <a href="/collection" class="{% if not selected_category %}active{% endif %}">
+            All Models
+          </a>
+        </li>
+        {% for cat in categories %}
+        <li>
+          <a href="/collection?category={{ cat.slug }}" class="{% if selected_category == cat.slug %}active{% endif %}">
+            {{ cat.name }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </aside>
+
     <!-- PRODUCT GRID -->
     <div class="product-grid">
       {% if products %}

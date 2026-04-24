@@ -445,7 +445,7 @@ function populateForm(product) {
     document.getElementById("slug").value = product.slug ?? "";
     document.getElementById("tagline").value = product.tagline ?? "";
     document.getElementById("sort_order").value = product.sort_order ?? 0;
-    document.getElementById("category_id").value = product.category_id ?? "";
+    document.getElementById("category_id").value = product.category?.id ?? "";
     document.getElementById("is_active").checked = product.is_active ?? true;
     document.getElementById("base_price").value = product.base_price ?? 0;
     document.getElementById("short_description").value = product.short_description ?? "";

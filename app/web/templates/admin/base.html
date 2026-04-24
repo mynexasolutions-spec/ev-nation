@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ page_title }} | EV Nation Admin</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='/admin.css') }}?v=3">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='/admin.css') }}?v=5">
 </head>
 <body>
     <div class="admin-shell">
@@ -12,7 +13,7 @@
         <header class="admin-navbar">
             <div class="navbar-inner">
                 <div class="navbar-brand">
-                    <strong style="margin-right:0.5rem;font-size:1.2rem;">EV Nation <span style="font-weight:400;color:var(--accent);">Admin</span></strong>
+                    <strong style="margin-right:0.5rem;font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:0.04em;">EV <span style="color:var(--accent-light);">Nation</span> <span style="font-weight:400;opacity:0.65;font-size:1.1rem;">Admin</span></strong>
                 </div>
                 <nav class="admin-nav">
                     <a href="/admin/products" class="{% if 'Products' in page_title %}active{% endif %}">Products</a>

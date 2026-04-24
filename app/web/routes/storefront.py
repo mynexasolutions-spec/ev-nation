@@ -73,7 +73,8 @@ def collection(
     battery: str | None = None,
     body_material: str | None = None,
     range_type: str | None = None,
-    speed_type: str | None = None
+    speed_type: str | None = None,
+    category: str | None = None
 ):
     # Map range buckets
     range_min, range_max = None, None
@@ -93,8 +94,11 @@ def collection(
         range_min=range_min,
         range_max=range_max,
         speed_min=speed_min,
-        speed_max=speed_max
+        speed_max=speed_max,
+        category_slug=category
     )
+    
+    categories = category_service.get_all_active(db)
     
     return templates.TemplateResponse(
         "storefront/collection.html",
@@ -105,6 +109,8 @@ def collection(
             "selected_body": body_material,
             "selected_range": range_type,
             "selected_speed": speed_type,
+            "selected_category": category,
+            "categories": categories,
             "page_title": "Collection — EV Nation",
             "whatsapp_number": settings.whatsapp_number,
             "user": user,

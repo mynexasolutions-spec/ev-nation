@@ -1,90 +1,106 @@
 {% extends "admin/base.html" %}
 {% block content %}
-<section class="page-head">
+<div class="header-action">
     <div>
-        <p class="eyebrow">Enquiries</p>
-        <h2>Leads</h2>
-        <p class="muted">Track WhatsApp and call requests, then move them through simple status stages.</p>
+        <h1 class="page-title">Leads</h1>
+        <p class="muted">Track enquiries and move them through status stages.</p>
     </div>
-    <form method="get" class="lead-filters" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-        <input type="search" name="search" placeholder="Search name or phone..." value="{{ search_term }}" style="flex: 1; min-width: 200px; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
-        <select name="status" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+    <form method="get" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <input type="search" name="search" placeholder="Search name or phone..." value="{{ search_term }}" style="min-width: 180px;">
+        <select name="status">
             <option value="">All statuses</option>
             {% for item in lead_statuses %}
             <option value="{{ item.value }}" {% if selected_status == item.value %}selected{% endif %}>{{ item.value }}</option>
             {% endfor %}
         </select>
-        <select name="source" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+        <select name="source">
             <option value="">All sources</option>
             {% for item in lead_sources %}
             <option value="{{ item.value }}" {% if selected_source == item.value %}selected{% endif %}>{{ item.value }}</option>
             {% endfor %}
         </select>
-        <button type="submit" class="ghost-button">Filter</button>
+        <button type="submit" class="btn btn-primary">Filter</button>
     </form>
-</section>
+</div>
 
-<section class="panel">
-    <div class="panel-head" style="justify-content: space-between; align-items: center;">
-        <h3>Lead Queue</h3>
-        <span class="pill" style="margin-left: auto;">{{ total_count }} total items</span>
-    </div>
-    {% if leads %}
-    <div class="lead-table">
-        {% for lead in leads %}
-        <article class="lead-card">
-            <div class="lead-card-head">
-                <div>
-                    <strong>{{ lead.name }}</strong>
-                    <p class="muted">{{ lead.phone }}{% if lead.product_name %} · {{ lead.product_name }}{% endif %}{% if lead.variant_name %} · {{ lead.variant_name }}{% endif %}</p>
-                </div>
-                <span class="pill">{{ lead.source.value }}</span>
-            </div>
-            <p class="lead-message">{{ lead.message or "No message provided." }}</p>
-            {% if lead.preferred_contact_time %}
-            <p class="muted">Preferred contact time: {{ lead.preferred_contact_time }}</p>
-            {% endif %}
-            <div class="lead-actions" style="margin-top: 1rem;">
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <select data-lead-status="{{ lead.id }}">
+<div class="card p-0">
+    <table class="data-table" id="leads-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Product / Variant</th>
+                <th>Source</th>
+                <th>Message</th>
+                <th style="text-align:center">Status</th>
+                <th>Date</th>
+                <th style="width: 150px; text-align:right">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if leads %}
+            {% for lead in leads %}
+            <tr>
+                <td><strong>{{ lead.name }}</strong></td>
+                <td>{{ lead.phone }}</td>
+                <td>
+                    {% if lead.product_name %}
+                        {{ lead.product_name }}{% if lead.variant_name %} <span class="muted">· {{ lead.variant_name }}</span>{% endif %}
+                    {% else %}
+                        <span class="muted" style="font-style:italic">—</span>
+                    {% endif %}
+                </td>
+                <td><span class="tag">{{ lead.source.value }}</span></td>
+                <td style="max-width: 220px;">
+                    {% if lead.message %}
+                        <span title="{{ lead.message }}">{{ lead.message[:60] }}{% if lead.message|length > 60 %}...{% endif %}</span>
+                    {% else %}
+                        <span class="muted" style="font-style:italic">No message</span>
+                    {% endif %}
+                </td>
+                <td style="text-align:center">
+                    <select data-lead-status="{{ lead.id }}" style="width:auto;min-width:100px;padding:6px 10px;font-size:0.85rem;">
                         {% for item in lead_statuses %}
                         <option value="{{ item.value }}" {% if lead.status == item %}selected{% endif %}>{{ item.value }}</option>
                         {% endfor %}
                     </select>
-                    <button type="button" class="primary-button small-button" data-save-lead="{{ lead.id }}">Save Status</button>
-                    <button type="button" class="ghost-button small-button" data-delete-lead="{{ lead.id }}" style="color: var(--error);">Delete</button>
-                </div>
-                <div class="muted" style="font-size: 0.85rem; text-align: right; line-height: 1.4;">
-                    <div>Inquired: {{ to_ist(lead.created_at) }}</div>
-                    {% if lead.contacted_at %}<div>Contacted: {{ to_ist(lead.contacted_at) }}</div>{% endif %}
-                    {% if lead.closed_at %}<div>Closed: {{ to_ist(lead.closed_at) }}</div>{% endif %}
-                </div>
-            </div>
-        </article>
-        {% endfor %}
-    </div>
-    </div>
-    
-    <div class="pagination-footer" style="padding: 1rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-        <span class="muted">Page {{ current_page }} of {{ total_pages }}</span>
-        <div style="display: flex; gap: 0.5rem;">
-            {% if current_page > 1 %}
-            <a href="?search={{ search_term }}&status={{ selected_status }}&source={{ selected_source }}&page={{ current_page - 1 }}" class="ghost-button small-button">← Previous</a>
+                </td>
+                <td>
+                    <span class="lead-label">Inquired</span>
+                    {{ to_ist(lead.created_at) }}
+                    {% if lead.contacted_at %}
+                    <br><span class="lead-label" style="margin-top:4px;">Contacted</span>
+                    {{ to_ist(lead.contacted_at) }}
+                    {% endif %}
+                </td>
+                <td style="text-align:right">
+                    <button type="button" class="btn btn-primary" style="padding:6px 12px;font-size:0.8rem;" data-save-lead="{{ lead.id }}">Save</button>
+                    <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;color:var(--error);border-color:var(--error);" data-delete-lead="{{ lead.id }}">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
             {% else %}
-            <button class="ghost-button small-button" disabled style="opacity: 0.5; cursor: not-allowed;">← Previous</button>
+            <tr>
+                <td colspan="8" style="text-align:center;padding:2rem;" class="muted">No leads matching your criteria.</td>
+            </tr>
             {% endif %}
-            
-            {% if current_page < total_pages %}
-            <a href="?search={{ search_term }}&status={{ selected_status }}&source={{ selected_source }}&page={{ current_page + 1 }}" class="ghost-button small-button">Next →</a>
-            {% else %}
-            <button class="ghost-button small-button" disabled style="opacity: 0.5; cursor: not-allowed;">Next →</button>
-            {% endif %}
-        </div>
+        </tbody>
+    </table>
+</div>
+
+{% if leads %}
+<div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;">
+    <span class="muted">Showing page {{ current_page }} of {{ total_pages }} · {{ total_count }} total leads</span>
+    <div style="display:flex;gap:8px;">
+        {% if current_page > 1 %}
+        <a href="?search={{ search_term }}&status={{ selected_status }}&source={{ selected_source }}&page={{ current_page - 1 }}" class="btn btn-outline" style="padding:6px 14px;font-size:0.85rem;">← Previous</a>
+        {% endif %}
+        {% if current_page < total_pages %}
+        <a href="?search={{ search_term }}&status={{ selected_status }}&source={{ selected_source }}&page={{ current_page + 1 }}" class="btn btn-outline" style="padding:6px 14px;font-size:0.85rem;">Next →</a>
+        {% endif %}
     </div>
-    {% else %}
-    <p class="empty-copy">No leads matching your criteria.</p>
-    {% endif %}
-</section>
+</div>
+{% endif %}
 
 <script>
 document.querySelectorAll("[data-save-lead]").forEach((button) => {

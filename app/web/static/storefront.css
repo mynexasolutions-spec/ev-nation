@@ -1891,7 +1891,74 @@ footer {
   max-width: 1440px;
   margin: 0 auto 100px;
   padding: 0 56px;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 40px;
+  align-items: start;
 }
+
+.filter-sidebar {
+  background: var(--white);
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  position: sticky;
+  top: 120px;
+}
+
+.filter-sidebar h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  color: var(--green-deep);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  letter-spacing: 0.02em;
+}
+
+.filter-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.filter-list li {
+  margin-bottom: 12px;
+}
+
+.filter-list a {
+  text-decoration: none;
+  color: var(--gray);
+  font-weight: 500;
+  font-size: 1.05rem;
+  transition: all 0.2s;
+  display: block;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.filter-list a:hover {
+  background-color: var(--green-pale);
+  color: var(--green-deep);
+}
+
+.filter-list a.active {
+  background-color: var(--green-deep);
+  color: var(--green-lime);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .collection-layout {
+    grid-template-columns: 1fr;
+  }
+  .filter-sidebar {
+    position: static;
+    margin-bottom: 30px;
+  }
+}
+
 
 .collection-sidebar {
   background: var(--white);
@@ -1952,7 +2019,7 @@ footer {
 
 .collection-layout .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 32px;
 }
 
@@ -2067,6 +2134,10 @@ footer {
   .collection-layout {
     padding: 0 32px;
   }
+  
+  .collection-layout .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
@@ -2074,8 +2145,7 @@ footer {
     padding: 0 24px;
   }
 
-
   .collection-layout .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: 1fr;
   }
 }
