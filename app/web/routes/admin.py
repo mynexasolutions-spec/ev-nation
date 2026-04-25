@@ -173,7 +173,7 @@ async def admin_product_save(request: Request, db: Session = Depends(get_db)) ->
 def admin_product_delete(product_id: int, request: Request, db: Session = Depends(get_db)) -> JSONResponse:
     try:
         _require_admin(request, db)
-        product_service.soft_delete_admin_product(db, product_id)
+        product_service.delete_admin_product(db, product_id)
     except HTTPException:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required.")
     except NotFoundError as exc:

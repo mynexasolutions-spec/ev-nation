@@ -38,7 +38,7 @@ ENV/
 *.db-wal
 
 # Media/Uploads
-# media/**
+media/**
 !media/.gitkeep
 
 # IDEs
@@ -52,3 +52,4 @@ Thumbs.db
 # Project Specific
 scratch/
 write_test.txt
+*.pem

@@ -41,16 +41,18 @@
       {% if products %}
       {% for product in products %}
       <div class="product-card">
-        <div class="p-img-box">
-          {% if product.primary_image %}
-          <img src="{{ product.primary_image.image_path }}" alt="{{ product.name }}">
-          {% elif product.variants and product.variants[0].image_path %}
-          <img src="{{ product.variants[0].image_path }}" alt="{{ product.name }}">
-          {% else %}
-          <img src="{{ url_for('static', path='/images/products/product_' ~ (loop.index0 % 6 + 1) ~ '.png') }}"
-            alt="{{ product.name }}">
-          {% endif %}
-        </div>
+        <a href="/bikes/{{ product.slug }}" style="display: block; text-decoration: none;">
+          <div class="p-img-box">
+            {% if product.primary_image %}
+            <img src="{{ product.primary_image.image_path }}" alt="{{ product.name }}">
+            {% elif product.variants and product.variants[0].image_path %}
+            <img src="{{ product.variants[0].image_path }}" alt="{{ product.name }}">
+            {% else %}
+            <img src="{{ url_for('static', path='/images/products/product_' ~ (loop.index0 % 6 + 1) ~ '.png') }}"
+              alt="{{ product.name }}">
+            {% endif %}
+          </div>
+        </a>
         <div class="p-body">
           <div class="p-title-row">
             <h3>{{ product.name | upper }}</h3>

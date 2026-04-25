@@ -148,12 +148,21 @@ class ProductService:
             is_active=saved.is_active,
         )
 
-    def soft_delete_admin_product(self, db: Session, product_id: int) -> None:
+    def delete_admin_product(self, db: Session, product_id: int) -> None:
+        import shutil
+        from pathlib import Path
+        from app.core.config import settings
+
         product = self.repository.get_by_id(db, product_id)
         if product is None:
             raise NotFoundError(f"Product with id '{product_id}' was not found.")
-        product.is_active = False
-        self.repository.save(db, product)
+        
+        db.delete(product)
+        db.commit()
+
+        product_dir = Path(settings.media_dir) / "products" / str(product_id)
+        if product_dir.exists() and product_dir.is_dir():
+            shutil.rmtree(product_dir, ignore_errors=True)
 
     def _to_product_list_item(self, product: Product) -> ProductListItem:
         active_variants = [variant for variant in product.variants if variant.is_active]

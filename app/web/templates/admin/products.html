@@ -35,7 +35,7 @@
             <h3 id="form-title">Create Product</h3>
             <div class="inline-actions">
                 <button type="submit" form="product-form" id="save-product-button" class="primary-button">Save</button>
-                <button type="button" id="delete-product-button" class="ghost-button" hidden>Soft Delete</button>
+                <button type="button" id="delete-product-button" class="ghost-button" style="color: var(--error);" hidden>Delete Product</button>
             </div>
         </div>
 
@@ -532,11 +532,11 @@ async function saveProduct() {
 async function deleteProduct() {
     const productId = document.getElementById("product-id").value;
     if (!productId) return;
-    if (!confirm("Soft delete this product? It will become inactive.")) return;
+    if (!confirm("Are you sure you want to PERMANENTLY delete this product? This will remove all associated images and cannot be undone.")) return;
     const r = await fetch(`/admin/products/${productId}/delete`, { method: "POST" });
     const d = await r.json().catch(() => ({}));
     if (!r.ok) { setFeedback(d.detail || "Failed to delete.", "error"); return; }
-    setFeedback("Product marked inactive. Refreshing...", "success");
+    setFeedback("Product permanently deleted. Refreshing...", "success");
     setTimeout(() => window.location.reload(), 700);
 }
 
