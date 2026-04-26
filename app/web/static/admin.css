@@ -858,7 +858,35 @@ textarea {
 
 @media (max-width: 700px) {
     .admin-main {
-        padding: 20px;
+        padding: 16px;
+    }
+
+    .admin-navbar {
+        padding: 0 16px;
+        height: auto;
+        min-height: 60px;
+    }
+
+    .navbar-inner {
+        flex-wrap: wrap;
+        padding: 10px 0;
+        gap: 10px;
+    }
+
+    .admin-nav {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .admin-nav a {
+        padding: 6px 12px;
+        font-size: 0.82rem;
+    }
+
+    /* Disable sticky sidebar on mobile - it causes layout issues */
+    .admin-grid > .panel:first-child {
+        position: static;
+        max-height: none;
     }
 
     .two-col,
@@ -888,5 +916,21 @@ textarea {
     .data-table th,
     .data-table td {
         padding: 10px 12px;
+    }
+
+    /* Product list items stack better */
+    .product-list-item {
+        padding: 12px;
+    }
+
+    /* Repeatable rows stack on mobile */
+    .repeatable-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .repeatable-row .two-col,
+    .repeatable-row .three-col {
+        grid-template-columns: 1fr;
     }
 }

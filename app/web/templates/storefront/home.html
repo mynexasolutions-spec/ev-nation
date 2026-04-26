@@ -196,10 +196,10 @@
   </section>
 
   <!-- TEST RIDE / ENQUIRY SECTION -->
-  <section class="test-ride-section" style="padding: 40px 56px 40px; background: var(--charcoal);">
-    <div style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: stretch;">
+  <section class="test-ride-section">
+    <div class="test-ride-grid">
       <!-- Left: Changing Scooter Carousel -->
-      <div class="test-ride-carousel reveal" style="position: relative; overflow: hidden; min-height: 500px; display: flex; align-items: center; justify-content: center;">
+      <div class="test-ride-carousel reveal">
         {% if products %}
           {% for product in products[:3] %}
           <div class="tr-slide {% if loop.first %}active{% endif %}" style="position: absolute; width: 100%; height: 100%; transition: opacity 0.6s ease-in-out; opacity: {% if loop.first %}1{% else %}0{% endif %};">
@@ -225,7 +225,7 @@
         <h2 class="section-title" style="color: var(--white);">BOOK A<br>TEST RIDE</h2>
         <p style="font-size: 1.15rem; color: rgba(255,255,255,0.6); margin-bottom: 40px; line-height: 1.7;">Feel the instant torque, seamless handling, and unmatched comfort. Schedule a test ride at your nearest EV Nation hub today.</p>
         
-        <form id="test-ride-form" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <form id="test-ride-form" class="test-ride-form-grid">
           <div style="grid-column: 1 / -1;">
             <select id="tr-product" style="width: 100%; padding: 16px; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem; color: var(--white); background: rgba(255,255,255,0.05);">
               <option value="" disabled selected style="color: #000;">Select Model</option>
@@ -313,7 +313,7 @@
   </script>
 
   <!-- WHY CHOOSE US -->
-  <section class="benefits-section" style="background: var(--white); padding: 100px 56px;">
+  <section class="benefits-section">
     <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
       <div class="section-eyebrow reveal">The EV Nation Advantage</div>
       <h2 class="section-title reveal" style="color: var(--charcoal); margin-bottom: 60px;">WHY RIDE WITH US?</h2>
@@ -415,8 +415,8 @@
   </div>
 
   <!-- CONTACT SECTION -->
-  <section class="contact-section" id="contact" style="background: var(--off-white); padding: 100px 56px;">
-    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+  <section class="contact-section" id="contact">
+    <div class="contact-grid">
       <div class="contact-text reveal">
         <div class="section-eyebrow">Get in Touch</div>
         <h2 class="section-title">READY TO RIDE?</h2>
