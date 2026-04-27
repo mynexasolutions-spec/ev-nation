@@ -15,14 +15,20 @@
 <body class="{% if request.url.path != '/' %}inner-page{% endif %}">
   <!-- MOBILE MENU -->
   <div class="mobile-menu" id="mobileMenu">
-    <button class="m-close" onclick="closeMenu()">✕</button>
-    <a href="/" onclick="closeMenu()">Home</a>
-    <a href="/collection" onclick="closeMenu()">Collection</a>
-    <a href="/#models" onclick="closeMenu()">Models</a>
-    <a href="/#charging" onclick="closeMenu()">Charging</a>
-    <a href="/#gallery" onclick="closeMenu()">Gallery</a>
-    <a href="/#contact" onclick="closeMenu()">Contact</a>
-    <a href="/collection" class="m-cta" onclick="closeMenu()">Explore</a>
+    <div class="menu-backdrop" onclick="closeMenu()"></div>
+    <div class="menu-content">
+      <button class="m-close" onclick="closeMenu()" aria-label="Close Menu">✕</button>
+      <div class="menu-links">
+        <a href="/" onclick="closeMenu()">Home</a>
+        <a href="/collection" onclick="closeMenu()">Collection</a>
+        <a href="/about" onclick="closeMenu()">About</a>
+        <a href="/#models" onclick="closeMenu()">Models</a>
+        <a href="/#charging" onclick="closeMenu()">Charging</a>
+        <a href="/#gallery" onclick="closeMenu()">Gallery</a>
+        <a href="/#contact" onclick="closeMenu()">Contact</a>
+        <a href="/collection" class="m-cta" onclick="closeMenu()">Explore</a>
+      </div>
+    </div>
   </div>
 
   <!-- NAV -->
