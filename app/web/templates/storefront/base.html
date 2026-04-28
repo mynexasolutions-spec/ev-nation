@@ -10,6 +10,7 @@
     href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700;900&family=Barlow+Condensed:wght@700;900&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', path='/storefront.css') }}?v=9">
+  <link rel="icon" type="image/png" href="{{ url_for('static', path='/images/logo.png') }}">
 </head>
 
 <body class="{% if request.url.path != '/' %}inner-page{% endif %}">
@@ -22,8 +23,6 @@
         <a href="/" onclick="closeMenu()">Home</a>
         <a href="/collection" onclick="closeMenu()">Collection</a>
         <a href="/about" onclick="closeMenu()">About</a>
-        <a href="/#models" onclick="closeMenu()">Models</a>
-        <a href="/#charging" onclick="closeMenu()">Charging</a>
         <a href="/#gallery" onclick="closeMenu()">Gallery</a>
         <a href="/#contact" onclick="closeMenu()">Contact</a>
         <a href="/collection" class="m-cta" onclick="closeMenu()">Explore</a>

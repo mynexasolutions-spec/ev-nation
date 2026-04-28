@@ -1,0 +1,125 @@
+{% extends "storefront/base.html" %}
+{% block content %}
+
+<style>
+  .legal-page {
+    padding: 140px 24px 80px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .legal-header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .legal-header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: var(--green-deep);
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+  }
+
+  .legal-content {
+    background: #fff;
+    padding: 60px;
+    border-radius: 12px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.05);
+  }
+
+  .legal-section {
+    margin-bottom: 48px;
+  }
+
+  .legal-section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--green-deep);
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--green-lime);
+    display: inline-block;
+    padding-bottom: 4px;
+  }
+
+  .legal-section p {
+    color: var(--gray);
+    line-height: 1.8;
+    margin-bottom: 16px;
+    font-size: 1.05rem;
+  }
+
+  .legal-section ul {
+    margin-bottom: 16px;
+    padding-left: 20px;
+  }
+
+  .legal-section li {
+    color: var(--gray);
+    line-height: 1.8;
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 768px) {
+    .legal-page {
+      padding-top: 110px;
+    }
+    .legal-content {
+      padding: 30px 20px;
+    }
+    .legal-header h1 {
+      font-size: 3rem;
+    }
+  }
+
+  /* Ensure navbar is visible on legal page (light bg) */
+  nav:not(.scrolled) .nav-logo,
+  nav:not(.scrolled) .nav-links a:not(.nav-cta) {
+    color: var(--green-deep) !important;
+  }
+  nav:not(.scrolled) .nav-logo img {
+    filter: brightness(0) saturate(100%) invert(20%) sepia(45%) saturate(545%) hue-rotate(101deg) brightness(93%) contrast(93%);
+  }
+  nav:not(.scrolled) .hamburger span {
+    background: var(--green-deep) !important;
+  }
+</style>
+
+<div class="legal-page">
+  <div class="legal-header">
+    <h1>Legal Information</h1>
+    <p>Privacy Policy, Terms of Service, and Cookie Policy</p>
+  </div>
+
+  <div class="legal-content">
+    <!-- PRIVACY POLICY -->
+    <section class="legal-section" id="privacy">
+      <h2>Privacy Policy</h2>
+      <p>At EV Nation, we are committed to protecting your privacy. This policy explains how we collect, use, and safeguard your personal information when you visit our website or use our services.</p>
+      <p>We collect information you provide to us directly, such as when you book a test ride, sign up for our newsletter, or contact our support team. This may include your name, email address, phone number, and location.</p>
+      <p>Your data is used solely to provide and improve our services, communicate with you, and ensure a personalized experience. We do not sell your personal information to third parties.</p>
+    </section>
+
+    <!-- TERMS OF SERVICE -->
+    <section class="legal-section" id="terms">
+      <h2>Terms of Service</h2>
+      <p>By accessing or using the EV Nation website, you agree to comply with and be bound by these Terms of Service. Please read them carefully.</p>
+      <ul>
+        <li>You must be at least 18 years old to book a test ride or purchase our products.</li>
+        <li>All content on this website, including text, images, and logos, is the property of EV Nation and protected by intellectual property laws.</li>
+        <li>We reserve the right to modify or discontinue any part of our service without prior notice.</li>
+        <li>User accounts must be kept secure, and any unauthorized use should be reported immediately.</li>
+      </ul>
+    </section>
+
+    <!-- COOKIE POLICY -->
+    <section class="legal-section" id="cookies">
+      <h2>Cookie Policy</h2>
+      <p>Our website uses cookies to enhance your browsing experience and provide personalized content. By continuing to use our site, you consent to our use of cookies.</p>
+      <p>Cookies are small text files stored on your device. They help us analyze web traffic, remember your preferences, and improve site performance.</p>
+      <p>You can choose to disable cookies through your browser settings, though this may affect the functionality of some parts of our website.</p>
+    </section>
+  </div>
+</div>
+
+{% endblock %}

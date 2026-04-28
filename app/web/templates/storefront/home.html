@@ -144,20 +144,16 @@
               </div>
             </div>
             <div class="p-specs">
-              {% if product.variants %}
-              <div class="p-spec-item"><label>COLORS</label><value>{{ product.variants | length }}</value></div>
+              {% if product.spec and product.spec.range %}
+              <div class="p-spec-item"><label>MAX RANGE</label><value>{{ product.spec.range }}</value></div>
+              {% endif %}
+              {% if product.spec and product.spec.speed %}
+              <div class="p-spec-item"><label>TOP SPEED</label><value>{{ product.spec.speed }}</value></div>
               {% endif %}
               {% if product.tagline %}
               <div class="p-spec-item"><label>TYPE</label><value>{{ product.tagline }}</value></div>
               {% endif %}
             </div>
-            {% if product.variants %}
-            <div class="p-features-list">
-              {% for variant in product.variants[:4] %}
-              <div class="p-feat-item"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:{{ variant.color_code or '#888' }};margin-right:6px;vertical-align:middle;"></span> {{ variant.color_name }}</div>
-              {% endfor %}
-            </div>
-            {% endif %}
             <div class="p-footer">
               <a href="/bikes/{{ product.slug }}" class="btn-product">View Details</a>
             </div>
@@ -179,6 +175,8 @@
               </div>
             </div>
             <div class="p-specs">
+              <div class="p-spec-item"><label>MAX RANGE</label><value>120 km</value></div>
+              <div class="p-spec-item"><label>TOP SPEED</label><value>85 km/h</value></div>
               <div class="p-spec-item"><label>TYPE</label><value>Sport</value></div>
             </div>
             <div class="p-footer">

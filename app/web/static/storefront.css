@@ -2345,3 +2345,13 @@ footer {
     padding: 48px 16px;
   }
 }
+
+.footer-legal-links a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-legal-links a:hover {
+  color: var(--green-bright);
+}

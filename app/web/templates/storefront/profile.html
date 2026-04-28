@@ -1,6 +1,19 @@
 {% extends 'storefront/base.html' %}
 
 {% block content %}
+<style>
+  /* Ensure navbar is visible on light bg */
+  nav:not(.scrolled) .nav-logo,
+  nav:not(.scrolled) .nav-links a:not(.nav-cta) {
+    color: var(--green-deep) !important;
+  }
+  nav:not(.scrolled) .nav-logo img {
+    filter: brightness(0) saturate(100%) invert(20%) sepia(45%) saturate(545%) hue-rotate(101deg) brightness(93%) contrast(93%);
+  }
+  nav:not(.scrolled) .hamburger span {
+    background: var(--green-deep) !important;
+  }
+</style>
 <section class="profile-page" style="padding: 140px 56px 100px; background: var(--off-white); min-height: 80vh;">
     <div style="max-width: 1000px; margin: 0 auto;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 50px;">
@@ -8,7 +21,7 @@
                 <h1 style="font-family: 'Bebas Neue', sans-serif; font-size: 4rem; color: var(--green-deep); margin-bottom: 5px;">MY DASHBOARD</h1>
                 <p style="font-family: 'Barlow', sans-serif; color: var(--gray); font-size: 1.2rem;">Welcome back, <span style="color: var(--green-mid); font-weight: 700;">{{ user.full_name or 'Friend' }}</span></p>
             </div>
-            <button id="logout-btn" class="btn-ghost" style="border: 1px solid #ddd;">LOG OUT</button>
+            <button id="logout-btn" class="btn-product" style="background: var(--charcoal); color: var(--white); border: none; padding: 10px 24px;">LOG OUT</button>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 40px;">

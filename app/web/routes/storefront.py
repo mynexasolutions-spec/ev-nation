@@ -27,6 +27,18 @@ def about(request: Request, user=Depends(get_current_user_web)):
     )
 
 
+@router.get("/legal", response_class=HTMLResponse)
+def legal(request: Request, user=Depends(get_current_user_web)):
+    return templates.TemplateResponse(
+        "storefront/legal.html",
+        {
+            "request": request,
+            "user": user,
+            "page_title": "Legal — EV Nation",
+        },
+    )
+
+
 @router.get("/", response_class=HTMLResponse)
 def home(request: Request, db: Session = Depends(get_db), user=Depends(get_current_user_web)):
     all_active_categories = category_service.get_all_active(db)

@@ -1,6 +1,19 @@
 {% extends 'storefront/base.html' %}
 
 {% block content %}
+<style>
+  /* Ensure navbar is visible on light bg */
+  nav:not(.scrolled) .nav-logo,
+  nav:not(.scrolled) .nav-links a:not(.nav-cta) {
+    color: var(--green-deep) !important;
+  }
+  nav:not(.scrolled) .nav-logo img {
+    filter: brightness(0) saturate(100%) invert(20%) sepia(45%) saturate(545%) hue-rotate(101deg) brightness(93%) contrast(93%);
+  }
+  nav:not(.scrolled) .hamburger span {
+    background: var(--green-deep) !important;
+  }
+</style>
 <section class="auth-page" style="padding: 140px 20px 100px; background: var(--off-white); min-height: 80vh; display: flex; align-items: center; justify-content: center;">
     <div class="auth-card" style="width: 100%; max-width: 450px; background: var(--white); padding: 50px; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.05); border: 1px solid #eee;">
         <div style="text-align: center; margin-bottom: 40px;">
@@ -49,7 +62,13 @@
                 })
             });
             const d = await r.json();
-            if (!r.ok) throw new Error(d.detail || 'Login failed');
+            if (!r.ok) {
+                let msg = 'Login failed';
+                if (typeof d.detail === 'string') msg = d.detail;
+                else if (Array.isArray(d.detail)) msg = d.detail.map(e => e.msg).join(', ');
+                else if (d.detail && d.detail.message) msg = d.detail.message;
+                throw new Error(msg);
+            }
 
             fb.textContent = '✓ Success! Redirecting...';
             fb.style.background = '#d6f5e3';
