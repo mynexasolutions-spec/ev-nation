@@ -45,15 +45,15 @@
   .product-gallery {
     background: #fff;
     border-radius: 20px;
-    padding: 40px;
+    padding: 20px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.05);
     width: 100%;
     overflow: hidden;
   }
   #gallery-main {
     width: 100%;
-    height: 420px;
-    max-height: 420px;
+    height: 500px;
+    max-height: 500px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -65,7 +65,7 @@
     width: auto;
     height: 100%;
     max-width: 100%;
-    max-height: 420px;
+    max-height: 500px;
     object-fit: contain;
     filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
   }
@@ -455,11 +455,23 @@
             <div class="product-variants">
                 <p class="variants-label">Available Colors</p>
                 <div class="variants-row">
-                    {% for variant in product.variants %}
-                    <button class="variant-btn {% if loop.first %}active{% endif %}" style="--color: {{ variant.color_code or '#888888' }}" title="{{ variant.color_name }}" data-variant-id="{{ variant.id }}" {% if variant.image_path %}data-image="{{ variant.image_path }}"{% endif %}>
-                        <span class="variant-swatch"></span>
-                        <span class="variant-name">{{ variant.color_name }}</span>
+                    <button class="variant-btn active" data-variant-id="">
+                        <span class="variant-swatch" style="background: linear-gradient(135deg, #e0e0e0, #f5f5f5);"></span>
+                        <span class="variant-name">General</span>
                     </button>
+                    {% for variant in product.variants %}
+                        {% set ns = namespace(has_images=false) %}
+                        {% for img in product.images %}
+                            {% if img.variant_id == variant.id %}
+                                {% set ns.has_images = true %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if ns.has_images or variant.image_path %}
+                            <button class="variant-btn" style="--color: {{ variant.color_code or '#888888' }}" title="{{ variant.color_name }}" data-variant-id="{{ variant.id }}" {% if variant.image_path %}data-image="{{ variant.image_path }}"{% endif %}>
+                                <span class="variant-swatch"></span>
+                                <span class="variant-name">{{ variant.color_name }}</span>
+                            </button>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
@@ -581,7 +593,7 @@
 {% endif %}
 
 {% if recommendations %}
-<section class="info-section" style="margin-top: 0; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1);">
+<section class="info-section" style="margin-top: 0; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); margin-bottom: 60px;">
     <h2>Explore More Models</h2>
     <div class="bikes-grid">
         {% for rec in recommendations %}
@@ -631,39 +643,65 @@ function swipeGallery(direction) {
 }
 
 // Variant color image swapper
-document.querySelectorAll(".variant-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        document.querySelectorAll(".variant-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-
-        const targetVariantId = btn.dataset.variantId;
-        const thumbs = document.querySelectorAll(".thumb-btn");
+function filterGallery(variantBtn) {
+    const variantId = variantBtn ? variantBtn.dataset.variantId : null;
+    const thumbs = document.querySelectorAll(".thumb-btn");
+    let firstVisibleThumb = null;
+    let visibleCount = 0;
+    
+    thumbs.forEach(thumb => {
+        const thumbVariantId = thumb.dataset.variantId || "";
+        const targetId = variantId || "";
         
-        let firstVisibleThumb = null;
-        thumbs.forEach(thumb => {
-            const thumbVariantId = thumb.dataset.variantId;
-            if (thumbVariantId === targetVariantId || thumbVariantId === "") {
-                thumb.style.display = 'block';
-                if (!firstVisibleThumb && thumbVariantId === targetVariantId) {
-                    firstVisibleThumb = thumb;
-                } else if (!firstVisibleThumb && thumbVariantId === "") {
-                    firstVisibleThumb = thumb;
-                }
-            } else {
-                thumb.style.display = 'none';
+        if (thumbVariantId === targetId) {
+            thumb.style.display = 'block';
+            visibleCount++;
+            if (!firstVisibleThumb) {
+                firstVisibleThumb = thumb;
             }
-        });
-
-        if (firstVisibleThumb) {
-            firstVisibleThumb.click();
         } else {
-            const imgPath = btn.dataset.image;
-            if (imgPath) {
-                document.getElementById("main-img").src = imgPath;
-                document.getElementById("main-img").alt = btn.title;
-            }
+            thumb.style.display = 'none';
         }
     });
+
+    if (firstVisibleThumb) {
+        firstVisibleThumb.click();
+    } else if (variantBtn && variantBtn.dataset.image) {
+        // Fallback to variant primary image if no gallery thumbs exist for this color
+        document.getElementById("main-img").src = variantBtn.dataset.image;
+        document.getElementById("main-img").alt = variantBtn.title;
+    }
+    
+    // Hide thumbs container if 1 or 0 thumbs are visible
+    const thumbsContainer = document.getElementById("gallery-thumbs");
+    if (thumbsContainer) {
+        thumbsContainer.style.display = visibleCount > 1 ? 'flex' : 'none';
+    }
+}
+
+document.querySelectorAll(".variant-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const isActive = btn.classList.contains("active");
+        
+        // Remove active class from all buttons
+        document.querySelectorAll(".variant-btn").forEach(b => b.classList.remove("active"));
+        
+        if (isActive && btn.dataset.variantId !== "") {
+            // Revert to general images
+            const genBtn = document.querySelector('.variant-btn[data-variant-id=""]');
+            if (genBtn) genBtn.classList.add("active");
+            filterGallery(null);
+        } else {
+            // Activate clicked button and filter
+            btn.classList.add("active");
+            filterGallery(btn);
+        }
+    });
+});
+
+// Initialize gallery on load
+window.addEventListener('DOMContentLoaded', () => {
+    filterGallery(null);
 });
 
 // Toggle call form

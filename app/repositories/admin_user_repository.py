@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -16,7 +16,7 @@ class AdminUserRepository:
         return db.scalar(statement)
 
     def update_last_login(self, db: Session, admin_user: AdminUser) -> AdminUser:
-        admin_user.last_login_at = datetime.now(UTC)
+        admin_user.last_login_at = datetime.now(timezone.utc)
         db.add(admin_user)
         db.commit()
         db.refresh(admin_user)

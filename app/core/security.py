@@ -5,7 +5,7 @@ import hashlib
 import hmac
 import json
 import secrets
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from app.core.config import settings
 
@@ -52,7 +52,7 @@ def verify_password(password: str, password_hash: str) -> bool:
 
 
 def create_access_token(subject: str, expires_delta: timedelta | None = None) -> str:
-    expires_at = datetime.now(UTC) + (expires_delta or timedelta(minutes=settings.access_token_expire_minutes))
+    expires_at = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=settings.access_token_expire_minutes))
     header = {"alg": "HS256", "typ": "JWT"}
     payload = {
         "sub": subject,
@@ -92,6 +92,6 @@ def decode_access_token(token: str) -> dict[str, object]:
     expires_at = payload.get("exp")
     if not isinstance(expires_at, int):
         raise ValueError("Invalid token expiration.")
-    if datetime.now(UTC).timestamp() >= expires_at:
+    if datetime.now(timezone.utc).timestamp() >= expires_at:
         raise ValueError("Token has expired.")
     return payload

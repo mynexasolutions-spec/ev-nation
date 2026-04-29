@@ -24,68 +24,70 @@
 </div>
 
 <div class="card p-0">
-    <table class="data-table" id="leads-table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Product / Variant</th>
-                <th>Source</th>
-                <th>Message</th>
-                <th style="text-align:center">Status</th>
-                <th>Date</th>
-                <th style="width: 150px; text-align:right">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if leads %}
-            {% for lead in leads %}
-            <tr>
-                <td><strong>{{ lead.name }}</strong></td>
-                <td>{{ lead.phone }}</td>
-                <td>
-                    {% if lead.product_name %}
-                        {{ lead.product_name }}{% if lead.variant_name %} <span class="muted">· {{ lead.variant_name }}</span>{% endif %}
-                    {% else %}
-                        <span class="muted" style="font-style:italic">—</span>
-                    {% endif %}
-                </td>
-                <td><span class="tag">{{ lead.source.value }}</span></td>
-                <td style="max-width: 220px;">
-                    {% if lead.message %}
-                        <span title="{{ lead.message }}">{{ lead.message[:60] }}{% if lead.message|length > 60 %}...{% endif %}</span>
-                    {% else %}
-                        <span class="muted" style="font-style:italic">No message</span>
-                    {% endif %}
-                </td>
-                <td style="text-align:center">
-                    <select data-lead-status="{{ lead.id }}" style="width:auto;min-width:100px;padding:6px 10px;font-size:0.85rem;">
-                        {% for item in lead_statuses %}
-                        <option value="{{ item.value }}" {% if lead.status == item %}selected{% endif %}>{{ item.value }}</option>
-                        {% endfor %}
-                    </select>
-                </td>
-                <td>
-                    <span class="lead-label">Inquired</span>
-                    {{ to_ist(lead.created_at) }}
-                    {% if lead.contacted_at %}
-                    <br><span class="lead-label" style="margin-top:4px;">Contacted</span>
-                    {{ to_ist(lead.contacted_at) }}
-                    {% endif %}
-                </td>
-                <td style="text-align:right">
-                    <button type="button" class="btn btn-primary" style="padding:6px 12px;font-size:0.8rem;" data-save-lead="{{ lead.id }}">Save</button>
-                    <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;color:var(--error);border-color:var(--error);" data-delete-lead="{{ lead.id }}">Delete</button>
-                </td>
-            </tr>
-            {% endfor %}
-            {% else %}
-            <tr>
-                <td colspan="8" style="text-align:center;padding:2rem;" class="muted">No leads matching your criteria.</td>
-            </tr>
-            {% endif %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="data-table" id="leads-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Product / Variant</th>
+                    <th>Source</th>
+                    <th>Message</th>
+                    <th style="text-align:center">Status</th>
+                    <th>Date</th>
+                    <th style="width: 150px; text-align:right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if leads %}
+                {% for lead in leads %}
+                <tr>
+                    <td><strong>{{ lead.name }}</strong></td>
+                    <td>{{ lead.phone }}</td>
+                    <td>
+                        {% if lead.product_name %}
+                            {{ lead.product_name }}{% if lead.variant_name %} <span class="muted">· {{ lead.variant_name }}</span>{% endif %}
+                        {% else %}
+                            <span class="muted" style="font-style:italic">—</span>
+                        {% endif %}
+                    </td>
+                    <td><span class="tag">{{ lead.source.value }}</span></td>
+                    <td style="max-width: 220px;">
+                        {% if lead.message %}
+                            <span title="{{ lead.message }}">{{ lead.message[:60] }}{% if lead.message|length > 60 %}...{% endif %}</span>
+                        {% else %}
+                            <span class="muted" style="font-style:italic">No message</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align:center">
+                        <select data-lead-status="{{ lead.id }}" style="width:auto;min-width:100px;padding:6px 10px;font-size:0.85rem;">
+                            {% for item in lead_statuses %}
+                            <option value="{{ item.value }}" {% if lead.status == item %}selected{% endif %}>{{ item.value }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <span class="lead-label">Inquired</span>
+                        {{ to_ist(lead.created_at) }}
+                        {% if lead.contacted_at %}
+                        <br><span class="lead-label" style="margin-top:4px;">Contacted</span>
+                        {{ to_ist(lead.contacted_at) }}
+                        {% endif %}
+                    </td>
+                    <td style="text-align:right">
+                        <button type="button" class="btn btn-primary" style="padding:6px 12px;font-size:0.8rem;" data-save-lead="{{ lead.id }}">Save</button>
+                        <button type="button" class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem;color:var(--error);border-color:var(--error);" data-delete-lead="{{ lead.id }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="8" style="text-align:center;padding:2rem;" class="muted">No leads matching your criteria.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 {% if leads %}

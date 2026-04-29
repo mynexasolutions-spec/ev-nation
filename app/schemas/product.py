@@ -198,6 +198,7 @@ class ProductListItem(BaseModel):
     sort_order: int
     category: CategoryRead | None = None
     primary_image: ProductImageRead | None = None
+    images: list[ProductImageRead] = Field(default_factory=list)
     variants: list[VariantRead] = Field(default_factory=list)
     spec: ProductSpecRead | None = None
 

@@ -5,7 +5,7 @@
 
 set -e
 
-SERVER="ec2-user@ec2-13-232-60-185.ap-south-1.compute.amazonaws.com"
+SERVER="ec2-user@ec2-13-200-255-139.ap-south-1.compute.amazonaws.com"
 PEM="nexa-solutions.pem"
 REMOTE_DIR="/home/ec2-user/ev-nation"
 SERVICE="ev-nation"

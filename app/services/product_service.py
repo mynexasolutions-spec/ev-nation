@@ -180,6 +180,7 @@ class ProductService:
             sort_order=product.sort_order,
             category=CategoryRead.model_validate(product.category) if product.category else None,
             primary_image=ProductImageRead.model_validate(primary_image) if primary_image else None,
+            images=[ProductImageRead.model_validate(image) for image in product.images],
             variants=[VariantRead.model_validate(variant) for variant in active_variants],
             spec=ProductSpecRead.model_validate(product.spec) if product.spec else None,
         )

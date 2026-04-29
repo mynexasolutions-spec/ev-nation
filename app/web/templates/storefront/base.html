@@ -25,7 +25,11 @@
         <a href="/about" onclick="closeMenu()">About</a>
         <a href="/#gallery" onclick="closeMenu()">Gallery</a>
         <a href="/#contact" onclick="closeMenu()">Contact</a>
-        <a href="/collection" class="m-cta" onclick="closeMenu()">Explore</a>
+        {% if user %}
+          <a href="/profile" class="m-cta" style="background: var(--green-deep); color: var(--green-lime);" onclick="closeMenu()">Profile</a>
+        {% else %}
+          <a href="/login" class="m-cta" onclick="closeMenu()">Login</a>
+        {% endif %}
       </div>
     </div>
   </div>

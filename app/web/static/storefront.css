@@ -1026,7 +1026,6 @@ section {
 }
 
 .product-card:hover {
-  transform: translateY(-8px);
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
   border-color: var(--green-lime);
 }
@@ -1050,9 +1049,7 @@ section {
   transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-.product-card:hover .p-img-box img {
-  transform: scale(1.1);
-}
+
 
 .p-body {
   padding: 32px;
@@ -2132,7 +2129,6 @@ footer {
 }
 
 .product-card:hover {
-  transform: translateY(-8px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
 }
 
@@ -2142,22 +2138,20 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 0; /* Padding moved to children to prevent hover-slide bleed */
 }
 
 .p-img-box img {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+  padding: 10px;
   transition: transform 0.5s ease;
 }
 
-.product-card:hover .p-img-box img {
-  transform: scale(1.05);
-}
 
 .p-body {
-  padding: 20px;
+  padding: 12px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -2179,7 +2173,7 @@ footer {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 800;
   color: var(--green-mid);
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   margin-top: 4px;
 }
 
@@ -2195,16 +2189,17 @@ footer {
 
 .p-spec-item label {
   display: block;
-  font-size: 0.65rem;
-  color: #aaa;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.85rem;
+  color: #777;
   text-transform: uppercase;
   font-weight: 800;
   margin-bottom: 4px;
 }
 
-.p-spec-item span {
+.p-spec-item span, .p-spec-item value {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   color: var(--green-deep);
 }
 
@@ -2354,4 +2349,116 @@ footer {
 
 .footer-legal-links a:hover {
   color: var(--green-bright);
+}
+
+/* Hover Slideshow for Product Cards */
+.hover-slideshow {
+  position: relative;
+  overflow: hidden;
+  justify-content: flex-start;
+}
+
+.slideshow-track {
+  display: flex;
+  width: calc(var(--total-imgs) * 100%);
+  height: 100%;
+  transition: transform 0.4s ease;
+  flex-shrink: 0;
+}
+
+.slideshow-track img {
+  flex: 0 0 calc(100% / var(--total-imgs));
+  width: calc(100% / var(--total-imgs));
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Adjust track width for specific counts */
+.hover-slideshow[data-total="2"] .slideshow-track { width: 200%; }
+.hover-slideshow[data-total="3"] .slideshow-track { width: 300%; }
+.hover-slideshow[data-total="4"] .slideshow-track { width: 400%; }
+
+.hover-slideshow[data-total="2"] .slideshow-track img { flex-basis: 50%; }
+.hover-slideshow[data-total="3"] .slideshow-track img { flex-basis: 33.333%; }
+.hover-slideshow[data-total="4"] .slideshow-track img { flex-basis: 25%; }
+
+.product-card:hover .hover-slideshow.animated .slideshow-track {
+  animation: slideTrack calc(var(--total-imgs) * 1.5s) infinite;
+}
+
+/* Specific animations for specific counts to ensure correct alignment */
+.product-card:hover .hover-slideshow[data-total="2"] .slideshow-track {
+  animation: slideTrack2 3s infinite;
+}
+@keyframes slideTrack2 {
+  0%, 45% { transform: translateX(0); }
+  50%, 95% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.product-card:hover .hover-slideshow[data-total="3"] .slideshow-track {
+  animation: slideTrack3 4.5s infinite;
+}
+@keyframes slideTrack3 {
+  0%, 28% { transform: translateX(0); }
+  33%, 61% { transform: translateX(-33.33%); }
+  66%, 95% { transform: translateX(-66.66%); }
+  100% { transform: translateX(0); }
+}
+
+.product-card:hover .hover-slideshow[data-total="4"] .slideshow-track {
+  animation: slideTrack4 6s infinite;
+}
+@keyframes slideTrack4 {
+  0%, 20% { transform: translateX(0); }
+  25%, 45% { transform: translateX(-25%); }
+  50%, 70% { transform: translateX(-50%); }
+  75%, 95% { transform: translateX(-75%); }
+  100% { transform: translateX(0); }
+}
+
+.slider-dots {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.product-card:hover .slider-dots {
+  opacity: 1;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 50%;
+}
+
+.product-card:hover .dot {
+  animation: dotActive calc(var(--total-imgs) * 1.5s) infinite;
+  animation-delay: calc(var(--dot-idx) * 1.5s);
+}
+
+@keyframes dotActive {
+  0%, 25% { background: var(--green-mid); transform: scale(1.3); }
+  30%, 100% { background: rgba(0, 0, 0, 0.15); transform: scale(1); }
+}
+
+/* Fallback for single image - no dots, no track animation */
+.hover-slideshow:not(.animated) .slideshow-track {
+  width: 100%;
+  transform: none !important;
+  animation: none !important;
+}
+
+@media (max-width: 768px) {
+  .p-title-row h3 {
+    font-size: 1.4rem;
+  }
 }

@@ -717,6 +717,84 @@ textarea {
     background: rgba(168, 230, 61, 0.04);
 }
 
+/* ---- Tables ---- */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ---- Media Queries ---- */
+@media (max-width: 1024px) {
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-grid > .panel:first-child {
+        position: static;
+        max-height: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-navbar {
+        height: auto;
+        padding: 12px 20px;
+    }
+    
+    .navbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .admin-nav {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .admin-nav a {
+        white-space: nowrap;
+        padding: 6px 12px;
+    }
+    
+    .navbar-user {
+        width: 100%;
+        justify-content: space-between;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .admin-main {
+        padding: 20px 16px;
+    }
+    
+    .header-action {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .header-action form {
+        width: 100%;
+    }
+    
+    .header-action form input,
+    .header-action form select {
+        flex: 1;
+    }
+
+    .panel {
+        padding: 16px;
+    }
+    
+    .two-col {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* ---- Status Pills ---- */
 .status-pill {
     display: inline-block;
