@@ -21,10 +21,18 @@
       <button class="m-close" onclick="closeMenu()" aria-label="Close Menu">✕</button>
       <div class="menu-links">
         <a href="/" onclick="closeMenu()">Home</a>
-        <a href="/collection" onclick="closeMenu()">Collection</a>
+        <div class="m-dropdown">
+          <a href="#" onclick="toggleMDropdown(event)" class="m-drop-btn">Products <span class="m-drop-icon" style="font-size: 0.8rem; transition: transform 0.3s; display: inline-block;">▼</span></a>
+          <div class="m-dropdown-content" id="mProductsDropdown" style="max-height: 0; overflow: hidden; transition: max-height 0.4s ease; padding-left: 15px; display: flex; flex-direction: column; gap: 10px;">
+            <a href="/collection" onclick="closeMenu()" style="font-size: 1.4rem; color: var(--gray); margin-top: 10px;">All Models</a>
+            <a href="/collection?category=sport" onclick="closeMenu()" style="font-size: 1.4rem; color: var(--gray);">Sport Series</a>
+            <a href="/collection?category=city" onclick="closeMenu()" style="font-size: 1.4rem; color: var(--gray);">City Commuters</a>
+          </div>
+        </div>
         <a href="/about" onclick="closeMenu()">About</a>
         <a href="/#gallery" onclick="closeMenu()">Gallery</a>
         <a href="/#contact" onclick="closeMenu()">Contact</a>
+        <a href="/cart" onclick="closeMenu()" style="display: flex; align-items: center; gap: 8px;">Cart <span class="cart-badge" id="cartBadgeMenu" style="display:none; position:static; font-size:0.8rem;">0</span></a>
         {% if user %}
           <a href="/profile" class="m-cta" style="background: var(--green-deep); color: var(--green-lime);" onclick="closeMenu()">Profile</a>
         {% else %}
@@ -71,6 +79,19 @@
       }
     }
 
+    function toggleMDropdown(e) {
+      e.preventDefault();
+      const dropContent = document.getElementById('mProductsDropdown');
+      const icon = e.target.querySelector('.m-drop-icon') || e.target.parentElement.querySelector('.m-drop-icon');
+      if (dropContent.style.maxHeight === '0px' || !dropContent.style.maxHeight) {
+        dropContent.style.maxHeight = dropContent.scrollHeight + 'px';
+        if(icon) icon.style.transform = 'rotate(180deg)';
+      } else {
+        dropContent.style.maxHeight = '0px';
+        if(icon) icon.style.transform = 'rotate(0deg)';
+      }
+    }
+
     // Scroll reveal
     const revealEls = document.querySelectorAll('.reveal');
     const revObs = new IntersectionObserver(entries => {
@@ -114,6 +135,111 @@
       }
       setInterval(nextSlide, 3000);
     }
+
+    // ====== CART SYSTEM ======
+    const EVCart = {
+      STORAGE_KEY: 'evn_cart',
+      isLoggedIn: {{ 'true' if user else 'false' }},
+
+      // --- Guest (localStorage) ---
+      getGuestCart() {
+        try { return JSON.parse(localStorage.getItem(this.STORAGE_KEY)) || []; }
+        catch { return []; }
+      },
+      saveGuestCart(items) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(items));
+      },
+      addToGuestCart(productId, variantId, qty = 1, attributes = null) {
+        const cart = this.getGuestCart();
+        // Check if item exists with SAME variant AND SAME attributes
+        const idx = cart.findIndex(i => 
+          i.product_id === productId && 
+          i.variant_id === variantId && 
+          JSON.stringify(i.attributes) === JSON.stringify(attributes)
+        );
+        if (idx >= 0) {
+          cart[idx].quantity = Math.min(cart[idx].quantity + qty, 10);
+        } else {
+          cart.push({ product_id: productId, variant_id: variantId, quantity: qty, attributes: attributes });
+        }
+        this.saveGuestCart(cart);
+      },
+      getGuestCount() {
+        return this.getGuestCart().length;
+      },
+
+      // --- Logged-in (API) ---
+      async apiAddItem(productId, variantId, qty = 1, attributes = null) {
+        const r = await fetch('/api/v1/cart/items', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            product_id: productId, 
+            variant_id: variantId || null, 
+            quantity: qty,
+            attributes: attributes 
+          }),
+        });
+        if (r.status === 401) { window.location.href = '/login'; return null; }
+        if (!r.ok) { const d = await r.json(); throw new Error(d.detail || 'Failed'); }
+        return await r.json();
+      },
+      async apiGetCount() {
+        try {
+          const r = await fetch('/api/v1/cart/count');
+          if (!r.ok) return 0;
+          const d = await r.json();
+          return d.count || 0;
+        } catch { return 0; }
+      },
+      async syncGuestCart() {
+        const guest = this.getGuestCart();
+        if (guest.length === 0) return;
+        try {
+          await fetch('/api/v1/cart/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(guest),
+          });
+          localStorage.removeItem(this.STORAGE_KEY);
+        } catch { /* silent fail */ }
+      },
+
+      // --- Unified ---
+      async addItem(productId, variantId, qty = 1, attributes = null) {
+        if (this.isLoggedIn) {
+          return await this.apiAddItem(productId, variantId, qty, attributes);
+        } else {
+          this.addToGuestCart(productId, variantId, qty, attributes);
+          this.updateBadge();
+          return true;
+        }
+      },
+      async updateBadge() {
+        let count = 0;
+        if (this.isLoggedIn) {
+          count = await this.apiGetCount();
+        } else {
+          count = this.getGuestCount();
+        }
+        document.querySelectorAll('.cart-badge').forEach(el => {
+          if (count > 0) {
+            el.textContent = count > 9 ? '9+' : count;
+            el.style.display = 'flex';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      },
+    };
+
+    // Sync guest cart on login & update badge
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (EVCart.isLoggedIn) {
+        await EVCart.syncGuestCart();
+      }
+      EVCart.updateBadge();
+    });
   </script>
 </body>
 </html>

@@ -1,0 +1,54 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="page-head">
+    <h1 class="page-title">Registered Customers</h1>
+</div>
+
+<div class="card p-0">
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>Email Address</th>
+                    <th>Joined On</th>
+                    <th>Orders</th>
+                    <th style="text-align: right;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if users %}
+                    {% for user, order_count in users %}
+                    <tr>
+                        <td>
+                            <div style="font-weight: 700; color: var(--accent);">{{ user.full_name or 'Friend' }}</div>
+                        </td>
+                        <td>
+                            <div class="muted">{{ user.email }}</div>
+                        </td>
+                        <td>
+                            {{ to_ist(user.created_at) }}
+                        </td>
+                        <td>
+                            <span class="pill" style="background: var(--accent-pale); color: var(--accent);">
+                                {{ order_count }} Order{{ 's' if order_count != 1 else '' }}
+                            </span>
+                        </td>
+                        <td style="text-align: right;">
+                            <a href="/admin/users/{{ user.id }}" class="btn-outline" style="padding: 6px 12px; font-size: 0.8rem;">View Profile</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 48px; color: var(--muted); font-style: italic;">
+                            No registered customers found.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

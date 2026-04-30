@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     )
 
     project_name: str = "EV Nation API"
+    debug: bool = False
     api_v1_prefix: str = "/api/v1"
     database_url: str = _default_sqlite_url()
     database_echo: bool = False
@@ -32,6 +33,10 @@ class Settings(BaseSettings):
     bootstrap_admin_password: str = "Admin12345"
     bootstrap_admin_full_name: str | None = "Local Admin"
     media_dir: str = str(_PROJECT_ROOT / "media")
+    
+    # Razorpay
+    razorpay_key_id: str = "rzp_test_change_me"
+    razorpay_key_secret: str = "change_me"
 
 
 @lru_cache

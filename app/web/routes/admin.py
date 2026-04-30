@@ -25,12 +25,80 @@ from app.services.admin_auth_service import AdminAuthService
 from app.services.lead_service import LeadService
 from app.services.product_service import ProductService
 from app.services.category_service import category_service
+from app.services.order_service import OrderService
 from app.web.templating import templates
 
 router = APIRouter(prefix="/admin")
 auth_service = AdminAuthService()
 product_service = ProductService()
 lead_service = LeadService()
+order_service = OrderService()
+
+
+@router.get("/orders", response_class=HTMLResponse)
+def admin_orders_page(request: Request, db: Session = Depends(get_db)):
+    try:
+        current_admin = _require_admin(request, db)
+    except HTTPException:
+        return _redirect_to_login()
+
+    status_filter = request.query_params.get("status")
+    orders = order_service.admin_get_all_orders(db, status_filter=status_filter)
+    
+    from app.models.enums import OrderStatus
+    return templates.TemplateResponse(
+        "admin/orders.html",
+        _base_context(
+            request,
+            current_admin,
+            page_title="Orders",
+            orders=orders,
+            order_statuses=list(OrderStatus),
+            selected_status=status_filter or "",
+        ),
+    )
+
+
+@router.get("/orders/{order_number}", response_class=HTMLResponse)
+def admin_order_detail_page(order_number: str, request: Request, db: Session = Depends(get_db)):
+    try:
+        current_admin = _require_admin(request, db)
+    except HTTPException:
+        return _redirect_to_login()
+
+    try:
+        order = order_service.admin_get_order(db, order_number)
+    except NotFoundError:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    from app.models.enums import OrderStatus
+    return templates.TemplateResponse(
+        "admin/order_detail.html",
+        _base_context(
+            request,
+            current_admin,
+            page_title=f"Order {order_number}",
+            order=order,
+            order_statuses=list(OrderStatus),
+        ),
+    )
+
+
+@router.post("/orders/{order_number}/status")
+async def admin_order_status_update(order_number: str, request: Request, db: Session = Depends(get_db)) -> JSONResponse:
+    try:
+        _require_admin(request, db)
+        payload = await request.json()
+        new_status = payload.get("status")
+        if not new_status:
+            raise DomainValidationError("Status is required")
+            
+        order = order_service.admin_update_status(db, order_number, new_status)
+        return JSONResponse({"ok": True, "order": order.model_dump(mode="json")})
+    except HTTPException:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required.")
+    except (NotFoundError, DomainValidationError) as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
 
 def _redirect_to_login() -> RedirectResponse:
@@ -75,6 +143,65 @@ def _base_context(request: Request, current_admin: AdminUser, **extra: object) -
     }
     context.update(extra)
     return context
+
+
+@router.get("/users", response_class=HTMLResponse)
+def admin_users_page(request: Request, db: Session = Depends(get_db)):
+    try:
+        current_admin = _require_admin(request, db)
+    except HTTPException:
+        return _redirect_to_login()
+
+    from app.models.user import User
+    from app.models.order import Order
+    from sqlalchemy import func
+
+    # Fetch users with their order counts
+    users_with_counts = db.query(
+        User, 
+        func.count(Order.id).label("order_count")
+    ).outerjoin(Order).group_by(User.id).order_by(User.created_at.desc()).all()
+    
+    return templates.TemplateResponse(
+        "admin/users.html",
+        _base_context(
+            request,
+            current_admin,
+            page_title="Users",
+            users=users_with_counts,
+        ),
+    )
+
+
+@router.get("/users/{user_id}", response_class=HTMLResponse)
+def admin_user_detail_page(user_id: int, request: Request, db: Session = Depends(get_db)):
+    try:
+        current_admin = _require_admin(request, db)
+    except HTTPException:
+        return _redirect_to_login()
+
+    from app.models.user import User
+    from app.models.order import Order
+    from app.models.lead import Lead
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    orders = db.query(Order).filter(Order.user_id == user_id).order_by(Order.created_at.desc()).all()
+    leads = db.query(Lead).filter(Lead.user_id == user_id).order_by(Lead.created_at.desc()).all()
+    
+    return templates.TemplateResponse(
+        "admin/user_detail.html",
+        _base_context(
+            request,
+            current_admin,
+            page_title=f"Customer: {user.full_name or user.email}",
+            user=user,
+            orders=orders,
+            leads=leads,
+        ),
+    )
 
 
 @router.get("", response_class=HTMLResponse)

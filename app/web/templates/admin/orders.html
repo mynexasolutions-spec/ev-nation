@@ -1,0 +1,96 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="page-head">
+    <h1 class="page-title">Customer Orders</h1>
+</div>
+
+<!-- Filters -->
+<div class="panel" style="margin-bottom: 24px; display: flex; align-items: center; gap: 16px;">
+    <span class="eyebrow" style="margin: 0;">Filter By Status:</span>
+    <select id="statusFilter" style="width: auto; padding: 6px 12px;" onchange="filterOrders()">
+        <option value="">All Orders</option>
+        {% for status in order_statuses %}
+            <option value="{{ status.value }}" {% if selected_status == status.value %}selected{% endif %}>
+                {{ status.value }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+<!-- Orders Table -->
+<div class="card p-0">
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Order No.</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if orders %}
+                    {% for order in orders %}
+                    <tr>
+                        <td style="font-weight: 700; color: var(--accent);">
+                            {{ order.order_number }}
+                        </td>
+                        <td>
+                            {{ to_ist(order.created_at) }}
+                        </td>
+                        <td>
+                            <div style="font-weight: 600;">{{ order.customer_name }}</div>
+                            <div class="muted" style="font-size: 0.8rem;">{{ order.customer_phone }}</div>
+                        </td>
+                        <td style="font-weight: 700;">
+                            ₹{{ "{:,.0f}".format(order.total) if order.total is number else order.total }}
+                        </td>
+                        <td>
+                            <span class="pill" style="
+                                {% if order.status == 'PENDING' %} background: #fff8e1; color: #f57f17; 
+                                {% elif order.status == 'PAID' %} background: #e8f5e9; color: #2e7d32;
+                                {% elif order.status == 'CONFIRMED' %} background: #e3f2fd; color: #1976d2;
+                                {% elif order.status == 'READY' %} background: var(--accent-pale); color: var(--accent);
+                                {% elif order.status == 'CANCELLED' %} background: #ffebee; color: #c62828;
+                                {% endif %}">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="muted" style="font-size: 0.85rem;">{{ order.payment_status }}</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <a href="/admin/orders/{{ order.order_number }}" class="btn-outline" style="padding: 6px 12px; font-size: 0.8rem;">Manage</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 48px; color: var(--muted); font-style: italic;">
+                            No orders found matching the criteria.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function filterOrders() {
+        const status = document.getElementById('statusFilter').value;
+        const url = new URL(window.location.href);
+        if (status) {
+            url.searchParams.set('status', status);
+        } else {
+            url.searchParams.delete('status');
+        }
+        window.location.href = url.toString();
+    }
+</script>
+{% endblock %}

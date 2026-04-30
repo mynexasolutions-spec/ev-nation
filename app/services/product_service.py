@@ -97,6 +97,12 @@ class ProductService:
             raise NotFoundError(f"Product with slug '{slug}' was not found.")
         return self._to_product_detail(product)
 
+    def get_public_product_by_id(self, db: Session, product_id: int) -> ProductDetailRead:
+        product = self.repository.get_by_id(db, product_id)
+        if product is None or not product.is_active:
+            raise NotFoundError(f"Product with id '{product_id}' was not found.")
+        return self._to_product_detail(product)
+
     def get_admin_product(self, db: Session, product_id: int) -> AdminProductDetailRead:
         product = self.repository.get_by_id(db, product_id)
         if product is None:
@@ -183,6 +189,7 @@ class ProductService:
             images=[ProductImageRead.model_validate(image) for image in product.images],
             variants=[VariantRead.model_validate(variant) for variant in active_variants],
             spec=ProductSpecRead.model_validate(product.spec) if product.spec else None,
+            battery_options=[BatteryOptionRead.model_validate(option) for option in product.battery_options],
         )
 
     def _to_product_detail(self, product: Product) -> ProductDetailRead:

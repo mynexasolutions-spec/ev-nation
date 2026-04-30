@@ -85,13 +85,9 @@
           <div class="p-specs">
             {% if product.spec %}
             <div class="p-spec-item"><label>RANGE</label><span>{{ product.spec.range or 'N/A' }}</span></div>
-            <div class="p-spec-item"><label>SPEED</label><span>{{ product.spec.speed or 'N/A' }}</span></div>
-            {% if product.spec.motor %}
-            <div class="p-spec-item"><label>MOTOR</label><span>{{ product.spec.motor.split(' ')[0] if ' ' in product.spec.motor else product.spec.motor }}</span></div>
-            {% endif %}
-            {% if product.spec.charging_time %}
-            <div class="p-spec-item"><label>CHARGE</label><span>{{ product.spec.charging_time }}</span></div>
-            {% endif %}
+            <div class="p-spec-item"><label>MOTOR</label><span>{{ product.spec.motor or 'N/A' }}</span></div>
+            <div class="p-spec-item"><label>TOP SPEED</label><span>{{ product.spec.speed or 'N/A' }}</span></div>
+            <div class="p-spec-item"><label>BATTERY</label><span>{{ product.spec.battery_type or 'N/A' }}</span></div>
             {% endif %}
           </div>
 

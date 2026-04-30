@@ -44,3 +44,38 @@ def get_current_user_web(
         return user_repo.get_by_id(db, int(user_id))
     except Exception:
         return None
+
+
+def get_current_user_required(
+    request: Request,
+    db: Session = Depends(get_db),
+) -> User:
+    """Like get_current_user_web, but raises 401 if not authenticated."""
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required.",
+        )
+    try:
+        payload = decode_access_token(token)
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token.",
+            )
+        user = user_repo.get_by_id(db, int(user_id))
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User not found.",
+            )
+        return user
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token.",
+        ) from exc

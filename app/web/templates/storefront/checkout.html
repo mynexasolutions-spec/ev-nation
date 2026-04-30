@@ -1,0 +1,302 @@
+{% extends "storefront/base.html" %}
+{% block content %}
+
+<style>
+  nav:not(.scrolled) .nav-logo,
+  nav:not(.scrolled) .nav-links a:not(.nav-cta) { color: var(--green-deep) !important; }
+  nav:not(.scrolled) .nav-logo img {
+    filter: brightness(0) saturate(100%) invert(20%) sepia(45%) saturate(545%) hue-rotate(101deg) brightness(93%) contrast(93%);
+  }
+  nav:not(.scrolled) .hamburger span { background: var(--green-deep) !important; }
+
+  .checkout-page { padding: 140px 56px 100px; background: var(--off-white); min-height: 80vh; }
+  .checkout-container { max-width: 1100px; margin: 0 auto; }
+  .checkout-title { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: var(--green-deep); margin-bottom: 30px; }
+
+  .checkout-layout { display: grid; grid-template-columns: 1fr 420px; gap: 40px; align-items: start; }
+  
+  .checkout-section {
+    background: #fff; padding: 32px; border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid var(--light-gray);
+    margin-bottom: 24px;
+  }
+  .section-h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--green-deep); margin-bottom: 20px; border-bottom: 1px solid var(--light-gray); padding-bottom: 10px; }
+
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; font-weight: 700; font-size: 0.9rem; color: var(--gray); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-group input {
+    width: 100%; padding: 14px; border: 1px solid var(--light-gray); border-radius: 8px;
+    font-family: inherit; font-size: 1rem; color: var(--charcoal); transition: border-color 0.2s;
+  }
+  .form-group input:focus { outline: none; border-color: var(--green-mid); }
+
+  .pickup-info {
+    display: flex; gap: 16px; align-items: flex-start;
+    background: var(--green-mist); padding: 16px; border-radius: 8px; border: 1px solid var(--green-pale);
+  }
+  .pickup-icon { font-size: 1.5rem; }
+  .pickup-text h4 { font-weight: 800; color: var(--green-deep); margin-bottom: 4px; }
+  .pickup-text p { font-size: 0.9rem; color: var(--gray); line-height: 1.4; }
+
+  .order-summary-card {
+    background: var(--charcoal); color: #fff; padding: 32px; border-radius: 16px;
+    position: sticky; top: 120px;
+  }
+  .order-summary-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--green-lime); margin-bottom: 24px; }
+  
+  .summary-items { margin-bottom: 20px; max-height: 300px; overflow-y: auto; padding-right: 10px; }
+  .summary-item { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 12px; font-size: 0.95rem; }
+  .summary-item .name { color: rgba(255,255,255,0.8); }
+  .summary-item .price { font-weight: 700; color: #fff; }
+
+  .summary-divider { border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0; }
+  
+  .total-row { display: flex; justify-content: space-between; align-items: center; }
+  .total-row .label { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--white); }
+  .total-row .value { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--green-lime); }
+
+  .btn-pay {
+    width: 100%; padding: 18px; margin-top: 30px;
+    background: var(--green-lime); color: var(--charcoal);
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem;
+    border: none; border-radius: 8px; cursor: pointer;
+    text-transform: uppercase; letter-spacing: 1px;
+    transition: all 0.3s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .btn-pay:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(163,255,0,0.3); }
+  .btn-pay:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .secure-notice {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 16px; color: rgba(255,255,255,0.5); font-size: 0.8rem;
+  }
+
+  @media (max-width: 992px) {
+    .checkout-layout { grid-template-columns: 1fr; }
+    .order-summary-card { position: static; }
+  }
+  @media (max-width: 768px) {
+    .checkout-page { padding: 120px 16px 60px; }
+    .checkout-title { font-size: 2.8rem; }
+  }
+</style>
+
+<section class="checkout-page">
+  <div class="checkout-container">
+    <h1 class="checkout-title">CHECKOUT</h1>
+
+    <div class="checkout-layout">
+      <!-- Left: Forms -->
+      <div class="checkout-main">
+        <div class="checkout-section">
+          <h3 class="section-h3">CUSTOMER INFORMATION</h3>
+          <form id="checkoutForm">
+            <div class="form-group">
+              <label for="full_name">Full Name</label>
+              <input type="text" id="full_name" name="full_name" value="{{ user.full_name or '' }}" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="Enter your 10-digit mobile number" required>
+            </div>
+            <div class="form-group">
+              <label for="notes">Notes (Optional)</label>
+              <input type="text" id="notes" name="notes" placeholder="Any special instructions?">
+            </div>
+          </form>
+        </div>
+
+        <div class="checkout-section">
+          <h3 class="section-h3">PICKUP DETAILS</h3>
+          <div class="pickup-info">
+            <div class="pickup-icon">📍</div>
+            <div class="pickup-text">
+              <h4>Showroom Pickup</h4>
+              <p>EV Nation Experience Center<br>Main Road, Small Town, Area 51<br>Time: 10:00 AM - 7:00 PM</p>
+            </div>
+          </div>
+          <p style="margin-top: 16px; font-size: 0.9rem; color: var(--gray);">
+            * Since we currently offer showroom pickup only, no shipping address is required. Your order will be ready for pickup after confirmation.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right: Summary & Pay -->
+      <div class="checkout-sidebar">
+        <div class="order-summary-card">
+          <h3>ORDER SUMMARY</h3>
+          
+          <div class="summary-items" id="summaryItems">
+            <!-- Items injected by JS -->
+          </div>
+
+          <div class="summary-divider"></div>
+          
+          <div class="total-row">
+            <span class="label">Payable Now</span>
+            <span class="value" id="orderTotal">₹0</span>
+          </div>
+
+          <button class="btn-pay" id="payBtn" onclick="handleCheckout()">
+            <span>PLACE ORDER & PAY</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+
+          <div class="secure-notice">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Secure payment via Razorpay</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Razorpay Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+  let cart = null;
+
+  async function initCheckout() {
+    try {
+      const r = await fetch('/api/v1/cart');
+      if (!r.ok) throw new Error('Failed to load cart');
+      cart = await r.json();
+      
+      if (cart.items.length === 0) {
+        window.location.href = '/cart';
+        return;
+      }
+
+      renderSummary();
+    } catch (err) {
+      console.error(err);
+      alert("Could not load cart data. Please try again.");
+    }
+  }
+
+  function renderSummary() {
+    const list = document.getElementById('summaryItems');
+    list.innerHTML = '';
+
+    cart.items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'summary-item';
+      div.innerHTML = `
+        <span class="name">${item.product_name} x ${item.quantity}</span>
+        <span class="price">₹${(item.unit_price * item.quantity).toLocaleString('en-IN')}</span>
+      `;
+      list.appendChild(div);
+    });
+
+    document.getElementById('orderTotal').textContent = '₹' + cart.subtotal.toLocaleString('en-IN');
+  }
+
+  async function handleCheckout() {
+    const btn = document.getElementById('payBtn');
+    const name = document.getElementById('full_name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const notes = document.getElementById('notes').value.trim();
+
+    if (!name || !phone) {
+      alert("Please enter your name and phone number.");
+      return;
+    }
+
+    if (phone.length < 10) {
+      alert("Please enter a valid 10-digit phone number.");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span>PROCESSING...</span>';
+
+    try {
+      // 1. Create the Order in our DB
+      const orderResp = await fetch('/api/v1/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_name: name,
+          customer_phone: phone,
+          notes: notes
+        })
+      });
+
+      if (!orderResp.ok) {
+        const err = await orderResp.json();
+        throw new Error(err.detail || 'Failed to create order');
+      }
+
+      const order = await orderResp.json();
+
+      // 2. Initiate Payment (Get Razorpay Order ID)
+      const payInitResp = await fetch(`/api/v1/orders/${order.order_number}/pay`, {
+        method: 'POST'
+      });
+
+      if (!payInitResp.ok) throw new Error('Failed to initiate payment');
+      const paymentData = await payInitResp.json();
+
+      // 3. Open Razorpay Popup
+      const options = {
+        "key": paymentData.razorpay_key_id,
+        "amount": paymentData.amount, // in paise
+        "currency": paymentData.currency,
+        "name": "EV NATION",
+        "description": "Payment for Order " + paymentData.order_number,
+        "order_id": paymentData.razorpay_order_id,
+        "handler": async function (response) {
+          // 4. Verify Payment on Success
+          try {
+            btn.innerHTML = '<span>VERIFYING PAYMENT...</span>';
+            const verifyResp = await fetch('/api/v1/orders/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            });
+
+            if (verifyResp.ok) {
+              window.location.href = `/orders/${order.order_number}/confirmation`;
+            } else {
+              alert("Payment verification failed. Please contact support.");
+              window.location.reload();
+            }
+          } catch (err) {
+            console.error(err);
+            alert("An error occurred during verification.");
+          }
+        },
+        "prefill": {
+          "name": paymentData.customer_name,
+          "contact": paymentData.customer_phone
+        },
+        "theme": { "color": "#1a4a2e" },
+        "modal": {
+          "ondismiss": function() {
+            btn.disabled = false;
+            btn.innerHTML = '<span>PLACE ORDER & PAY</span>';
+          }
+        }
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.open();
+
+    } catch (err) {
+      alert(err.message);
+      btn.disabled = false;
+      btn.innerHTML = '<span>PLACE ORDER & PAY</span>';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initCheckout);
+</script>
+
+{% endblock %}

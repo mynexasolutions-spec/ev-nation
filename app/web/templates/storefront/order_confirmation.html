@@ -1,0 +1,62 @@
+{% extends "storefront/base.html" %}
+{% block content %}
+
+<style>
+  nav:not(.scrolled) .nav-logo,
+  nav:not(.scrolled) .nav-links a:not(.nav-cta) { color: var(--green-deep) !important; }
+  nav:not(.scrolled) .nav-logo img {
+    filter: brightness(0) saturate(100%) invert(20%) sepia(45%) saturate(545%) hue-rotate(101deg) brightness(93%) contrast(93%);
+  }
+  nav:not(.scrolled) .hamburger span { background: var(--green-deep) !important; }
+
+  .conf-page { padding: 160px 24px 100px; text-align: center; background: var(--off-white); min-height: 80vh; }
+  .conf-card {
+    max-width: 600px; margin: 0 auto; background: #fff; padding: 60px 40px;
+    border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    border: 1px solid var(--light-gray);
+  }
+  
+  .conf-icon {
+    width: 80px; height: 80px; background: var(--green-lime); color: var(--green-deep);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 30px; font-size: 2.5rem;
+    animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  
+  .conf-card h1 { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--green-deep); margin-bottom: 10px; }
+  .conf-card p { color: var(--gray); font-size: 1.1rem; margin-bottom: 30px; line-height: 1.6; }
+  
+  .order-number-box {
+    background: var(--green-mist); padding: 20px; border-radius: 12px;
+    border: 1px dashed var(--green-mid); margin-bottom: 40px;
+  }
+  .order-number-box span { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--green-mid); margin-bottom: 4px; font-weight: 700; }
+  .order-number-box strong { font-family: 'Barlow Condensed', sans-serif; font-size: 2rem; color: var(--green-deep); }
+
+  .conf-actions { display: flex; flex-direction: column; gap: 16px; }
+  
+  @keyframes scaleIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+</style>
+
+<section class="conf-page">
+  <div class="conf-card">
+    <div class="conf-icon">✓</div>
+    <h1>PAYMENT SUCCESSFUL!</h1>
+    <p>Thank you for choosing EV Nation. Your order has been placed successfully and is now being processed.</p>
+    
+    <div class="order-number-box">
+      <span>Your Order Number</span>
+      <strong>{{ order_number }}</strong>
+    </div>
+
+    <div class="conf-actions">
+      <a href="/profile" class="btn-primary">TRACK MY ORDER</a>
+      <a href="/collection" style="color: var(--gray); text-decoration: none; font-size: 0.9rem; font-weight: 700;">Continue Browsing →</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

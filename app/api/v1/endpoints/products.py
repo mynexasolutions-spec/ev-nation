@@ -21,3 +21,11 @@ def get_product(slug: str, db: Session = Depends(get_db)) -> ProductDetailRead:
         return service.get_public_product(db, slug)
     except NotFoundError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+
+
+@router.get("/id/{product_id}", response_model=ProductDetailRead, summary="Get product by ID")
+def get_product_by_id(product_id: int, db: Session = Depends(get_db)) -> ProductDetailRead:
+    try:
+        return service.get_public_product_by_id(db, product_id)
+    except NotFoundError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc

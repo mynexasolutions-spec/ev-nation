@@ -18,7 +18,9 @@
                 <nav class="admin-nav">
                     <a href="/admin/products" class="{% if 'Products' in page_title %}active{% endif %}">Products</a>
                     <a href="/admin/categories" class="{% if 'Categories' in page_title %}active{% endif %}">Categories</a>
+                    <a href="/admin/orders" class="{% if 'Orders' in page_title %}active{% endif %}">Orders</a>
                     <a href="/admin/leads" class="{% if 'Leads' in page_title %}active{% endif %}">Leads</a>
+                    <a href="/admin/users" class="{% if 'Users' in page_title %}active{% endif %}">Users</a>
                 </nav>
                 <div class="navbar-user">
                     <span class="muted" style="margin-right: 1rem;">{{ current_admin.full_name or current_admin.email }}</span>

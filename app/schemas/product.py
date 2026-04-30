@@ -201,6 +201,7 @@ class ProductListItem(BaseModel):
     images: list[ProductImageRead] = Field(default_factory=list)
     variants: list[VariantRead] = Field(default_factory=list)
     spec: ProductSpecRead | None = None
+    battery_options: list[BatteryOptionRead] = Field(default_factory=list)
 
 
 class ProductDetailRead(BaseModel):

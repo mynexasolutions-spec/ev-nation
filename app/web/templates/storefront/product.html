@@ -199,6 +199,39 @@
     background: var(--color);
     box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
   }
+
+  /* Battery Buttons */
+  .battery-btn {
+    padding: 10px 16px;
+    border: 1px solid var(--light-gray);
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+    min-width: 120px;
+  }
+  .battery-btn.active, .battery-btn:hover {
+    border-color: var(--green-mid);
+    background: var(--green-mist);
+    transform: translateY(-2px);
+  }
+  .battery-btn strong { display: block; font-size: 1.1rem; color: var(--green-deep); }
+  .battery-btn span { font-size: 0.8rem; color: var(--gray); }
+
+  .selection-error {
+    color: #ff4d4d;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    display: none;
+    animation: shake 0.4s ease-in-out;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
   
   .spec-highlights {
     display: grid;
@@ -452,13 +485,15 @@
 
             <!-- Color Variants -->
             {% if product.variants %}
-            <div class="product-variants">
-                <p class="variants-label">Available Colors</p>
-                <div class="variants-row">
+            <div class="product-variants" style="margin-bottom: 25px;">
+                <p class="variants-label">Select Color</p>
+                <div class="variants-row" style="margin-bottom: 0;">
+                    {% if not product.variants %}
                     <button class="variant-btn active" data-variant-id="">
                         <span class="variant-swatch" style="background: linear-gradient(135deg, #e0e0e0, #f5f5f5);"></span>
-                        <span class="variant-name">General</span>
+                        <span class="variant-name">Standard Edition</span>
                     </button>
+                    {% endif %}
                     {% for variant in product.variants %}
                         {% set ns = namespace(has_images=false) %}
                         {% for img in product.images %}
@@ -466,12 +501,28 @@
                                 {% set ns.has_images = true %}
                             {% endif %}
                         {% endfor %}
+                        
                         {% if ns.has_images or variant.image_path %}
                             <button class="variant-btn" style="--color: {{ variant.color_code or '#888888' }}" title="{{ variant.color_name }}" data-variant-id="{{ variant.id }}" {% if variant.image_path %}data-image="{{ variant.image_path }}"{% endif %}>
                                 <span class="variant-swatch"></span>
                                 <span class="variant-name">{{ variant.color_name }}</span>
                             </button>
                         {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Battery Variants -->
+            {% if product.battery_options %}
+            <div class="product-battery" style="margin-bottom: 30px;">
+                <p class="variants-label">Select Battery Option</p>
+                <div class="variants-row" style="margin-bottom: 0;">
+                    {% for bat in product.battery_options %}
+                        <button class="battery-btn" data-battery-id="{{ bat.id }}" data-battery-desc="{{ bat.capacity }} ({{ bat.range }})">
+                            <strong>{{ bat.capacity }}</strong>
+                            <span>{{ bat.range }} Range</span>
+                        </button>
                     {% endfor %}
                 </div>
             </div>
@@ -507,14 +558,28 @@
             </div>
             {% endif %}
 
+            <!-- Selection Warning -->
+            <div id="selectionWarning" class="selection-error">⚠️ Please select a color and battery option to continue.</div>
+
             <!-- CTA Buttons -->
             <div class="product-ctas">
-                <button class="btn-primary" id="call-toggle">Book Test Ride</button>
+                <button class="btn-primary" id="addToCartBtn" onclick="handleAddToCart()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle; margin-right: 6px;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    Add to Cart
+                </button>
+                <button class="btn-outline" id="buyNowBtn" onclick="handleBuyNow()" style="border: 2px solid var(--charcoal); font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; padding: 14px 32px; border-radius: 4px; cursor: pointer; text-transform: uppercase;">Buy Now</button>
+                <button class="btn-outline" id="call-toggle">Book Test Ride</button>
                 {% if whatsapp_number %}
                 <button class="btn-outline" id="whatsapp-toggle">
                     WhatsApp Us
                 </button>
                 {% endif %}
+            </div>
+            <!-- Add to cart feedback toast -->
+            <div class="cart-toast" id="cartToast" style="display:none;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                <span>Added to cart!</span>
+                <a href="/cart" style="color: var(--green-lime); margin-left: 8px; font-weight: 700;">View Cart →</a>
             </div>
 
             <!-- Call form (hidden by default) -->
@@ -801,5 +866,108 @@ document.getElementById("call-form")?.addEventListener("submit", async (e) => {
         btn.disabled = false;
     }
 });
+
+// ====== CART HANDLERS ======
+// Battery selection
+document.querySelectorAll(".battery-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll(".battery-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById("selectionWarning").style.display = "none";
+    });
+});
+
+function getSelectedVariant() {
+    const activeBtn = document.querySelector('.variant-btn.active');
+    if (!activeBtn) return null;
+    const vid = activeBtn.dataset.variantId;
+    return vid ? parseInt(vid) : null;
+}
+
+function getSelectedBattery() {
+    const activeBtn = document.querySelector('.battery-btn.active');
+    if (!activeBtn) return null;
+    return {
+        id: activeBtn.dataset.batteryId,
+        desc: activeBtn.dataset.batteryDesc
+    };
+}
+
+function validateSelection() {
+    const hasColorOptions = document.querySelectorAll('.variant-btn').length > 0;
+    const hasBatteryOptions = document.querySelectorAll('.battery-btn').length > 0;
+    
+    const colorSelected = document.querySelector('.variant-btn.active');
+    const batterySelected = document.querySelector('.battery-btn.active');
+    
+    let errorMsg = "";
+    if (hasColorOptions && !colorSelected) {
+        errorMsg = "⚠️ Please select a color option.";
+    } else if (hasBatteryOptions && !batterySelected) {
+        errorMsg = "⚠️ Please select a battery option.";
+    }
+
+    if (errorMsg) {
+        const warning = document.getElementById("selectionWarning");
+        warning.textContent = errorMsg;
+        warning.style.display = "block";
+        warning.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+    }
+    return true;
+}
+
+async function handleAddToCart() {
+    if (!validateSelection()) return;
+
+    const productId = {{ product.id }};
+    const variantId = getSelectedVariant();
+    const battery = getSelectedBattery();
+    
+    const btn = document.getElementById('addToCartBtn');
+    const origText = btn.innerHTML;
+
+    btn.disabled = true;
+    btn.innerHTML = 'Adding...';
+
+    try {
+        // We'll pass the battery info as part of the item attributes/notes
+        const attributes = battery ? { battery: battery.desc } : {};
+        await EVCart.addItem(productId, variantId, 1, attributes);
+        await EVCart.updateBadge();
+
+        // Show toast
+        const toast = document.getElementById('cartToast');
+        toast.style.display = 'flex';
+        setTimeout(() => { toast.style.display = 'none'; }, 4000);
+    } catch (err) {
+        alert(err.message || 'Failed to add to cart');
+    } finally {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+    }
+}
+
+async function handleBuyNow() {
+    if (!validateSelection()) return;
+
+    const productId = {{ product.id }};
+    const variantId = getSelectedVariant();
+    const battery = getSelectedBattery();
+    const btn = document.getElementById('buyNowBtn');
+
+    btn.disabled = true;
+    btn.textContent = 'Processing...';
+
+    try {
+        const attributes = battery ? { battery: battery.desc } : {};
+        await EVCart.addItem(productId, variantId, 1, attributes);
+        window.location.href = '/cart';
+    } catch (err) {
+        alert(err.message || 'Failed to add to cart');
+        btn.textContent = 'Buy Now';
+        btn.disabled = false;
+    }
+}
 </script>
 {% endblock %}

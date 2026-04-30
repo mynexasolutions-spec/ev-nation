@@ -3,12 +3,14 @@
 {% block content %}
 <!-- HERO -->
   <section class="hero" id="home">
-    <div class="hero-slider">
-      <div class="hero-slide active" style="background-image: url('{{ url_for('static', path='/images/banner/banner_1.png') }}');"></div>
-      <div class="hero-slide" style="background-image: url('{{ url_for('static', path='/images/banner/banner_2.png') }}');"></div>
-      <div class="hero-slide" style="background-image: url('{{ url_for('static', path='/images/banner/banner_3.png') }}');"></div>
+    <div class="hero-frame">
+      <div class="hero-slider">
+        <div class="hero-slide active" style="background-image: url('{{ url_for('static', path='/images/banner/banner_1.png') }}');"></div>
+        <div class="hero-slide" style="background-image: url('{{ url_for('static', path='/images/banner/banner_2.png') }}');"></div>
+        <div class="hero-slide" style="background-image: url('{{ url_for('static', path='/images/banner/banner_3.png') }}');"></div>
+      </div>
+      <div class="hero-overlay"></div>
     </div>
-    <div class="hero-overlay"></div>
     <div class="hero-watermark">EV NATION</div>
     <div class="hero-fade-bottom"></div>
     <div class="hero-content">
@@ -140,19 +142,13 @@
             <div class="p-title-row">
               <div>
                 <h3>{{ product.name | upper }}</h3>
-                <p style="font-size: 0.75rem; color: #aaa;">POWERED BY EV NATION</p>
               </div>
             </div>
             <div class="p-specs">
-              {% if product.spec and product.spec.range %}
-              <div class="p-spec-item"><label>MAX RANGE</label><value>{{ product.spec.range }}</value></div>
-              {% endif %}
-              {% if product.spec and product.spec.speed %}
-              <div class="p-spec-item"><label>TOP SPEED</label><value>{{ product.spec.speed }}</value></div>
-              {% endif %}
-              {% if product.tagline %}
-              <div class="p-spec-item"><label>TYPE</label><value>{{ product.tagline }}</value></div>
-              {% endif %}
+              <div class="p-spec-item"><label>MAX RANGE</label><value>{{ product.spec.range or 'N/A' }}</value></div>
+              <div class="p-spec-item"><label>TOP SPEED</label><value>{{ product.spec.speed or 'N/A' }}</value></div>
+              <div class="p-spec-item"><label>MOTOR</label><value>{{ product.spec.motor.split(' ')[0] if product.spec.motor and ' ' in product.spec.motor else (product.spec.motor or 'N/A') }}</value></div>
+              <div class="p-spec-item"><label>CHARGE</label><value>{{ product.spec.charging_time or 'N/A' }}</value></div>
             </div>
             <div class="p-footer">
               <a href="/bikes/{{ product.slug }}" class="btn-product">View Details</a>
@@ -171,14 +167,14 @@
             <div class="p-title-row">
               <div>
                 <h3>EV NATION MODEL {{ i }}</h3>
-                <p style="font-size: 0.75rem; color: #aaa;">POWERED BY EV NATION</p>
               </div>
             </div>
-            <div class="p-specs">
-              <div class="p-spec-item"><label>MAX RANGE</label><value>120 km</value></div>
-              <div class="p-spec-item"><label>TOP SPEED</label><value>85 km/h</value></div>
-              <div class="p-spec-item"><label>TYPE</label><value>Sport</value></div>
-            </div>
+              <div class="p-specs">
+                <div class="p-spec-item"><label>MAX RANGE</label><value>120 km</value></div>
+                <div class="p-spec-item"><label>TOP SPEED</label><value>85 km/h</value></div>
+                <div class="p-spec-item"><label>MOTOR</label><value>Mid-Drive</value></div>
+                <div class="p-spec-item"><label>CHARGE</label><value>4 Hours</value></div>
+              </div>
             <div class="p-footer">
               <a href="/collection" class="btn-product">Coming Soon</a>
             </div>

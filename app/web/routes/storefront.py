@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -150,5 +150,46 @@ def product_detail(slug: str, request: Request, db: Session = Depends(get_db), u
             "page_title": f"{product.name} – EV Nation",
             "whatsapp_number": settings.whatsapp_number,
             "user": user,
+        },
+    )
+
+
+@router.get("/cart", response_class=HTMLResponse)
+def cart_page(request: Request, user=Depends(get_current_user_web)):
+    return templates.TemplateResponse(
+        "storefront/cart.html",
+        {
+            "request": request,
+            "user": user,
+            "page_title": "Cart — EV Nation",
+        },
+    )
+
+
+@router.get("/checkout", response_class=HTMLResponse)
+def checkout_page(request: Request, user=Depends(get_current_user_web)):
+    if not user:
+        return RedirectResponse(url="/login?next=/checkout")
+    return templates.TemplateResponse(
+        "storefront/checkout.html",
+        {
+            "request": request,
+            "user": user,
+            "page_title": "Checkout — EV Nation",
+        },
+    )
+
+
+@router.get("/orders/{order_number}/confirmation", response_class=HTMLResponse)
+def order_confirmation_page(order_number: str, request: Request, user=Depends(get_current_user_web)):
+    if not user:
+        return RedirectResponse(url="/login")
+    return templates.TemplateResponse(
+        "storefront/order_confirmation.html",
+        {
+            "request": request,
+            "user": user,
+            "order_number": order_number,
+            "page_title": "Order Confirmed — EV Nation",
         },
     )

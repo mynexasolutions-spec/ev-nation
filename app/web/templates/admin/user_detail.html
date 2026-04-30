@@ -1,0 +1,125 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="page-head" style="margin-bottom: 32px;">
+    <div>
+        <a href="/admin/users" class="muted" style="text-decoration: none; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            BACK TO CUSTOMERS
+        </a>
+        <h1 class="page-title" style="font-size: 3rem;">{{ user.full_name or 'Friend' }}</h1>
+        <p class="muted">{{ user.email }} • Member since {{ to_ist(user.created_at) }}</p>
+    </div>
+</div>
+
+<div class="admin-grid" style="grid-template-columns: 1fr 380px;">
+    <!-- Left Column: History -->
+    <div style="display: grid; gap: 32px;">
+        
+        <!-- Order History -->
+        <section>
+            <h3 class="eyebrow" style="margin-bottom: 16px; color: var(--accent);">Purchase History</h3>
+            <div class="card p-0">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order No.</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th style="text-align: right;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if orders %}
+                            {% for order in orders %}
+                            <tr>
+                                <td><a href="/admin/orders/{{ order.order_number }}" style="font-weight: 700; color: var(--accent);">{{ order.order_number }}</a></td>
+                                <td>{{ to_ist(order.created_at) }}</td>
+                                <td>₹{{ "{:,.0f}".format(order.total) }}</td>
+                                <td style="text-align: right;">
+                                    <span class="pill" style="font-size: 0.7rem;">{{ order.status }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr><td colspan="4" class="muted" style="text-align: center; padding: 32px;">No orders placed yet.</td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Activity Feed -->
+        <section>
+            <h3 class="eyebrow" style="margin-bottom: 16px; color: var(--accent);">Interaction Timeline</h3>
+            <div style="display: grid; gap: 16px;">
+                {% if leads %}
+                    {% for lead in leads %}
+                    <div class="panel" style="display: flex; gap: 20px; align-items: flex-start;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--accent-pale); display: grid; place-items: center; color: var(--accent); flex-shrink: 0;">
+                            {% if lead.source.value == 'test_ride' %}
+                                🏍️
+                            {% elif lead.source.value == 'whatsapp' %}
+                                💬
+                            {% else %}
+                                📧
+                            {% endif %}
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <h4 style="margin: 0; font-weight: 700; text-transform: uppercase; font-size: 0.9rem;">
+                                    {{ lead.source.value.replace('_', ' ') }} 
+                                    {% if lead.product %} • {{ lead.product.name }}{% endif %}
+                                </h4>
+                                <span class="muted" style="font-size: 0.75rem;">{{ to_ist(lead.created_at) }}</span>
+                            </div>
+                            <p style="margin: 8px 0 0; font-size: 0.9rem; color: var(--muted); line-height: 1.4;">
+                                {{ lead.message or 'No message provided.' }}
+                            </p>
+                            <div style="margin-top: 12px;">
+                                <span class="pill" style="font-size: 0.65rem; background: #eee; color: #666;">Status: {{ lead.status.value }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="panel muted" style="text-align: center; padding: 32px; border-style: dashed;">
+                        No other interactions recorded.
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+
+    <!-- Right Column: Quick Stats -->
+    <div style="display: grid; gap: 24px;">
+        <div class="panel" style="background: var(--accent); color: #fff; border: none;">
+            <h3 class="eyebrow" style="color: var(--accent-light);">Customer Stats</h3>
+            <div style="display: grid; gap: 16px; margin-top: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span class="muted" style="color: rgba(255,255,255,0.6);">Total Orders</span>
+                    <span style="font-family: var(--font-display); font-size: 1.8rem; color: var(--accent-light);">{{ orders|length }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span class="muted" style="color: rgba(255,255,255,0.6);">Total Interactions</span>
+                    <span style="font-family: var(--font-display); font-size: 1.8rem; color: var(--accent-light);">{{ leads|length }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3 class="eyebrow" style="color: var(--muted);">Contact Information</h3>
+            <div style="margin-top: 16px;">
+                <div style="margin-bottom: 12px;">
+                    <label class="eyebrow" style="font-size: 0.6rem; color: #ccc;">Email</label>
+                    <p style="font-weight: 700; margin: 0; word-break: break-all;">{{ user.email }}</p>
+                </div>
+                <div>
+                    <label class="eyebrow" style="font-size: 0.6rem; color: #ccc;">Verified</label>
+                    <p style="font-weight: 700; margin: 0; color: var(--success);">✓ Email Verified</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
