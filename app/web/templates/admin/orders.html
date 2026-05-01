@@ -37,20 +37,20 @@
                 {% if orders %}
                     {% for order in orders %}
                     <tr>
-                        <td style="font-weight: 700; color: var(--accent);">
+                        <td data-label="Order No." style="font-weight: 700; color: var(--accent);">
                             {{ order.order_number }}
                         </td>
-                        <td>
+                        <td data-label="Date">
                             {{ to_ist(order.created_at) }}
                         </td>
-                        <td>
+                        <td data-label="Customer">
                             <div style="font-weight: 600;">{{ order.customer_name }}</div>
                             <div class="muted" style="font-size: 0.8rem;">{{ order.customer_phone }}</div>
                         </td>
-                        <td style="font-weight: 700;">
+                        <td data-label="Amount" style="font-weight: 700;">
                             ₹{{ "{:,.0f}".format(order.total) if order.total is number else order.total }}
                         </td>
-                        <td>
+                        <td data-label="Status">
                             <span class="pill" style="
                                 {% if order.status == 'PENDING' %} background: #fff8e1; color: #f57f17; 
                                 {% elif order.status == 'PAID' %} background: #e8f5e9; color: #2e7d32;
@@ -61,10 +61,10 @@
                                 {{ order.status }}
                             </span>
                         </td>
-                        <td>
+                        <td data-label="Payment">
                             <span class="muted" style="font-size: 0.85rem;">{{ order.payment_status }}</span>
                         </td>
-                        <td style="text-align: right;">
+                        <td data-label="Action" style="text-align: right;">
                             <a href="/admin/orders/{{ order.order_number }}" class="btn-outline" style="padding: 6px 12px; font-size: 0.8rem;">Manage</a>
                         </td>
                     </tr>

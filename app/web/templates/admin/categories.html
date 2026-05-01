@@ -41,9 +41,9 @@
             <tbody>
                 {% for product in products %}
                 <tr>
-                    <td>{{ product.id }}</td>
-                    <td><strong>{{ product.name }}</strong><br><small class="muted">{{ product.slug }}</small></td>
-                    <td>
+                    <td data-label="ID">{{ product.id }}</td>
+                    <td data-label="Product Name"><strong>{{ product.name }}</strong><br><small class="muted">{{ product.slug }}</small></td>
+                    <td data-label="Category">
                         {% if product.category %}
                             <span class="tag">{{ product.category.name }}</span>
                         {% else %}
@@ -122,14 +122,16 @@ function renderTable() {
     currentCategories.forEach(c => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-            <td>${c.id}</td>
-            <td><strong>${c.name}</strong><br><small class="muted">${c.description || ''}</small></td>
-            <td><code class="tag">${c.slug}</code></td>
-            <td style="text-align:center">${c.sort_order}</td>
-            <td style="text-align:center"><span class="status-pill status-${c.is_active ? 'success' : 'pending'}">${c.is_active ? 'Active' : 'Inactive'}</span></td>
-            <td style="text-align:right">
-                <button class="ghost-button small-button" onclick="editCategory(${c.id})">Edit</button>
-                <button class="ghost-button small-button" onclick="deleteCategory(${c.id})" style="color:var(--color-danger)">Delete</button>
+            <td data-label="ID">${c.id}</td>
+            <td data-label="Name"><strong>${c.name}</strong><br><small class="muted">${c.description || ''}</small></td>
+            <td data-label="Slug"><code class="tag">${c.slug}</code></td>
+            <td data-label="Sort Order" style="text-align:center">${c.sort_order}</td>
+            <td data-label="Status" style="text-align:center"><span class="status-pill status-${c.is_active ? 'success' : 'pending'}">${c.is_active ? 'Active' : 'Inactive'}</span></td>
+            <td data-label="Actions" style="text-align:right">
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                    <button class="ghost-button small-button" onclick="editCategory(${c.id})">Edit</button>
+                    <button class="ghost-button small-button" onclick="deleteCategory(${c.id})" style="color:var(--error); border-color: rgba(181, 40, 40, 0.2);">Delete</button>
+                </div>
             </td>
         `;
         tbody.appendChild(tr);

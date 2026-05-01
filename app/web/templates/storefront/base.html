@@ -13,7 +13,7 @@
   <link rel="icon" type="image/png" href="{{ url_for('static', path='/images/logo.png') }}">
 </head>
 
-<body class="{% if request.url.path != '/' %}inner-page{% endif %}">
+<body class="{% if request.url.path != '/' %}inner-page{% endif %}" data-user-logged-in="{{ 'true' if user else 'false' }}">
   <!-- MOBILE MENU -->
   <div class="mobile-menu" id="mobileMenu">
     <div class="menu-backdrop" onclick="closeMenu()"></div>
@@ -21,14 +21,7 @@
       <button class="m-close" onclick="closeMenu()" aria-label="Close Menu">✕</button>
       <div class="menu-links">
         <a href="/" onclick="closeMenu()">Home</a>
-        <div class="m-dropdown">
-          <a href="#" onclick="toggleMDropdown(event)" class="m-drop-btn">Products <span class="m-drop-icon" style="font-size: 0.8rem; transition: transform 0.3s; display: inline-block;">▼</span></a>
-          <div class="m-dropdown-content" id="mProductsDropdown" style="max-height: 0; overflow: hidden; transition: max-height 0.4s ease; padding-left: 15px; display: flex; flex-direction: column; gap: 10px;">
-            <a href="/collection" onclick="closeMenu()" style="font-size: 1.4rem; color: var(--gray); margin-top: 10px;">All Models</a>
-            <a href="/collection?category=sport" onclick="closeMenu()" style="font-size: 1.4rem; color: var(--gray);">Sport Series</a>
-            <a href="/collection?category=city" onclick="closeMenu()" style="font-size: 1.4rem; color: var(--gray);">City Commuters</a>
-          </div>
-        </div>
+        <a href="/collection" onclick="closeMenu()">Products</a>
         <a href="/about" onclick="closeMenu()">About</a>
         <a href="/#gallery" onclick="closeMenu()">Gallery</a>
         <a href="/#contact" onclick="closeMenu()">Contact</a>
@@ -139,7 +132,7 @@
     // ====== CART SYSTEM ======
     const EVCart = {
       STORAGE_KEY: 'evn_cart',
-      isLoggedIn: {{ 'true' if user else 'false' }},
+      isLoggedIn: document.body.dataset.userLoggedIn === 'true',
 
       // --- Guest (localStorage) ---
       getGuestCart() {

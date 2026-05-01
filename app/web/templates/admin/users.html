@@ -21,21 +21,21 @@
                 {% if users %}
                     {% for user, order_count in users %}
                     <tr>
-                        <td>
+                        <td data-label="Customer Name">
                             <div style="font-weight: 700; color: var(--accent);">{{ user.full_name or 'Friend' }}</div>
                         </td>
-                        <td>
+                        <td data-label="Email Address">
                             <div class="muted">{{ user.email }}</div>
                         </td>
-                        <td>
+                        <td data-label="Joined On">
                             {{ to_ist(user.created_at) }}
                         </td>
-                        <td>
+                        <td data-label="Orders">
                             <span class="pill" style="background: var(--accent-pale); color: var(--accent);">
                                 {{ order_count }} Order{{ 's' if order_count != 1 else '' }}
                             </span>
                         </td>
-                        <td style="text-align: right;">
+                        <td data-label="Action" style="text-align: right;">
                             <a href="/admin/users/{{ user.id }}" class="btn-outline" style="padding: 6px 12px; font-size: 0.8rem;">View Profile</a>
                         </td>
                     </tr>
