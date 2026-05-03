@@ -1,5 +1,6 @@
 from app.db.base_class import Base
 from app.models.admin_user import AdminUser
+from app.models.blog import BlogCategory, BlogPost, BlogSubscriber
 from app.models.cart import CartItem
 from app.models.category import Category
 from app.models.lead import Lead
@@ -10,6 +11,9 @@ from app.models.user import User
 __all__ = [
     "AdminUser",
     "Base",
+    "BlogCategory",
+    "BlogPost",
+    "BlogSubscriber",
     "BatteryOption",
     "CartItem",
     "Category",

@@ -1,0 +1,55 @@
+{% extends "admin/base.html" %}
+{% block content %}
+
+<div class="admin-page-header">
+  <h1 class="admin-page-title">Blog Subscribers</h1>
+  <span style="color:var(--text-muted);font-size:0.9rem;">{{ subscribers|length }} total</span>
+</div>
+
+<div class="table-card">
+  {% if subscribers %}
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th>Subscribed On</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in subscribers %}
+      <tr>
+        <td style="color:var(--text-muted);">{{ loop.index }}</td>
+        <td><strong>{{ s.email }}</strong></td>
+        <td>
+          {% if s.is_active %}
+          <span class="status-badge status-new">Active</span>
+          {% else %}
+          <span class="status-badge status-closed">Inactive</span>
+          {% endif %}
+        </td>
+        <td style="color:var(--text-muted);font-size:0.85rem;">{{ s.created_at.strftime('%b %d, %Y %H:%M') }}</td>
+        <td>
+          <button onclick="deleteSubscriber({{ s.id }}, '{{ s.email | e }}')" class="ghost-button small-button" style="color:#ef4444;border-color:rgba(239,68,68,0.3);">Remove</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="text-align:center;padding:60px 0;color:var(--text-muted);">No subscribers yet.</p>
+  {% endif %}
+</div>
+
+<script>
+  async function deleteSubscriber(id, email) {
+    if (!confirm(`Remove subscriber "${email}"?`)) return;
+    const r = await fetch(`/admin/subscribers/${id}/delete`, { method: 'POST' });
+    if (r.ok) location.reload();
+    else alert('Error removing subscriber.');
+  }
+</script>
+
+{% endblock %}

@@ -2,287 +2,605 @@
 {% block content %}
 
 <style>
-  .about-page {
-    padding: 110px 24px 60px;
-    max-width: 1000px;
-    margin: 0 auto;
-    background-color: var(--off-white);
-  }
+  /* Nav stays white/original on the dark hero — no overrides needed */
 
-  .about-header {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-
-  .about-header h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 3.5rem;
-    color: var(--green-deep);
-    margin-bottom: 8px;
-    letter-spacing: 0.02em;
-  }
-
-  .about-header p {
-    font-size: 1.1rem;
-    color: var(--gray);
-  }
-
-  /* Slideshow container */
-  .slideshow-container {
-    max-width: 900px;
-    height: 500px;
+  /* ── HERO ── */
+  .ab-hero {
+    background: var(--green-deep);
+    padding: 140px 56px 80px;
     position: relative;
-    margin: auto;
+    overflow: hidden;
+  }
+  .ab-hero::before {
+    content: 'EV NATION';
+    position: absolute;
+    right: -2vw;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18vw;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(168,230,61,0.1);
+    white-space: nowrap;
+    pointer-events: none;
+    line-height: 1;
+  }
+  .ab-hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .ab-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--green-lime);
+    margin-bottom: 18px;
+  }
+  .ab-hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 7vw, 7rem);
+    color: var(--white);
+    line-height: 0.92;
+    margin-bottom: 28px;
+  }
+  .ab-hero h1 em {
+    color: var(--green-lime);
+    font-style: normal;
+  }
+  .ab-hero-desc {
+    font-size: 1.2rem;
+    color: rgba(255,255,255,0.72);
+    line-height: 1.7;
+    max-width: 580px;
+  }
+  /* ── STORY SECTION ── */
+  .ab-story {
+    background: var(--white);
+    padding: 100px 56px;
+  }
+  .ab-story-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .ab-story-img {
+    position: relative;
+  }
+  .ab-story-img img {
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+  }
+  .ab-story-img::after {
+    content: '';
+    position: absolute;
+    bottom: -16px;
+    right: -16px;
+    width: 60%;
+    height: 60%;
+    border: 3px solid var(--green-lime);
+    border-radius: 4px;
+    z-index: -1;
+  }
+  .ab-story-text .section-eyebrow { color: var(--green-mid); margin-bottom: 16px; }
+  .ab-story-text h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.4rem, 4vw, 3.6rem);
+    color: var(--green-deep);
+    line-height: 1;
+    margin-bottom: 24px;
+  }
+  .ab-story-text p {
+    font-size: 1.05rem;
+    color: var(--gray);
+    line-height: 1.8;
+    margin-bottom: 18px;
+  }
+
+  /* ── WHY CHOOSE US ── */
+  .ab-why {
+    background: var(--green-deep);
+    padding: 100px 56px;
+  }
+  .ab-why-inner { max-width: 1200px; margin: 0 auto; }
+  .ab-why-head { text-align: center; margin-bottom: 60px; }
+  .ab-why-head .ab-eyebrow { color: var(--green-lime); }
+  .ab-why-head h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.4rem, 4vw, 3.8rem);
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .ab-why-head p { font-size: 1.05rem; color: rgba(255,255,255,0.65); max-width: 520px; margin: 0 auto; line-height: 1.7; }
+  .ab-why-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .ab-why-item {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(168,230,61,0.12);
+    border-radius: 12px;
+    padding: 28px 24px;
+    transition: background 0.3s;
+  }
+  .ab-why-item:hover { background: rgba(168,230,61,0.07); }
+  .ab-why-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--green-lime);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 48px;
+    opacity: 0.4;
+  }
+  .ab-why-item h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    color: var(--white);
+    margin-bottom: 8px;
+    letter-spacing: 0.04em;
+  }
+  .ab-why-item p { font-size: 0.95rem; color: rgba(255,255,255,0.6); line-height: 1.7; }
+
+  /* ── SHOWROOM GALLERY ── */
+  .ab-showroom {
+    background: var(--white);
+    padding: 100px 56px;
+  }
+  .ab-showroom-inner { max-width: 1200px; margin: 0 auto; }
+  .ab-showroom-head { margin-bottom: 48px; }
+  .ab-showroom-head h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.4rem, 4vw, 3.8rem);
+    color: var(--green-deep);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .ab-showroom-head p { font-size: 1.05rem; color: var(--gray); line-height: 1.7; max-width: 560px; }
+
+  /* Masonry-style grid with 7 images */
+  .ab-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: 280px 280px 280px;
+    gap: 12px;
+  }
+  .ab-photo-grid .ph { overflow: hidden; border-radius: 8px; }
+  .ab-photo-grid .ph img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+  .ab-photo-grid .ph:hover img { transform: scale(1.05); }
+  /* Layout assignments */
+  .ph-1 { grid-column: 1 / 8; grid-row: 1 / 2; }
+  .ph-2 { grid-column: 8 / 13; grid-row: 1 / 2; }
+  .ph-3 { grid-column: 1 / 5; grid-row: 2 / 3; }
+  .ph-4 { grid-column: 5 / 9; grid-row: 2 / 3; }
+  .ph-5 { grid-column: 9 / 13; grid-row: 2 / 3; }
+  .ph-6 { grid-column: 1 / 6; grid-row: 3 / 4; }
+  .ph-7 { grid-column: 6 / 13; grid-row: 3 / 4; }
+
+  /* ── SERVICES STRIP ── */
+  .ab-services {
+    background: var(--off-white);
+    padding: 100px 56px;
+  }
+  .ab-services-inner { max-width: 1200px; margin: 0 auto; }
+  .ab-services-head { margin-bottom: 52px; }
+  .ab-services-head h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.4rem, 4vw, 3.8rem);
+    color: var(--green-deep);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .ab-services-head p { font-size: 1.05rem; color: var(--gray); line-height: 1.7; max-width: 560px; }
+  .ab-services-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .ab-service-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+  }
+  .ab-service-card:hover { transform: translateY(-4px); }
+  .ab-service-icon { font-size: 2.4rem; margin-bottom: 16px; }
+  .ab-service-card h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    color: var(--green-deep);
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+  }
+  .ab-service-card p { font-size: 0.9rem; color: var(--gray); line-height: 1.6; }
+
+  /* ── VISIT & CONTACT ── */
+  .ab-contact {
+    background: var(--white);
+    padding: 100px 56px;
+  }
+  .ab-contact-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .ab-contact-left h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.4rem, 4vw, 3.6rem);
+    color: var(--green-deep);
+    line-height: 1;
+    margin-bottom: 32px;
+  }
+  .ab-contact-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 28px;
+  }
+  .ab-contact-item-icon {
+    width: 44px;
+    height: 44px;
+    background: rgba(168,230,61,0.12);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--green-mid);
+  }
+  .ab-contact-item-icon svg { width: 20px; height: 20px; }
+  .ab-contact-item h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--green-deep);
+    margin-bottom: 5px;
+    letter-spacing: 0.04em;
+  }
+  .ab-contact-item p, .ab-contact-item a {
+    font-size: 1rem;
+    color: var(--gray);
+    line-height: 1.7;
+    text-decoration: none;
+    display: block;
+    transition: color 0.2s;
+  }
+  .ab-contact-item a:hover { color: var(--green-mid); }
+  .ab-contact-item .phone-link {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--green-deep);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .ab-contact-item .phone-link:hover { color: var(--green-mid); }
+  .ab-contact-item .phone-link svg { width: 16px; height: 16px; }
+  .ab-map-embed {
+    width: 100%;
+    height: 400px;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    background-color: #000; /* Black background to avoid gaps */
+    box-shadow: 0 16px 48px rgba(0,0,0,0.10);
+  }
+  .ab-map-embed iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .ab-wa-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #25D366;
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    padding: 12px 22px;
+    border-radius: 8px;
+    text-decoration: none;
+    margin-top: 6px;
+    transition: background 0.2s, transform 0.2s;
+    box-shadow: 0 4px 14px rgba(37,211,102,0.3);
+  }
+  .ab-wa-btn:hover {
+    background: #1ebe5d;
+    transform: translateY(-2px);
+    color: #fff;
+  }
+
+  .ab-hours {
+    background: var(--off-white);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 28px;
+  }
+  .ab-hours h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--green-deep);
+    margin-bottom: 12px;
+    letter-spacing: 0.04em;
+  }
+  .ab-hours-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    color: var(--gray);
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .ab-hours-row:last-child { border-bottom: none; }
+  .ab-hours-row strong { color: var(--green-deep); }
+
+  /* ── MOBILE RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .ab-services-grid { grid-template-columns: repeat(2, 1fr); }
   }
 
   @media (max-width: 768px) {
-    .slideshow-container {
-      height: 300px;
+    .ab-hero { padding: 120px 24px 60px; }
+    .ab-story { padding: 60px 24px; }
+    .ab-story-grid { grid-template-columns: 1fr; gap: 40px; }
+    .ab-story-img img { height: 300px; }
+    .ab-story-img::after { display: none; }
+    .ab-why { padding: 60px 24px; }
+    .ab-why-grid { grid-template-columns: 1fr; }
+    .ab-showroom { padding: 60px 24px; }
+    .ab-photo-grid {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 180px 180px 180px 180px;
+      gap: 8px;
     }
+    .ph-1 { grid-column: 1 / 3; grid-row: 1 / 2; }
+    .ph-2 { grid-column: 1 / 2; grid-row: 2 / 3; }
+    .ph-3 { grid-column: 2 / 3; grid-row: 2 / 3; }
+    .ph-4 { grid-column: 1 / 2; grid-row: 3 / 4; }
+    .ph-5 { grid-column: 2 / 3; grid-row: 3 / 4; }
+    .ph-6 { grid-column: 1 / 2; grid-row: 4 / 5; }
+    .ph-7 { grid-column: 2 / 3; grid-row: 4 / 5; }
+    .ab-services { padding: 60px 24px; }
+    .ab-services-grid { grid-template-columns: repeat(2, 1fr); }
+    .ab-contact { padding: 60px 24px; }
+    .ab-contact-inner { grid-template-columns: 1fr; gap: 40px; }
+    .ab-map-embed { height: 280px; }
   }
 
-  /* The strip that actually moves */
-  .slides-wrapper {
-    display: flex;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 100%;
-    height: 100%;
-  }
-
-  .mySlides {
-    flex: 0 0 100%;
-    width: 100%;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .mySlides img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-  }
-
-  /* Next & previous buttons */
-  .prev, .next {
-    cursor: pointer;
-    position: absolute;
-    top: 50%;
-    width: auto;
-    padding: 16px;
-    margin-top: -22px;
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    transition: 0.3s ease;
-    border-radius: 50%;
-    user-select: none;
-    background-color: rgba(0,0,0,0.3);
-    margin: 0 10px;
-    z-index: 10;
-  }
-
-  .next {
-    right: 0;
-  }
-
-  .prev:hover, .next:hover {
-    background-color: rgba(0,0,0,0.8);
-  }
-
-  /* Number text (1/7 etc) */
-  .numbertext {
-    color: #f2f2f2;
-    font-size: 12px;
-    padding: 8px 12px;
-    position: absolute;
-    top: 0;
-    text-shadow: 1px 1px 2px black;
-    z-index: 11;
-  }
-
-  /* The dots/bullets/indicators */
-  .dot-container {
-    text-align: center;
-    padding: 10px;
-  }
-
-  .dot {
-    cursor: pointer;
-    height: 10px;
-    width: 10px;
-    margin: 0 4px;
-    background-color: #bbb;
-    border-radius: 50%;
-    display: inline-block;
-    transition: background-color 0.3s ease;
-  }
-
-  .dot.active {
-    background-color: var(--green-deep);
-  }
-
-  /* Contact Section */
-  .contact-info {
-    margin-top: 30px;
-    padding: 30px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 32px;
-    text-align: center;
-  }
-
-  .contact-item h3 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    color: var(--green-deep);
-    margin-bottom: 12px;
-  }
-
-  .contact-item p {
-    color: var(--gray);
-    line-height: 1.6;
-  }
-  
-  /* Ensure navbar is visible on light bg */
-  nav:not(.scrolled) .nav-logo,
-  nav:not(.scrolled) .nav-links a:not(.nav-cta) {
-    color: var(--green-deep) !important;
-  }
-  nav:not(.scrolled) .nav-logo img {
-    filter: brightness(0) saturate(100%) invert(20%) sepia(45%) saturate(545%) hue-rotate(101deg) brightness(93%) contrast(93%);
-  }
-  nav:not(.scrolled) .hamburger span {
-    background: var(--green-deep) !important;
+  @media (max-width: 480px) {
+    .ab-hero { padding: 110px 18px 48px; }
+    .ab-hero h1 { font-size: 3.2rem; }
+    .ab-story { padding: 48px 18px; }
+    .ab-why { padding: 48px 18px; }
+    .ab-showroom { padding: 48px 18px; }
+    .ab-photo-grid { grid-template-rows: 150px 150px 150px 150px; }
+    .ab-services { padding: 48px 18px; }
+    .ab-services-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .ab-service-card { padding: 22px 16px; }
+    .ab-contact { padding: 48px 18px; }
+    .ab-map-embed { height: 240px; }
   }
 </style>
 
-<div class="about-page">
-  <div class="about-header">
-    <h1>About EV Nation</h1>
-    <p>Your trusted partner in electric mobility. Experience the future of transportation.</p>
+<!-- ── HERO ── -->
+<section class="ab-hero">
+  <div class="ab-hero-inner">
+    <div class="ab-eyebrow">Est. in Saharanpur · U.P., India</div>
+    <h1>DRIVING<br><em>INDIA ELECTRIC</em></h1>
+    <p class="ab-hero-desc">EV Nation is Saharanpur's premier electric scooter dealership, committed to making clean, powerful, and affordable electric mobility accessible to every Indian family and commuter.</p>
   </div>
+</section>
 
-  <div class="slideshow-container">
-    <div class="slides-wrapper" id="slides-wrapper">
-        <!-- Replace these src attributes with your actual image paths once uploaded -->
-        <div class="mySlides">
-        <div class="numbertext">1 / 7</div>
-        <img src="{{ url_for('static', path='/images/about/about_1.jpg') }}" onerror="this.src='https://placehold.co/1000x562?text=Shop+Image+1'">
-        </div>
-
-        <div class="mySlides">
-        <div class="numbertext">2 / 7</div>
-        <img src="{{ url_for('static', path='/images/about/about_2.jpg') }}" onerror="this.src='https://placehold.co/1000x562?text=Shop+Image+2'">
-        </div>
-
-        <div class="mySlides">
-        <div class="numbertext">3 / 7</div>
-        <img src="{{ url_for('static', path='/images/about/about_3.jpg') }}" onerror="this.src='https://placehold.co/1000x562?text=Shop+Image+3'">
-        </div>
-
-        <div class="mySlides">
-        <div class="numbertext">4 / 7</div>
-        <img src="{{ url_for('static', path='/images/about/about_4.jpg') }}" onerror="this.src='https://placehold.co/1000x562?text=Shop+Image+4'">
-        </div>
-
-        <div class="mySlides">
-        <div class="numbertext">5 / 7</div>
-        <img src="{{ url_for('static', path='/images/about/about_5.jpg') }}" onerror="this.src='https://placehold.co/1000x562?text=Shop+Image+5'">
-        </div>
-
-        <div class="mySlides">
-        <div class="numbertext">6 / 7</div>
-        <img src="{{ url_for('static', path='/images/about/about_6.jpg') }}" onerror="this.src='https://placehold.co/1000x562?text=Shop+Image+6'">
-        </div>
-
-        <div class="mySlides">
-        <div class="numbertext">7 / 7</div>
-        <img src="{{ url_for('static', path='/images/about/about_7.jpg') }}" onerror="this.src='https://placehold.co/1000x562?text=Shop+Image+7'">
-        </div>
+<!-- ── OUR STORY ── -->
+<section class="ab-story">
+  <div class="ab-story-grid">
+    <div class="ab-story-img">
+      <img src="{{ url_for('static', path='/images/about/about_1.jpg') }}" alt="EV Nation Showroom">
     </div>
-
-    <a class="prev" onclick="plusSlides(-1)">❮</a>
-    <a class="next" onclick="plusSlides(1)">❯</a>
-
-  </div>
-  <br>
-
-  <div class="dot-container">
-    <span class="dot" onclick="currentSlide(1)"></span> 
-    <span class="dot" onclick="currentSlide(2)"></span> 
-    <span class="dot" onclick="currentSlide(3)"></span> 
-    <span class="dot" onclick="currentSlide(4)"></span> 
-    <span class="dot" onclick="currentSlide(5)"></span> 
-    <span class="dot" onclick="currentSlide(6)"></span> 
-    <span class="dot" onclick="currentSlide(7)"></span> 
-  </div>
-
-  <div class="contact-info">
-    <div class="contact-item">
-      <h3>Visit Us</h3>
-      <p>Sarak Doodhli, Near Reliance Petrol Pump<br>Dehradun Road, Saharanpur (U.P.)</p>
-    </div>
-    <div class="contact-item">
-      <h3>Call Us</h3>
-      <p>9045263337<br>8650555588<br>Mon–Sat: 9AM – 7PM</p>
+    <div class="ab-story-text">
+      <div class="section-eyebrow">Our Story</div>
+      <h2>BORN FROM A BELIEF IN CLEANER ROADS</h2>
+      <p>EV Nation was founded with a single conviction — that the future of urban transport in India is electric. Located in Saharanpur, U.P., we saw firsthand the congestion, pollution, and rising fuel costs that everyday commuters face, and decided to do something about it.</p>
+      <p>We partnered with India's leading electric scooter manufacturers to bring cutting-edge EV technology directly to your doorstep. From compact city riders to powerful long-range models, every scooter in our showroom is handpicked for reliability, performance, and value.</p>
+      <p>Today, EV Nation proudly serves hundreds of satisfied riders across Saharanpur and the surrounding region — and we're just getting started.</p>
     </div>
   </div>
-</div>
+</section>
 
-<script>
-let slideIndex = 1;
-const totalSlides = 7;
-const wrapper = document.getElementById("slides-wrapper");
+<!-- ── WHY CHOOSE US ── -->
+<section class="ab-why">
+  <div class="ab-why-inner">
+    <div class="ab-why-head">
+      <div class="ab-eyebrow">Why EV Nation</div>
+      <h2>THE EV NATION DIFFERENCE</h2>
+      <p>Hundreds of customers choose us every year. Here's why they keep coming back — and why they refer their friends.</p>
+    </div>
+    <div class="ab-why-grid">
+      <div class="ab-why-item">
+        <div class="ab-why-num">01</div>
+        <div>
+          <h4>Largest EV Showroom in Saharanpur</h4>
+          <p>Walk in and see every model in person. Our spacious showroom lets you sit on, test, and compare multiple scooters side by side before making a decision.</p>
+        </div>
+      </div>
+      <div class="ab-why-item">
+        <div class="ab-why-num">02</div>
+        <div>
+          <h4>Expert Guidance, No Pressure</h4>
+          <p>Our trained staff are EV enthusiasts themselves. We answer every question patiently and never push you toward a purchase you're not fully confident about.</p>
+        </div>
+      </div>
+      <div class="ab-why-item">
+        <div class="ab-why-num">03</div>
+        <div>
+          <h4>Easy Finance & EMI Options</h4>
+          <p>Going electric shouldn't break the bank. We work with leading financial partners to offer flexible EMI plans that fit every budget — with minimal documentation.</p>
+        </div>
+      </div>
+      <div class="ab-why-item">
+        <div class="ab-why-num">04</div>
+        <div>
+          <h4>Full After-Sales Support</h4>
+          <p>Our relationship with you doesn't end at the sale. We provide warranty assistance, service referrals, and ongoing support to keep your EV running at its best.</p>
+        </div>
+      </div>
+      <div class="ab-why-item">
+        <div class="ab-why-num">05</div>
+        <div>
+          <h4>Government Subsidy Assistance</h4>
+          <p>Confused about FAME II subsidies or state EV policies? We help you navigate all available government incentives so you get the maximum benefit on your purchase.</p>
+        </div>
+      </div>
+      <div class="ab-why-item">
+        <div class="ab-why-num">06</div>
+        <div>
+          <h4>Test Ride Before You Buy</h4>
+          <p>We encourage every customer to take a test ride. Feel the instant torque, the smooth acceleration, and the quiet ride — and let the scooter speak for itself.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-function plusSlides(n) {
-  slideIndex += n;
-  if (slideIndex > totalSlides) slideIndex = 1;
-  if (slideIndex < 1) slideIndex = totalSlides;
-  updateSlides();
-}
+<!-- ── SHOWROOM GALLERY ── -->
+<section class="ab-showroom">
+  <div class="ab-showroom-inner">
+    <div class="ab-showroom-head">
+      <div class="section-eyebrow" style="color:var(--green-mid);">Inside EV Nation</div>
+      <h2>OUR SHOWROOM</h2>
+      <p>A space designed around you — bright, welcoming, and stocked with the finest electric scooters available in India today.</p>
+    </div>
+    <div class="ab-photo-grid">
+      <div class="ph ph-1"><img src="{{ url_for('static', path='/images/about/about_1.jpg') }}" alt="EV Nation Showroom"></div>
+      <div class="ph ph-2"><img src="{{ url_for('static', path='/images/about/about_2.jpg') }}" alt="EV Nation Showroom"></div>
+      <div class="ph ph-3"><img src="{{ url_for('static', path='/images/about/about_3.jpg') }}" alt="EV Nation Showroom"></div>
+      <div class="ph ph-4"><img src="{{ url_for('static', path='/images/about/about_4.jpg') }}" alt="EV Nation Showroom"></div>
+      <div class="ph ph-5"><img src="{{ url_for('static', path='/images/about/about_5.jpg') }}" alt="EV Nation Showroom"></div>
+      <div class="ph ph-6"><img src="{{ url_for('static', path='/images/about/about_6.jpg') }}" alt="EV Nation Showroom"></div>
+      <div class="ph ph-7"><img src="{{ url_for('static', path='/images/about/about_7.jpg') }}" alt="EV Nation Showroom"></div>
+    </div>
+  </div>
+</section>
 
-function currentSlide(n) {
-  slideIndex = n;
-  updateSlides();
-}
+<!-- ── SERVICES ── -->
+<section class="ab-services">
+  <div class="ab-services-inner">
+    <div class="ab-services-head">
+      <div class="section-eyebrow" style="color:var(--green-mid);">What We Offer</div>
+      <h2>OUR SERVICES</h2>
+      <p>Beyond selling scooters, we're your complete electric mobility partner — from purchase to the road and beyond.</p>
+    </div>
+    <div class="ab-services-grid">
+      <div class="ab-service-card">
+        <div class="ab-service-icon">🛵</div>
+        <h4>Sales & Delivery</h4>
+        <p>Purchase your dream EV and get it delivered with full documentation, registration assistance, and a handover walkthrough.</p>
+      </div>
+      <div class="ab-service-card">
+        <div class="ab-service-icon">🏍️</div>
+        <h4>Test Rides</h4>
+        <p>Book a free test ride at our showroom. Experience the performance of any model before committing — no obligation, ever.</p>
+      </div>
+      <div class="ab-service-card">
+        <div class="ab-service-icon">💳</div>
+        <h4>Finance & EMI</h4>
+        <p>Flexible loan options through our banking partners with quick approval, low interest rates, and minimal paperwork.</p>
+      </div>
+      <div class="ab-service-card">
+        <div class="ab-service-icon">🔧</div>
+        <h4>Service & Support</h4>
+        <p>Post-purchase support including warranty claims, periodic service reminders, and technical assistance when you need it.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-function updateSlides() {
-  wrapper.style.transform = `translateX(-${(slideIndex - 1) * 100}%)`;
-  
-  const dots = document.getElementsByClassName("dot");
-  for (let i = 0; i < dots.length; i++) {
-    dots[i].classList.remove("active");
-  }
-  dots[slideIndex-1].classList.add("active");
-}
+<!-- ── VISIT & CONTACT ── -->
+<section class="ab-contact">
+  <div class="ab-contact-inner">
+    <div class="ab-contact-left">
+      <div class="section-eyebrow" style="color:var(--green-mid); margin-bottom:12px;">Find Us</div>
+      <h2>VISIT OUR SHOWROOM</h2>
 
-// Auto slideshow
-let autoSlide = setInterval(function() {
-    plusSlides(1);
-}, 5000);
+      <div class="ab-contact-item">
+        <div class="ab-contact-item-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div>
+          <h4>Address</h4>
+          <p>Sarak Doodhli, Near Reliance Petrol Pump<br>Dehradun Road, Saharanpur (U.P.) — 247001</p>
+        </div>
+      </div>
 
-// Reset timer on manual click
-function resetTimer() {
-    clearInterval(autoSlide);
-    autoSlide = setInterval(function() {
-        plusSlides(1);
-    }, 5000);
-}
+      <div class="ab-contact-item">
+        <div class="ab-contact-item-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        </div>
+        <div>
+          <h4>Call Us</h4>
+          <a href="tel:+919045263337" class="phone-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+            +91 90452 63337
+          </a>
+          <a href="tel:+918650555588" class="phone-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+            +91 86505 55588
+          </a>
+        </div>
+      </div>
 
-document.querySelectorAll('.prev, .next, .dot').forEach(el => {
-    el.addEventListener('click', resetTimer);
-});
+      <div class="ab-contact-item">
+        <div class="ab-contact-item-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+        </div>
+        <div>
+          <h4>WhatsApp</h4>
+          <a href="https://wa.me/919045263337" target="_blank" rel="noopener" class="ab-wa-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px;flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Chat with us on WhatsApp
+          </a>
+        </div>
+      </div>
 
-updateSlides(); // Init
-</script>
+      <div class="ab-hours">
+        <h4>Showroom Hours</h4>
+        <div class="ab-hours-row"><span>Monday – Saturday</span><strong>9:00 AM – 7:00 PM</strong></div>
+        <div class="ab-hours-row"><span>Sunday</span><strong>10:00 AM – 4:00 PM</strong></div>
+        <div class="ab-hours-row"><span>Public Holidays</span><strong>10:00 AM – 3:00 PM</strong></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="ab-map-embed">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3456.2700171717!2d77.596222!3d29.9716691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ec1de197337d5%3A0x4581d1f39b9f930b!2sEv%20Nation%20%7C%7C%20E%20scooter!5e0!3m2!1sen!2sde!4v1777838788684!5m2!1sen!2sde"
+          allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="EV Nation Location">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
 
 {% endblock %}

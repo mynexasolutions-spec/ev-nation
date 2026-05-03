@@ -9,6 +9,7 @@ from app.core.errors import NotFoundError
 from app.db.session import get_db
 from app.services.product_service import ProductService
 from app.services.category_service import category_service
+from app.services.blog_service import blog_service
 from app.api.deps import get_current_user_web
 from app.web.templating import templates
 
@@ -18,6 +19,7 @@ product_service = ProductService()
 @router.get("/about", response_class=HTMLResponse)
 def about(request: Request, user=Depends(get_current_user_web)):
     return templates.TemplateResponse(
+        request,
         "storefront/about.html",
         {
             "request": request,
@@ -27,9 +29,23 @@ def about(request: Request, user=Depends(get_current_user_web)):
     )
 
 
+@router.get("/contact", response_class=HTMLResponse)
+def contact(request: Request, user=Depends(get_current_user_web)):
+    return templates.TemplateResponse(
+        request,
+        "storefront/contact.html",
+        {
+            "request": request,
+            "user": user,
+            "page_title": "Contact Us — EV Nation",
+        },
+    )
+
+
 @router.get("/legal", response_class=HTMLResponse)
 def legal(request: Request, user=Depends(get_current_user_web)):
     return templates.TemplateResponse(
+        request,
         "storefront/legal.html",
         {
             "request": request,
@@ -64,6 +80,7 @@ def home(request: Request, db: Session = Depends(get_db), user=Depends(get_curre
         })
 
     return templates.TemplateResponse(
+        request,
         "storefront/home.html",
         {
             "request": request,
@@ -113,6 +130,7 @@ def collection(
     categories = category_service.get_all_active(db)
     
     return templates.TemplateResponse(
+        request,
         "storefront/collection.html",
         {
             "request": request,
@@ -137,11 +155,13 @@ def product_detail(slug: str, request: Request, db: Session = Depends(get_db), u
         recommendations = product_service.get_public_recommendations(db, exclude_id=product.id, limit=3)
     except NotFoundError:
         return templates.TemplateResponse(
+            request,
             "storefront/404.html",
             {"request": request, "page_title": "Not Found"},
             status_code=404,
         )
     return templates.TemplateResponse(
+        request,
         "storefront/product.html",
         {
             "request": request,
@@ -157,6 +177,7 @@ def product_detail(slug: str, request: Request, db: Session = Depends(get_db), u
 @router.get("/cart", response_class=HTMLResponse)
 def cart_page(request: Request, user=Depends(get_current_user_web)):
     return templates.TemplateResponse(
+        request,
         "storefront/cart.html",
         {
             "request": request,
@@ -171,6 +192,7 @@ def checkout_page(request: Request, user=Depends(get_current_user_web)):
     if not user:
         return RedirectResponse(url="/login?next=/checkout")
     return templates.TemplateResponse(
+        request,
         "storefront/checkout.html",
         {
             "request": request,
@@ -185,11 +207,62 @@ def order_confirmation_page(order_number: str, request: Request, user=Depends(ge
     if not user:
         return RedirectResponse(url="/login")
     return templates.TemplateResponse(
+        request,
         "storefront/order_confirmation.html",
         {
             "request": request,
             "user": user,
             "order_number": order_number,
             "page_title": "Order Confirmed — EV Nation",
+        },
+    )
+
+
+@router.get("/blog", response_class=HTMLResponse)
+def blog_listing(
+    request: Request,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user_web),
+    category: str | None = None,
+):
+    posts = blog_service.list_published(db, category_slug=category)
+    featured = blog_service.get_featured(db, limit=3)
+    latest = blog_service.get_latest(db, limit=5)
+    categories = blog_service.get_all_categories(db)
+    return templates.TemplateResponse(
+        request,
+        "storefront/blog.html",
+        {
+            "request": request,
+            "user": user,
+            "posts": posts,
+            "featured": featured,
+            "latest": latest,
+            "categories": categories,
+            "selected_category": category,
+            "page_title": "Blog — EV Nation",
+        },
+    )
+
+
+@router.get("/blog/{slug}", response_class=HTMLResponse)
+def blog_detail(slug: str, request: Request, db: Session = Depends(get_db), user=Depends(get_current_user_web)):
+    post = blog_service.get_by_slug(db, slug)
+    if not post or not post.is_published:
+        return templates.TemplateResponse(
+            request, "storefront/404.html", {"request": request, "page_title": "Not Found"}, status_code=404
+        )
+    related = blog_service.get_related(db, post_id=post.id, category_id=post.category_id, limit=4)
+    latest = blog_service.get_latest(db, limit=5)
+    return templates.TemplateResponse(
+        request,
+        "storefront/blog_detail.html",
+        {
+            "request": request,
+            "user": user,
+            "post": post,
+            "related": related,
+            "latest": latest,
+            "page_title": f"{post.title} — EV Nation Blog",
         },
     )

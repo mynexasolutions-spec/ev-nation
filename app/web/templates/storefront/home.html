@@ -66,6 +66,77 @@
     </div>
   </div>
 
+  <!-- PRODUCTS SECTION — DYNAMIC -->
+  <section class="products reveal" id="models">
+    <div class="products-head">
+      <div class="section-eyebrow">TAKING RIDES TO A NEWER LEVEL</div>
+      <h2 class="section-title">CHOOSE A SCOOTER</h2>
+      <p>Select from our range of high-performance electric scooters, each designed with precision engineering and
+        sustainable technology.</p>
+    </div>
+
+    <div class="product-grid">
+      {% if products %}
+        {% for product in products[:6] %}
+        <div class="product-card">
+          <div class="p-img-box">
+            {% if product.primary_image %}
+            <img src="{{ product.primary_image.image_path }}" alt="{{ product.primary_image.alt_text or product.name }}">
+            {% else %}
+            <img src="{{ url_for('static', path='/images/products/product_1.png') }}" alt="{{ product.name }}">
+            {% endif %}
+          </div>
+          <div class="p-body">
+            <div class="p-title-row">
+              <div>
+                <h3>{{ product.name | upper }}</h3>
+              </div>
+            </div>
+            <div class="p-specs">
+              <div class="p-spec-item"><label>MAX RANGE</label><value>{{ product.spec.range or 'N/A' }}</value></div>
+              <div class="p-spec-item"><label>TOP SPEED</label><value>{{ product.spec.speed or 'N/A' }}</value></div>
+              <div class="p-spec-item"><label>MOTOR</label><value>{{ product.spec.motor.split(' ')[0] if product.spec.motor and ' ' in product.spec.motor else (product.spec.motor or 'N/A') }}</value></div>
+              <div class="p-spec-item"><label>CHARGE</label><value>{{ product.spec.charging_time or 'N/A' }}</value></div>
+            </div>
+            <div class="p-footer">
+              <a href="/bikes/{{ product.slug }}" class="btn-product">View Details</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <!-- Fallback: show placeholder cards if no products in DB -->
+        {% for i in range(1, 7) %}
+        <div class="product-card">
+          <div class="p-img-box">
+            <img src="{{ url_for('static', path='/images/products/product_' ~ i ~ '.png') }}" alt="EV Scooter Model {{ i }}">
+          </div>
+          <div class="p-body">
+            <div class="p-title-row">
+              <div>
+                <h3>EV NATION MODEL {{ i }}</h3>
+              </div>
+            </div>
+              <div class="p-specs">
+                <div class="p-spec-item"><label>MAX RANGE</label><value>120 km</value></div>
+                <div class="p-spec-item"><label>TOP SPEED</label><value>85 km/h</value></div>
+                <div class="p-spec-item"><label>MOTOR</label><value>Mid-Drive</value></div>
+                <div class="p-spec-item"><label>CHARGE</label><value>4 Hours</value></div>
+              </div>
+            <div class="p-footer">
+              <a href="/collection" class="btn-product">Coming Soon</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    <div class="collection-btn-container" style="margin-top: 40px; text-align: center;">
+      <a href="/collection" class="btn-primary" style="padding: 20px 60px; font-size: 1rem;">SEE COLLECTION</a>
+    </div>
+  </section>
+
   <!-- PERFORMANCE SECTION -->
   <section class="performance reveal">
     <div class="performance-grid">
@@ -115,77 +186,6 @@
           <img src="{{ url_for('static', path='/images/after_banner/img3.png') }}" alt="Performance Detail 2">
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- PRODUCTS SECTION — DYNAMIC -->
-  <section class="products reveal" id="models">
-    <div class="products-head">
-      <div class="section-eyebrow">TAKING RIDES TO A NEWER LEVEL</div>
-      <h2 class="section-title">CHOOSE A SCOOTER</h2>
-      <p>Select from our range of high-performance electric scooters, each designed with precision engineering and
-        sustainable technology.</p>
-    </div>
-
-    <div class="product-grid">
-      {% if products %}
-        {% for product in products[:3] %}
-        <div class="product-card">
-          <div class="p-img-box">
-            {% if product.primary_image %}
-            <img src="{{ product.primary_image.image_path }}" alt="{{ product.primary_image.alt_text or product.name }}">
-            {% else %}
-            <img src="{{ url_for('static', path='/images/products/product_1.png') }}" alt="{{ product.name }}">
-            {% endif %}
-          </div>
-          <div class="p-body">
-            <div class="p-title-row">
-              <div>
-                <h3>{{ product.name | upper }}</h3>
-              </div>
-            </div>
-            <div class="p-specs">
-              <div class="p-spec-item"><label>MAX RANGE</label><value>{{ product.spec.range or 'N/A' }}</value></div>
-              <div class="p-spec-item"><label>TOP SPEED</label><value>{{ product.spec.speed or 'N/A' }}</value></div>
-              <div class="p-spec-item"><label>MOTOR</label><value>{{ product.spec.motor.split(' ')[0] if product.spec.motor and ' ' in product.spec.motor else (product.spec.motor or 'N/A') }}</value></div>
-              <div class="p-spec-item"><label>CHARGE</label><value>{{ product.spec.charging_time or 'N/A' }}</value></div>
-            </div>
-            <div class="p-footer">
-              <a href="/bikes/{{ product.slug }}" class="btn-product">View Details</a>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      {% else %}
-        <!-- Fallback: show placeholder cards if no products in DB -->
-        {% for i in range(1, 4) %}
-        <div class="product-card">
-          <div class="p-img-box">
-            <img src="{{ url_for('static', path='/images/products/product_' ~ i ~ '.png') }}" alt="EV Scooter Model {{ i }}">
-          </div>
-          <div class="p-body">
-            <div class="p-title-row">
-              <div>
-                <h3>EV NATION MODEL {{ i }}</h3>
-              </div>
-            </div>
-              <div class="p-specs">
-                <div class="p-spec-item"><label>MAX RANGE</label><value>120 km</value></div>
-                <div class="p-spec-item"><label>TOP SPEED</label><value>85 km/h</value></div>
-                <div class="p-spec-item"><label>MOTOR</label><value>Mid-Drive</value></div>
-                <div class="p-spec-item"><label>CHARGE</label><value>4 Hours</value></div>
-              </div>
-            <div class="p-footer">
-              <a href="/collection" class="btn-product">Coming Soon</a>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      {% endif %}
-    </div>
-
-    <div class="collection-btn-container" style="margin-top: 40px; text-align: center;">
-      <a href="/collection" class="btn-primary" style="padding: 20px 60px; font-size: 1rem;">SEE COLLECTION</a>
     </div>
   </section>
 
@@ -312,23 +312,23 @@
       <div class="section-eyebrow reveal">The EV Nation Advantage</div>
       <h2 class="section-title reveal" style="color: var(--charcoal); margin-bottom: 60px;">WHY RIDE WITH US?</h2>
       
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
+      <div class="benefits-grid">
         <!-- Benefit 1 -->
-        <div class="reveal reveal-d1" style="padding: 40px; background: var(--off-white); border-radius: 12px; border: 1px solid #eee; transition: transform 0.3s ease;">
+        <div class="benefit-card reveal reveal-d1">
           <div style="font-size: 3rem; margin-bottom: 20px;">⚡</div>
           <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--green-deep); margin-bottom: 15px;">Ultra-Low Running Cost</h3>
           <p style="color: var(--gray); line-height: 1.6;">Say goodbye to fluctuating petrol prices. Ride for as low as ₹0.20 per kilometer and save thousands every year.</p>
         </div>
         
         <!-- Benefit 2 -->
-        <div class="reveal reveal-d2" style="padding: 40px; background: var(--off-white); border-radius: 12px; border: 1px solid #eee; transition: transform 0.3s ease;">
+        <div class="benefit-card reveal reveal-d2">
           <div style="font-size: 3rem; margin-bottom: 20px;">📱</div>
           <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--green-deep); margin-bottom: 15px;">Smart Connectivity</h3>
           <p style="color: var(--gray); line-height: 1.6;">Track your ride, monitor battery health, and receive over-the-air (OTA) updates directly through the EV Nation app.</p>
         </div>
 
         <!-- Benefit 3 -->
-        <div class="reveal reveal-d3" style="padding: 40px; background: var(--off-white); border-radius: 12px; border: 1px solid #eee; transition: transform 0.3s ease;">
+        <div class="benefit-card reveal reveal-d3">
           <div style="font-size: 3rem; margin-bottom: 20px;">🛡️</div>
           <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--green-deep); margin-bottom: 15px;">Zero Maintenance</h3>
           <p style="color: var(--gray); line-height: 1.6;">With no engine oil, spark plugs, or complex mechanical parts, your service visits are almost non-existent.</p>
@@ -398,6 +398,12 @@
         </div>
         {% endfor %}
       {% endif %}
+      <!-- Static gallery images -->
+      {% for i in range(1, 7) %}
+      <div class="g-cell reveal {% if i % 3 == 2 %}reveal-d1{% elif i % 3 == 0 %}reveal-d2{% endif %}">
+        <img src="{{ url_for('static', path='/images/gallery/image-' ~ i ~ '.webp') }}" alt="EV Nation Gallery" loading="lazy">
+      </div>
+      {% endfor %}
     </div>
   </section>
 
@@ -410,21 +416,36 @@
 
   <!-- CONTACT SECTION -->
   <section class="contact-section" id="contact">
+    <div class="contact-header reveal">
+      <div class="section-eyebrow">Get in Touch</div>
+      <h2 class="section-title">READY TO RIDE?</h2>
+      <p class="contact-intro">Our team is here to answer any questions about our models, charging solutions, or corporate fleets. Drop us a line.</p>
+    </div>
+
     <div class="contact-grid">
-      <div class="contact-text reveal">
-        <div class="section-eyebrow">Get in Touch</div>
-        <h2 class="section-title">READY TO RIDE?</h2>
-        <p style="font-size: 1.1rem; color: var(--gray); margin-bottom: 30px; line-height: 1.6;">Our team is here to answer any questions about our models, charging solutions, or corporate fleets. Drop us a line.</p>
-        <div style="margin-bottom: 20px;">
-          <h4 style="font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--green-deep); margin-bottom: 5px;">EV NATIONAL PVT. LTD.</h4>
-          <p style="color: var(--gray);">Sarak Doodhli, Near Reliance Petrol Pump<br>Dehradun Road, Saharanpur (U.P.)</p>
+      <!-- LEFT: Map + info -->
+      <div class="contact-left reveal">
+        <div class="contact-map">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3456.2700171717!2d77.596222!3d29.9716691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ec1de197337d5%3A0x4581d1f39b9f930b!2sEv%20Nation%20%7C%7C%20E%20scooter!5e0!3m2!1sen!2sde!4v1777838788684!5m2!1sen!2sde"
+            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade" title="EV Nation Location">
+          </iframe>
         </div>
-        <div>
-          <h4 style="font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--green-deep); margin-bottom: 5px;">Contact Numbers</h4>
-          <p style="color: var(--gray);">9045263337, 8650555588</p>
+        <div class="contact-info-strip">
+          <div class="contact-info-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Sarak Doodhli, Near Reliance Petrol Pump,<br>Dehradun Road, Saharanpur (U.P.)</span>
+          </div>
+          <div class="contact-info-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            <span>9045263337 &nbsp;|&nbsp; 8650555588</span>
+          </div>
         </div>
       </div>
-      <div class="contact-form reveal reveal-d1" style="background: var(--white); padding: 40px; border-radius: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); border: 1px solid #eee;">
+
+      <!-- RIGHT: Form -->
+      <div class="contact-form reveal reveal-d1">
         <form id="contact-form">
           <div style="margin-bottom: 20px;">
             <label style="display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: var(--green-mid); margin-bottom: 8px;">Full Name</label>
@@ -450,6 +471,51 @@
   </section>
 
   <script>
+    // ── Gallery Marquee (phone only) ──
+    function initGalleryMarquee() {
+      if (window.innerWidth > 480) return;
+      const grid = document.querySelector('.gallery-grid');
+      if (!grid || grid.classList.contains('marquee-ready')) return;
+
+      const cells = Array.from(grid.querySelectorAll('.g-cell'));
+      if (cells.length === 0) return;
+
+      // Row 1: all items in original order → scrolls left
+      // Row 2: all items in reverse order → scrolls right
+      const row1Items = cells;
+      const row2Items = [...cells].reverse();
+
+      function makeRow(items, direction) {
+        const row = document.createElement('div');
+        row.className = 'gallery-marquee-row';
+
+        const inner = document.createElement('div');
+        inner.className = 'gallery-marquee-inner ' + (direction === 'left' ? 'scroll-left' : 'scroll-right');
+
+        // Duplicate items twice so the loop is seamless
+        [0, 1].forEach(() => {
+          items.forEach(cell => {
+            const clone = cell.cloneNode(true);
+            clone.classList.remove('reveal', 'reveal-d1', 'reveal-d2', 'visible');
+            inner.appendChild(clone);
+          });
+        });
+
+        row.appendChild(inner);
+        return row;
+      }
+
+      const wrap = document.createElement('div');
+      wrap.className = 'gallery-marquee-wrap';
+      wrap.appendChild(makeRow(row1Items, 'left'));
+      wrap.appendChild(makeRow(row2Items, 'right'));
+
+      grid.classList.add('marquee-ready');
+      grid.parentNode.insertBefore(wrap, grid.nextSibling);
+    }
+
+    document.addEventListener('DOMContentLoaded', initGalleryMarquee);
+
     // Contact form → Lead API
     document.getElementById('contact-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();

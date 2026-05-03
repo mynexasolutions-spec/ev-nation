@@ -4,6 +4,7 @@ from app.api.v1.endpoints.admin_auth import router as admin_auth_router
 from app.api.v1.endpoints.admin_leads import router as admin_leads_router
 from app.api.v1.endpoints.admin_products import router as admin_products_router
 from app.api.v1.endpoints.auth import router as auth_router
+from app.api.v1.endpoints.blog_subscribe import router as blog_subscribe_router
 from app.api.v1.endpoints.cart import router as cart_router
 from app.api.v1.endpoints.health import router as health_router
 from app.api.v1.endpoints.leads import router as leads_router
@@ -20,3 +21,4 @@ api_router.include_router(orders_router, tags=["orders"])
 api_router.include_router(admin_auth_router, tags=["admin-auth"])
 api_router.include_router(admin_products_router, tags=["admin-products"])
 api_router.include_router(admin_leads_router, tags=["admin-leads"])
+api_router.include_router(blog_subscribe_router, tags=["blog"])

@@ -1,0 +1,321 @@
+{% extends "admin/base.html" %}
+{% block content %}
+
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<style>
+  .blog-layout { display: grid; grid-template-columns: 1fr 380px; gap: 28px; align-items: start; }
+  .blog-table-wrap { background: var(--surface); border-radius: 12px; padding: 28px; }
+  .blog-panel { background: var(--surface); border-radius: 12px; padding: 28px; position: sticky; top: 88px; }
+  .blog-panel h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.04em; margin-bottom: 20px; color: var(--text); }
+  .form-row { margin-bottom: 16px; }
+  .form-row label { display: block; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 6px; }
+  .form-row input[type="text"],
+  .form-row input[type="number"],
+  .form-row select,
+  .form-row textarea { width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 0.95rem; }
+  .form-row textarea { resize: vertical; min-height: 80px; }
+  .form-check { display: flex; align-items: center; gap: 10px; }
+  .form-check input { width: 18px; height: 18px; cursor: pointer; }
+  .form-check label { font-size: 0.9rem; color: var(--text); margin-bottom: 0; font-weight: 500; text-transform: none; letter-spacing: 0; }
+  #quill-editor { min-height: 260px; background: var(--bg); border-radius: 0 0 8px 8px; color: var(--text); }
+  .ql-toolbar { background: var(--surface); border-radius: 8px 8px 0 0 !important; border-color: var(--border) !important; }
+  .ql-container { border-color: var(--border) !important; border-radius: 0 0 8px 8px !important; }
+  .ql-editor { min-height: 240px; font-family: 'Barlow', sans-serif; font-size: 0.95rem; }
+  .cat-row { display: flex; gap: 8px; align-items: flex-end; }
+  .cat-row select { flex: 1; }
+  #newCatInput { display: none; flex: 1; }
+  .img-preview { margin-top: 10px; border-radius: 8px; overflow: hidden; max-height: 180px; }
+  .img-preview img { width: 100%; height: 180px; object-fit: cover; display: block; }
+  .action-row { display: flex; gap: 10px; margin-top: 20px; }
+  .btn-save { background: var(--accent); color: #000; font-weight: 700; border: none; padding: 10px 22px; border-radius: 8px; cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; letter-spacing: 0.05em; }
+  .btn-cancel { background: transparent; color: var(--text-muted); border: 1px solid var(--border); padding: 10px 16px; border-radius: 8px; cursor: pointer; font-family: 'Barlow', sans-serif; }
+  .btn-cancel:hover { background: var(--border); }
+  .upload-btn { background: var(--surface); border: 1px dashed var(--border); color: var(--text-muted); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; width: 100%; text-align: center; transition: border-color 0.2s, color 0.2s; }
+  .upload-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .tbl { width: 100%; border-collapse: collapse; }
+  .tbl th { text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .tbl td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 0.9rem; vertical-align: middle; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tr:hover td { background: rgba(255,255,255,0.02); }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+  .badge-pub { background: rgba(168,230,61,0.15); color: #a8e63d; }
+  .badge-draft { background: rgba(255,255,255,0.08); color: var(--text-muted); }
+  .badge-feat { background: rgba(255,200,0,0.15); color: #ffc800; }
+  .row-actions { display: flex; gap: 8px; }
+  .btn-edit, .btn-del { border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; font-family: 'Barlow', sans-serif; }
+  .btn-edit { background: rgba(168,230,61,0.12); color: #a8e63d; }
+  .btn-edit:hover { background: rgba(168,230,61,0.25); }
+  .btn-del { background: rgba(239,68,68,0.1); color: #ef4444; }
+  .btn-del:hover { background: rgba(239,68,68,0.2); }
+  .post-thumb { width: 54px; height: 40px; object-fit: cover; border-radius: 6px; }
+  .no-thumb { width: 54px; height: 40px; background: var(--border); border-radius: 6px; display: inline-block; }
+  @media (max-width: 1100px) { .blog-layout { grid-template-columns: 1fr; } .blog-panel { position: static; } }
+</style>
+
+<div class="admin-page-header">
+  <h1 class="admin-page-title">Blog Posts</h1>
+  <button class="primary-button" onclick="openNew()">+ New Post</button>
+</div>
+
+<div class="blog-layout">
+  <!-- TABLE -->
+  <div class="blog-table-wrap">
+    {% if posts %}
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in posts %}
+        <tr>
+          <td>
+            {% if p.primary_image %}
+            <img src="{{ p.primary_image }}" alt="" class="post-thumb">
+            {% else %}
+            <span class="no-thumb"></span>
+            {% endif %}
+          </td>
+          <td><strong>{{ p.title }}</strong></td>
+          <td>{{ p.category.name if p.category else '—' }}</td>
+          <td>
+            {% if p.is_published %}<span class="badge badge-pub">Published</span>{% else %}<span class="badge badge-draft">Draft</span>{% endif %}
+            {% if p.is_featured %}<span class="badge badge-feat" style="margin-left:4px;">Featured</span>{% endif %}
+          </td>
+          <td style="white-space:nowrap;color:var(--text-muted);font-size:0.82rem;">{{ p.created_at.strftime('%b %d, %Y') }}</td>
+          <td>
+            <div class="row-actions">
+              <button class="btn-edit" onclick="editPost({{ p.id }}, {{ p | tojson }})">Edit</button>
+              <button class="btn-del" onclick="deletePost({{ p.id }}, '{{ p.title | e }}')">Delete</button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p style="color:var(--text-muted);text-align:center;padding:40px 0;">No blog posts yet. Create your first post →</p>
+    {% endif %}
+  </div>
+
+  <!-- EDIT PANEL -->
+  <div class="blog-panel" id="blogPanel">
+    <h3 id="panelTitle">New Post</h3>
+
+    <div class="form-row">
+      <label>Title *</label>
+      <input type="text" id="fTitle" placeholder="Post title…" oninput="autoSlug()">
+    </div>
+    <div class="form-row">
+      <label>Slug</label>
+      <input type="text" id="fSlug" placeholder="auto-generated">
+    </div>
+    <div class="form-row">
+      <label>Category</label>
+      <div class="cat-row">
+        <select id="fCategory" onchange="handleCatChange()">
+          <option value="">— Select —</option>
+          {% for c in categories %}
+          <option value="{{ c.id }}">{{ c.name }}</option>
+          {% endfor %}
+          <option value="__other__">+ Add new category…</option>
+        </select>
+        <input type="text" id="newCatInput" placeholder="New category name">
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Short Description</label>
+      <textarea id="fShortDesc" rows="2" placeholder="Brief summary shown on listing…"></textarea>
+    </div>
+    <div class="form-row">
+      <label>Author</label>
+      <input type="text" id="fAuthor" value="EV Nation Team">
+    </div>
+    <div class="form-row">
+      <label>Read Time (minutes)</label>
+      <input type="number" id="fReadTime" min="1" placeholder="e.g. 5">
+    </div>
+    <div class="form-row">
+      <label>Content</label>
+      <div id="quill-editor"></div>
+    </div>
+    <div class="form-row" style="display:flex;gap:20px;">
+      <div class="form-check">
+        <input type="checkbox" id="fPublished">
+        <label for="fPublished">Published</label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" id="fFeatured">
+        <label for="fFeatured">Featured</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Primary Image</label>
+      <label class="upload-btn" for="imgPicker">📷 Choose image (JPG/PNG/WEBP, max 5 MB)</label>
+      <input type="file" id="imgPicker" accept=".jpg,.jpeg,.png,.webp" style="display:none;" onchange="handleImagePick()">
+      <div class="img-preview" id="imgPreview" style="display:none;"></div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-save" onclick="savePost()">Save Post</button>
+      <button class="btn-cancel" onclick="cancelEdit()">Cancel</button>
+    </div>
+    <p id="panelMsg" style="display:none;margin-top:12px;padding:10px;border-radius:6px;font-size:0.88rem;"></p>
+  </div>
+</div>
+
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<script>
+  const quill = new Quill('#quill-editor', {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ color: [] }, { background: [] }],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ align: [] }],
+        ['blockquote', 'code-block'],
+        ['link', 'image'],
+        ['clean'],
+      ],
+    },
+  });
+
+  let currentId = null;
+  let pendingImageFile = null;
+
+  function openNew() {
+    currentId = null;
+    pendingImageFile = null;
+    document.getElementById('panelTitle').textContent = 'New Post';
+    document.getElementById('fTitle').value = '';
+    document.getElementById('fSlug').value = '';
+    document.getElementById('fCategory').value = '';
+    document.getElementById('newCatInput').style.display = 'none';
+    document.getElementById('newCatInput').value = '';
+    document.getElementById('fShortDesc').value = '';
+    document.getElementById('fAuthor').value = 'EV Nation Team';
+    document.getElementById('fReadTime').value = '';
+    document.getElementById('fPublished').checked = false;
+    document.getElementById('fFeatured').checked = false;
+    document.getElementById('imgPreview').style.display = 'none';
+    quill.setContents([]);
+    hideMsg();
+  }
+
+  function editPost(id, post) {
+    currentId = id;
+    pendingImageFile = null;
+    document.getElementById('panelTitle').textContent = 'Edit Post';
+    document.getElementById('fTitle').value = post.title || '';
+    document.getElementById('fSlug').value = post.slug || '';
+    document.getElementById('fCategory').value = post.category_id || '';
+    document.getElementById('newCatInput').style.display = 'none';
+    document.getElementById('fShortDesc').value = post.short_description || '';
+    document.getElementById('fAuthor').value = post.author || 'EV Nation Team';
+    document.getElementById('fReadTime').value = post.read_time || '';
+    document.getElementById('fPublished').checked = !!post.is_published;
+    document.getElementById('fFeatured').checked = !!post.is_featured;
+    quill.clipboard.dangerouslyPasteHTML(post.content || '');
+    if (post.primary_image) {
+      document.getElementById('imgPreview').innerHTML = `<img src="${post.primary_image}" alt="">`;
+      document.getElementById('imgPreview').style.display = 'block';
+    } else {
+      document.getElementById('imgPreview').style.display = 'none';
+    }
+    hideMsg();
+    document.getElementById('blogPanel').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function handleCatChange() {
+    const sel = document.getElementById('fCategory');
+    const inp = document.getElementById('newCatInput');
+    inp.style.display = sel.value === '__other__' ? 'block' : 'none';
+  }
+
+  function autoSlug() {
+    if (currentId) return; // don't override existing slug
+    const title = document.getElementById('fTitle').value;
+    document.getElementById('fSlug').value = title.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  }
+
+  function cancelEdit() { openNew(); }
+
+  async function savePost() {
+    const title = document.getElementById('fTitle').value.trim();
+    if (!title) { showMsg('Title is required.', false); return; }
+
+    const catSel = document.getElementById('fCategory').value;
+    let catRaw = null;
+    if (catSel === '__other__') {
+      catRaw = document.getElementById('newCatInput').value.trim();
+      if (!catRaw) { showMsg('Enter new category name.', false); return; }
+    } else if (catSel) {
+      catRaw = catSel; // numeric id as string
+    }
+
+    const payload = {
+      id: currentId || undefined,
+      title,
+      slug: document.getElementById('fSlug').value.trim() || undefined,
+      category_raw: catRaw || undefined,
+      short_description: document.getElementById('fShortDesc').value.trim() || null,
+      author: document.getElementById('fAuthor').value.trim() || 'EV Nation Team',
+      read_time: parseInt(document.getElementById('fReadTime').value) || null,
+      content: quill.root.innerHTML,
+      is_published: document.getElementById('fPublished').checked,
+      is_featured: document.getElementById('fFeatured').checked,
+    };
+
+    const r = await fetch('/admin/blogs/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const d = await r.json();
+    if (!r.ok) { showMsg(d.detail || 'Error saving post.', false); return; }
+
+    const postId = d.id;
+
+    // Upload image if pending
+    if (pendingImageFile) {
+      const form = new FormData();
+      form.append('file', pendingImageFile);
+      const ir = await fetch(`/admin/blogs/${postId}/upload-image`, { method: 'POST', body: form });
+      if (!ir.ok) { showMsg('Post saved but image upload failed.', false); setTimeout(() => location.reload(), 2000); return; }
+    }
+
+    showMsg('Post saved!', true);
+    setTimeout(() => location.reload(), 1200);
+  }
+
+  async function deletePost(id, title) {
+    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+    const r = await fetch(`/admin/blogs/${id}/delete`, { method: 'POST' });
+    if (r.ok) location.reload();
+    else alert('Error deleting post.');
+  }
+
+  function handleImagePick() {
+    const file = document.getElementById('imgPicker').files[0];
+    if (!file) return;
+    pendingImageFile = file;
+    const url = URL.createObjectURL(file);
+    document.getElementById('imgPreview').innerHTML = `<img src="${url}" alt="">`;
+    document.getElementById('imgPreview').style.display = 'block';
+  }
+
+  function showMsg(msg, ok) {
+    const el = document.getElementById('panelMsg');
+    el.textContent = msg;
+    el.style.background = ok ? 'rgba(168,230,61,0.12)' : 'rgba(239,68,68,0.12)';
+    el.style.color = ok ? '#a8e63d' : '#ef4444';
+    el.style.display = 'block';
+  }
+  function hideMsg() { document.getElementById('panelMsg').style.display = 'none'; }
+</script>
+
+{% endblock %}

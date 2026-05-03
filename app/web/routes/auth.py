@@ -17,14 +17,14 @@ order_service = OrderService()
 async def login_page(request: Request, user=Depends(get_current_user_web)):
     if user:
         return RedirectResponse(url="/profile")
-    return templates.TemplateResponse("storefront/login.html", {"request": request, "user": user})
+    return templates.TemplateResponse(request, "storefront/login.html", {"request": request, "user": user})
 
 
 @router.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request, user=Depends(get_current_user_web)):
     if user:
         return RedirectResponse(url="/profile")
-    return templates.TemplateResponse("storefront/register.html", {"request": request, "user": user})
+    return templates.TemplateResponse(request, "storefront/register.html", {"request": request, "user": user})
 
 
 @router.get("/profile", response_class=HTMLResponse)
@@ -35,6 +35,7 @@ async def profile_page(request: Request, user=Depends(get_current_user_web), db:
     orders = order_service.get_user_orders(db, user.id)
     
     return templates.TemplateResponse(
+        request,
         "storefront/profile.html", 
         {
             "request": request, 
@@ -56,6 +57,7 @@ async def order_detail_page(order_number: str, request: Request, user=Depends(ge
         return RedirectResponse(url="/profile")
         
     return templates.TemplateResponse(
+        request,
         "storefront/order_detail.html",
         {
             "request": request,

@@ -1,0 +1,431 @@
+{% extends "storefront/base.html" %}
+{% block content %}
+
+<style>
+  /* Nav stays white/original on the dark header — no overrides needed */
+
+  .contact-page {
+    background: var(--off-white);
+    min-height: 100vh;
+  }
+
+  /* ── PAGE HEADER ── */
+  .cp-header {
+    background: var(--green-deep);
+    padding: 130px 56px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cp-header::before {
+    content: 'CONTACT';
+    position: absolute;
+    right: -1vw;
+    bottom: -1rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16vw;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(168,230,61,0.08);
+    pointer-events: none;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .cp-header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .cp-header-text { /* text side */ }
+  .cp-header-img {
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.30);
+    height: 360px;
+  }
+  .cp-header-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .cp-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--green-lime);
+    margin-bottom: 14px;
+  }
+  .cp-header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    color: var(--white);
+    line-height: 0.95;
+    margin-bottom: 18px;
+  }
+  .cp-header p {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.65);
+    max-width: 440px;
+    line-height: 1.65;
+  }
+
+  /* ── QUICK INFO STRIP ── */
+  .cp-strip {
+    background: var(--green-lime);
+    padding: 0 56px;
+  }
+  .cp-strip-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+  }
+  .cp-strip-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 22px 40px 22px 0;
+    flex: 1;
+    border-right: 1px solid rgba(26,74,46,0.15);
+  }
+  .cp-strip-item:last-child { border-right: none; }
+  .cp-strip-item svg { width: 22px; height: 22px; color: var(--green-deep); flex-shrink: 0; }
+  .cp-strip-item div { display: flex; flex-direction: column; }
+  .cp-strip-item strong {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--green-deep);
+    opacity: 0.65;
+    margin-bottom: 2px;
+  }
+  .cp-strip-item a,
+  .cp-strip-item span {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--green-deep);
+    text-decoration: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 0.02em;
+    transition: opacity 0.2s;
+  }
+  .cp-strip-item a:hover { opacity: 0.75; }
+
+  /* ── MAIN CONTENT ── */
+  .cp-body {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 72px 56px 100px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  /* ── LEFT: Map + details ── */
+  .cp-left { display: flex; flex-direction: column; gap: 24px; }
+
+  /* ── RIGHT: Form ── */
+  .cp-right {
+    position: sticky;
+    top: 100px;
+  }
+
+  .cp-map {
+    width: 100%;
+    height: 380px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.10);
+  }
+  .cp-map iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+  .cp-details {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .cp-detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .cp-detail-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(168,230,61,0.12);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--green-mid);
+  }
+  .cp-detail-icon svg { width: 18px; height: 18px; }
+  .cp-detail-row h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.05rem;
+    color: var(--green-deep);
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .cp-detail-row p,
+  .cp-detail-row a {
+    font-size: 0.95rem;
+    color: var(--gray);
+    line-height: 1.6;
+    text-decoration: none;
+    display: block;
+  }
+  .cp-detail-row a { font-weight: 600; color: var(--green-deep); transition: color 0.2s; }
+  .cp-detail-row a:hover { color: var(--green-mid); }
+
+  .cp-wa-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #25D366;
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    padding: 12px 22px;
+    border-radius: 8px;
+    text-decoration: none;
+    margin-top: 4px;
+    transition: background 0.2s, transform 0.2s;
+    box-shadow: 0 4px 14px rgba(37,211,102,0.28);
+    width: fit-content;
+  }
+  .cp-wa-btn:hover { background: #1ebe5d; transform: translateY(-2px); }
+  .cp-wa-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  /* ── FORM ── */
+  .cp-form-card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .cp-header-inner { grid-template-columns: 1fr; gap: 36px; }
+    .cp-header-img { height: 280px; }
+    .cp-body { padding: 56px 32px 80px; gap: 40px; }
+    .cp-right { position: static; }
+  }
+  @media (max-width: 768px) {
+    .cp-header { padding: 120px 24px 52px; }
+    .cp-header-img { display: none; }
+    .cp-strip { padding: 0 24px; }
+    .cp-strip-inner { flex-wrap: wrap; }
+    .cp-strip-item { flex: 1 1 45%; border-right: none; padding: 16px 0; border-bottom: 1px solid rgba(26,74,46,0.12); }
+    .cp-strip-item:last-child { border-bottom: none; }
+    .cp-body { grid-template-columns: 1fr; padding: 40px 24px 64px; }
+    .cp-map { height: 280px; }
+  }
+  @media (max-width: 480px) {
+    .cp-header { padding: 108px 18px 44px; }
+    .cp-strip { padding: 0 18px; }
+    .cp-strip-inner { flex-direction: column; gap: 0; }
+    .cp-strip-item { flex: 0 0 100%; padding: 14px 0; border-bottom: 1px solid rgba(26,74,46,0.12); }
+    .cp-body { padding: 32px 18px 56px; }
+    .cp-map { height: 240px; border-radius: 8px; }
+    .cp-form-card { padding: 22px 16px; }
+  }
+</style>
+
+<div class="contact-page">
+
+  <!-- HEADER -->
+  <div class="cp-header">
+    <div class="cp-header-inner">
+      <div class="cp-header-text">
+        <div class="cp-eyebrow">We're here to help</div>
+        <h1>GET IN<br>TOUCH</h1>
+        <p>Reach out to us with any question about our electric scooters, test rides, finance options, or just to say hello.</p>
+      </div>
+      <div class="cp-header-img">
+        <img src="{{ url_for('static', path='/images/about/about_2.jpg') }}" alt="EV Nation Showroom">
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK INFO STRIP -->
+  <div class="cp-strip">
+    <div class="cp-strip-inner">
+      <div class="cp-strip-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        <div>
+          <strong>Call Us</strong>
+          <a href="tel:+919045263337">+91 90452 63337</a>
+        </div>
+      </div>
+      <div class="cp-strip-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        <div>
+          <strong>Alternate</strong>
+          <a href="tel:+918650555588">+91 86505 55588</a>
+        </div>
+      </div>
+      <div class="cp-strip-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div>
+          <strong>Hours</strong>
+          <span>Mon–Sat: 9AM – 7PM</span>
+        </div>
+      </div>
+      <div class="cp-strip-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <div>
+          <strong>Location</strong>
+          <span>Saharanpur, U.P.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY: Map + Details + Form -->
+  <div class="cp-body">
+    <div class="cp-left">
+      <div class="cp-map">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3456.2700171717!2d77.596222!3d29.9716691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ec1de197337d5%3A0x4581d1f39b9f930b!2sEv%20Nation%20%7C%7C%20E%20scooter!5e0!3m2!1sen!2sde!4v1777838788684!5m2!1sen!2sde"
+          allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="EV Nation Location">
+        </iframe>
+      </div>
+
+      <div class="cp-details">
+        <div class="cp-detail-row">
+          <div class="cp-detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <h4>Showroom Address</h4>
+            <p>Sarak Doodhli, Near Reliance Petrol Pump<br>Dehradun Road, Saharanpur (U.P.) — 247001</p>
+          </div>
+        </div>
+
+        <div class="cp-detail-row">
+          <div class="cp-detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          </div>
+          <div>
+            <h4>Phone Numbers</h4>
+            <a href="tel:+919045263337">+91 90452 63337</a>
+            <a href="tel:+918650555588">+91 86505 55588</a>
+          </div>
+        </div>
+
+        <div class="cp-detail-row">
+          <div class="cp-detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <h4>Showroom Hours</h4>
+            <p>Monday – Saturday: 9:00 AM – 7:00 PM<br>Sunday: 10:00 AM – 4:00 PM</p>
+          </div>
+        </div>
+
+        <div class="cp-detail-row">
+          <div class="cp-detail-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </div>
+          <div>
+            <h4>WhatsApp</h4>
+            <a href="https://wa.me/919045263337" target="_blank" rel="noopener" class="cp-wa-btn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Chat on WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Contact form -->
+    <div class="cp-right">
+      <div class="cp-form-card">
+        <form id="cp-form">
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: var(--green-mid); margin-bottom: 8px;">Full Name</label>
+            <input id="cpf-name" type="text" required style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem;">
+          </div>
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: var(--green-mid); margin-bottom: 8px;">Phone Number</label>
+            <input id="cpf-phone" type="text" required style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem;">
+          </div>
+          <!-- Bot trap -->
+          <div style="display: none;" aria-hidden="true">
+            <input type="text" id="cpf-bot" name="bot_check" tabindex="-1" autocomplete="off">
+          </div>
+          <div style="margin-bottom: 30px;">
+            <label style="display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: var(--green-mid); margin-bottom: 8px;">Message</label>
+            <textarea id="cpf-message" rows="4" style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem; resize: vertical;"></textarea>
+          </div>
+          <div id="cpf-feedback" style="display: none; padding: 12px; border-radius: 4px; font-size: 0.95rem; margin-bottom: 16px;"></div>
+          <button type="submit" class="btn-primary" style="width: 100%; font-size: 1rem; padding: 16px;">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.getElementById('cp-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fb = document.getElementById('cpf-feedback');
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    fb.style.display = 'none';
+
+    try {
+      const payload = {
+        name: document.getElementById('cpf-name').value.trim(),
+        phone: document.getElementById('cpf-phone').value.trim(),
+        source: 'call',
+        message: document.getElementById('cpf-message').value.trim() || null,
+        bot_check: document.getElementById('cpf-bot').value.trim() || null,
+      };
+      const r = await fetch('/api/v1/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.detail || 'Something went wrong.');
+      fb.textContent = '✓ Message sent! We will get back to you soon.';
+      fb.style.background = '#d6f5e3';
+      fb.style.color = 'var(--green-deep)';
+      fb.style.display = 'block';
+      e.target.reset();
+    } catch (err) {
+      fb.textContent = err.message;
+      fb.style.background = '#ffe0e0';
+      fb.style.color = '#c00';
+      fb.style.display = 'block';
+    } finally {
+      btn.textContent = 'Send Message';
+      btn.disabled = false;
+    }
+  });
+</script>
+
+{% endblock %}

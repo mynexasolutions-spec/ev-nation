@@ -26,6 +26,7 @@ from app.services.lead_service import LeadService
 from app.services.product_service import ProductService
 from app.services.category_service import category_service
 from app.services.order_service import OrderService
+from app.services.blog_service import blog_service
 from app.web.templating import templates
 
 router = APIRouter(prefix="/admin")
@@ -47,6 +48,7 @@ def admin_orders_page(request: Request, db: Session = Depends(get_db)):
     
     from app.models.enums import OrderStatus
     return templates.TemplateResponse(
+        request,
         "admin/orders.html",
         _base_context(
             request,
@@ -73,6 +75,7 @@ def admin_order_detail_page(order_number: str, request: Request, db: Session = D
 
     from app.models.enums import OrderStatus
     return templates.TemplateResponse(
+        request,
         "admin/order_detail.html",
         _base_context(
             request,
@@ -216,7 +219,7 @@ def login_page(request: Request, db: Session = Depends(get_db)):
     current_admin = _get_current_admin_from_cookie(request.cookies.get(settings.admin_cookie_name), db)
     if current_admin is not None:
         return RedirectResponse(url="/admin/products", status_code=status.HTTP_303_SEE_OTHER)
-    return templates.TemplateResponse("admin/login.html", {"request": request, "page_title": "Admin Login"})
+    return templates.TemplateResponse(request, "admin/login.html", {"request": request, "page_title": "Admin Login"})
 
 
 @router.post("/login")
@@ -252,6 +255,7 @@ def admin_products_page(request: Request, db: Session = Depends(get_db)):
     products = product_service.list_admin_products(db)
     categories = category_service.get_all_admin(db)
     return templates.TemplateResponse(
+        request,
         "admin/products.html",
         _base_context(
             request,
@@ -489,6 +493,7 @@ def admin_leads_page(request: Request, db: Session = Depends(get_db)):
     total_pages = ceil(total_count / limit) if total_count > 0 else 1
 
     return templates.TemplateResponse(
+        request,
         "admin/leads.html",
         _base_context(
             request,
@@ -544,6 +549,7 @@ def admin_categories_ui(request: Request, db: Session = Depends(get_db)):
     products = product_service.list_admin_products(db)
         
     return templates.TemplateResponse(
+        request,
         "admin/categories.html", 
         _base_context(
             request, 
@@ -609,5 +615,135 @@ def admin_category_delete(category_id: int, request: Request, db: Session = Depe
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required.")
     except NotFoundError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+    return JSONResponse({"ok": True})
+
+
+# ── Blog Posts ──
+
+@router.get("/blogs", response_class=HTMLResponse)
+def admin_blogs_page(request: Request, db: Session = Depends(get_db)):
+    try:
+        current_admin = _require_admin(request, db)
+    except HTTPException:
+        return _redirect_to_login()
+    posts = blog_service.list_admin(db)
+    categories = blog_service.get_all_categories(db)
+    return templates.TemplateResponse(
+        request,
+        "admin/blogs.html",
+        _base_context(request, current_admin, page_title="Blog Posts", posts=posts, categories=categories),
+    )
+
+
+@router.post("/blogs/save")
+async def admin_blog_save(request: Request, db: Session = Depends(get_db)) -> JSONResponse:
+    try:
+        _require_admin(request, db)
+    except HTTPException:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required.")
+    payload = await request.json()
+    post_id = payload.pop("id", None)
+
+    cat_raw = payload.pop("category_raw", None)
+    if cat_raw:
+        try:
+            cat_id = int(cat_raw)
+            payload["category_id"] = cat_id
+        except (ValueError, TypeError):
+            cat = blog_service.get_or_create_category(db, cat_raw)
+            payload["category_id"] = cat.id
+
+    if post_id is None:
+        post = blog_service.create(db, payload)
+    else:
+        post = blog_service.update(db, int(post_id), payload)
+        if not post:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found.")
+    return JSONResponse({"ok": True, "id": post.id, "slug": post.slug})
+
+
+@router.post("/blogs/{post_id}/upload-image")
+async def admin_blog_upload_image(post_id: int, request: Request, file: UploadFile, db: Session = Depends(get_db)) -> JSONResponse:
+    try:
+        _require_admin(request, db)
+    except HTTPException:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required.")
+
+    allowed = {".jpg", ".jpeg", ".png", ".webp"}
+    ext = Path(file.filename or "").suffix.lower()
+    if ext not in allowed:
+        raise HTTPException(status_code=400, detail="Invalid file type.")
+    if file.size and file.size > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File too large (max 5 MB).")
+
+    dest_dir = Path("media/blog")
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    filename = f"{uuid.uuid4().hex}{ext}"
+    dest = dest_dir / filename
+    with dest.open("wb") as f:
+        shutil.copyfileobj(file.file, f)
+
+    image_path = f"/media/blog/{filename}"
+    post = blog_service.set_primary_image(db, post_id, image_path)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found.")
+    return JSONResponse({"ok": True, "image_path": image_path})
+
+
+@router.post("/blogs/{post_id}/delete")
+def admin_blog_delete(post_id: int, request: Request, db: Session = Depends(get_db)) -> JSONResponse:
+    try:
+        _require_admin(request, db)
+    except HTTPException:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required.")
+    deleted = blog_service.delete(db, post_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Post not found.")
+    return JSONResponse({"ok": True})
+
+
+@router.get("/blog-categories/list-json")
+def admin_blog_categories_json(request: Request, db: Session = Depends(get_db)) -> JSONResponse:
+    try:
+        _require_admin(request, db)
+    except HTTPException:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required.")
+    cats = blog_service.get_all_categories(db)
+    return JSONResponse({"ok": True, "categories": [{"id": c.id, "name": c.name, "slug": c.slug} for c in cats]})
+
+
+@router.post("/blog-categories/{cat_id}/delete")
+def admin_blog_category_delete(cat_id: int, request: Request, db: Session = Depends(get_db)) -> JSONResponse:
+    try:
+        _require_admin(request, db)
+    except HTTPException:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required.")
+    blog_service.delete_category(db, cat_id)
+    return JSONResponse({"ok": True})
+
+
+# ── Blog Subscribers ──
+
+@router.get("/subscribers", response_class=HTMLResponse)
+def admin_subscribers_page(request: Request, db: Session = Depends(get_db)):
+    try:
+        current_admin = _require_admin(request, db)
+    except HTTPException:
+        return _redirect_to_login()
+    subscribers = blog_service.get_all_subscribers(db)
+    return templates.TemplateResponse(
+        request,
+        "admin/subscribers.html",
+        _base_context(request, current_admin, page_title="Subscribers", subscribers=subscribers),
+    )
+
+
+@router.post("/subscribers/{sub_id}/delete")
+def admin_subscriber_delete(sub_id: int, request: Request, db: Session = Depends(get_db)) -> JSONResponse:
+    try:
+        _require_admin(request, db)
+    except HTTPException:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required.")
+    blog_service.delete_subscriber(db, sub_id)
     return JSONResponse({"ok": True})
 
