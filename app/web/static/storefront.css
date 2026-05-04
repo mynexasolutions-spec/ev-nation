@@ -30,7 +30,7 @@ body {
 }
 
 /* ── NAV ── */
-nav {
+#navbar {
   position: fixed;
   top: 0;
   left: 0;
@@ -45,7 +45,7 @@ nav {
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-nav.scrolled {
+#navbar.scrolled {
   top: 0;
   left: 0;
   right: 0;
@@ -79,7 +79,7 @@ nav.scrolled {
   font-weight: inherit;
 }
 
-nav.scrolled .nav-logo {
+#navbar.scrolled .nav-logo {
   color: var(--green-deep);
 }
 
@@ -90,7 +90,7 @@ nav.scrolled .nav-logo {
   transition: all 0.4s ease;
 }
 
-nav.scrolled .nav-logo img {
+#navbar.scrolled .nav-logo img {
   height: 48px;
 }
 
@@ -113,8 +113,12 @@ nav.scrolled .nav-logo img {
   transition: color 0.3s;
 }
 
-nav.scrolled .nav-links a {
-  color: var(--green-deep);
+#navbar.scrolled .nav-links a {
+  color: var(--charcoal);
+}
+
+#navbar.scrolled .nav-links a:hover {
+  color: var(--green-bright);
 }
 
 .nav-links a::after {
@@ -169,8 +173,8 @@ nav.scrolled .nav-links a {
   transition: all 0.3s;
 }
 
-nav.scrolled .hamburger span {
-  background: var(--green-deep);
+#navbar.scrolled .hamburger span {
+  background: var(--charcoal);
 }
 
 .hamburger.open span:nth-child(1) {
@@ -853,10 +857,8 @@ section {
 
   .perf-left img {
     width: 100%;
-    height: 105vw;
-    max-height: 440px;
-    object-fit: cover;
-    object-position: center 35%;
+    height: auto;
+    object-fit: contain;
     border-radius: 0;
     box-shadow: none;
     display: block;
@@ -1942,22 +1944,22 @@ footer {
 }
 
 @media (max-width: 768px) {
-  nav {
+  #navbar {
     padding: 12px 20px;
     background: rgba(240, 242, 240, 0.98);
     backdrop-filter: blur(10px);
     box-shadow: 0 5px 20px rgba(0,0,0,0.05);
   }
 
-  nav .nav-logo {
+  #navbar .nav-logo {
     color: var(--green-deep);
   }
 
-  nav .hamburger span {
+  #navbar .hamburger span {
     background: var(--green-deep);
   }
 
-  nav.scrolled {
+  #navbar.scrolled {
     left: 0;
     right: 0;
     top: 0;
@@ -2095,7 +2097,7 @@ footer {
     height: 56.25vw;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    box-shadow: 0 20px 30px rgba(0,0,0,0.06);
     border: 2px solid var(--white);
   }
 
@@ -2114,7 +2116,8 @@ footer {
     position: absolute;
     inset: 0;
     height: 100%;
-    background: rgba(0, 0, 0, 0.15);
+    background-image: none;
+    background-color: rgba(0, 0, 0, 0.05);
     z-index: 5;
   }
 

@@ -10,7 +10,6 @@ from app.repositories.admin_user_repository import AdminUserRepository
 
 def bootstrap_application() -> None:
     try:
-        Base.metadata.create_all(bind=get_engine())
         _ensure_bootstrap_admin()
     except OperationalError as exc:
         raise RuntimeError(
