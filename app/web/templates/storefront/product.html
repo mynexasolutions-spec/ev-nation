@@ -608,29 +608,31 @@
     </div>
 </div>
 
-<!-- Battery Options -->
-{% if product.battery_options %}
-<div class="info-section">
-    <h2>Battery Options</h2>
-    <div class="battery-cards">
-        {% for bat in product.battery_options %}
-        <div class="battery-card">
-            <div class="battery-icon">⚡</div>
-            <strong>{{ bat.capacity }}</strong>
-            <span>{{ bat.range }} range</span>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
-
-    <!-- Full Description Section -->
-    {% if product.description %}
+    <!-- Product Overview Section -->
+    {% if product.description or product.battery_options %}
     <section class="info-section">
         <h2>Product Overview</h2>
-        <div class="product-full-desc" style="font-size: 1.1rem; line-height: 1.8; color: rgba(255,255,255,0.7); max-width: 900px;">
+        
+        {% if product.description %}
+        <div class="product-full-desc" style="font-size: 1.1rem; line-height: 1.8; color: rgba(255,255,255,0.7); max-width: 900px; margin-bottom: 2rem;">
             {{ product.description | safe }}
         </div>
+        {% endif %}
+
+        {% if product.battery_options %}
+        <div style="margin-top: 2rem;">
+            <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--green-lime); margin-bottom: 1rem;">Available Battery Options</h3>
+            <div class="battery-cards">
+                {% for bat in product.battery_options %}
+                <div class="battery-card">
+                    <div class="battery-icon">⚡</div>
+                    <strong>{{ bat.capacity }}</strong>
+                    <span>{{ bat.range }} range</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
     </section>
     {% endif %}
 
@@ -867,13 +869,15 @@ document.getElementById("call-form")?.addEventListener("submit", async (e) => {
     }
 });
 
-// ====== CART HANDLERS ======
 // Battery selection
 document.querySelectorAll(".battery-btn").forEach(btn => {
     btn.addEventListener("click", () => {
+        const isActive = btn.classList.contains("active");
         document.querySelectorAll(".battery-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        document.getElementById("selectionWarning").style.display = "none";
+        if (!isActive) {
+            btn.classList.add("active");
+            document.getElementById("selectionWarning").style.display = "none";
+        }
     });
 });
 
@@ -920,7 +924,7 @@ function validateSelection() {
 async function handleAddToCart() {
     if (!validateSelection()) return;
 
-    const productId = {{ product.id }};
+    const productId = Number("{{ product.id }}");
     const variantId = getSelectedVariant();
     const battery = getSelectedBattery();
     
@@ -951,7 +955,7 @@ async function handleAddToCart() {
 async function handleBuyNow() {
     if (!validateSelection()) return;
 
-    const productId = {{ product.id }};
+    const productId = Number("{{ product.id }}");
     const variantId = getSelectedVariant();
     const battery = getSelectedBattery();
     const btn = document.getElementById('buyNowBtn');

@@ -42,35 +42,33 @@
       {% for product in products %}
       <div class="product-card">
         <a href="/bikes/{{ product.slug }}" style="display: block; text-decoration: none;">
+          {# Prefer general (no-variant) images; fall back to ALL images if none exist #}
           {% set general_images = [] %}
+          {% set all_images = [] %}
           {% if product.images %}
             {% for img in product.images %}
+              {% set _ = all_images.append(img) %}
               {% if not img.variant_id %}
                 {% set _ = general_images.append(img) %}
               {% endif %}
             {% endfor %}
           {% endif %}
+          {% set display_images = general_images if general_images else all_images %}
           
-          <div class="p-img-box hover-slideshow {% if general_images|length > 1 %}animated{% endif %}" data-total="{{ [general_images|length, 4]|min if general_images else 1 }}" style="--total-imgs: {{ [general_images|length, 4]|min if general_images else 1 }};">
+          <div class="p-img-box hover-slideshow {% if display_images|length > 1 %}animated{% endif %}" data-total="{{ [display_images|length, 4]|min if display_images else 1 }}" style="--total-imgs: {{ [display_images|length, 4]|min if display_images else 1 }};">
             <div class="slideshow-track">
-              {% if general_images %}
-                {% for img in general_images[:4] %}
+              {% if display_images %}
+                {% for img in display_images[:4] %}
                   <img src="{{ img.image_path }}" alt="{{ product.name }}" style="--img-idx: {{ loop.index0 }};">
                 {% endfor %}
               {% else %}
-                {# Fallback to primary image if no general images exist #}
-                {% if product.primary_image %}
-                  <img src="{{ product.primary_image.image_path }}" alt="{{ product.name }}" style="--img-idx: 0;">
-                {% elif product.variants and product.variants[0].image_path %}
-                  <img src="{{ product.variants[0].image_path }}" alt="{{ product.name }}" style="--img-idx: 0;">
-                {% else %}
-                  <img src="{{ url_for('static', path='/images/products/product_' ~ (loop.index0 % 6 + 1) ~ '.png') }}" alt="{{ product.name }}" style="--img-idx: 0;">
-                {% endif %}
+                {# No images at all — use static placeholder #}
+                <img src="{{ url_for('static', path='/images/products/product_' ~ (loop.index0 % 6 + 1) ~ '.png') }}" alt="{{ product.name }}" style="--img-idx: 0;">
               {% endif %}
             </div>
-            {% if general_images|length > 1 %}
+            {% if display_images|length > 1 %}
             <div class="slider-dots">
-              {% for i in range([general_images|length, 4]|min) %}
+              {% for i in range([display_images|length, 4]|min) %}
               <span class="dot" style="--dot-idx: {{ i }};"></span>
               {% endfor %}
             </div>

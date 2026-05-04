@@ -2014,7 +2014,9 @@ footer {
   }
 
   .p-img-box {
-    height: 280px;
+    height: auto;
+    aspect-ratio: 16/10;
+    width: 100%;
   }
 
   .p-specs {
@@ -2974,6 +2976,7 @@ footer {
   width: calc(100% / var(--total-imgs));
   height: 100%;
   object-fit: contain;
+  object-position: center;
 }
 
 /* Adjust track width for specific counts */

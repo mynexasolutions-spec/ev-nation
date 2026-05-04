@@ -52,7 +52,7 @@
                         {% endif %}
                     </td>
                     <td data-label="Source"><span class="tag">{{ lead.source.value }}</span></td>
-                    <td data-label="Message" style="max-width: 220px;">
+                    <td data-label="Message" style="max-width: 220px; overflow-wrap: break-word; word-break: break-word;">
                         {% if lead.message %}
                             <span title="{{ lead.message }}">{{ lead.message[:60] }}{% if lead.message|length > 60 %}...{% endif %}</span>
                         {% else %}

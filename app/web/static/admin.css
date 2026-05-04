@@ -6,7 +6,8 @@
     --text: #1a2e22;
     --muted: #5a6b60;
     --accent: #1a4a2e;
-    --accent-hover: #2d7a4f;
+    --accent-hover: #256640;
+    --accent-dark: #0f2b1b;
     --accent-light: #a8e63d;
     --accent-pale: #d6f5e3;
     --success: #2d7a4f;
@@ -257,7 +258,7 @@ textarea {
 }
 
 .primary-button:hover {
-    background: var(--accent-dark);
+    background: var(--accent-hover);
 }
 
 .ghost-button {
