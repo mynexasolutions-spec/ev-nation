@@ -2,558 +2,653 @@
 
 {% block content %}
 <!-- HERO -->
-  <section class="hero" id="home">
-    <div class="hero-frame">
-      <div class="hero-slider">
-        <div class="hero-slide active" style="background-image: url('{{ url_for('static', path='/images/banner/banner_1.webp') }}');"></div>
-        <div class="hero-slide" style="background-image: url('{{ url_for('static', path='/images/banner/banner_2.webp') }}');"></div>
-        <div class="hero-slide" style="background-image: url('{{ url_for('static', path='/images/banner/banner_3.webp') }}');"></div>
-      </div>
-      <div class="hero-overlay"></div>
+<section class="hero" id="home">
+  <div class="hero-frame">
+    <div class="hero-slider">
+      <div class="hero-slide active"
+        style="background-image: url('{{ url_for('static', path='/images/banner/banner_1.webp') }}');"></div>
+      <div class="hero-slide"
+        style="background-image: url('{{ url_for('static', path='/images/banner/banner_2.webp') }}');"></div>
+      <div class="hero-slide"
+        style="background-image: url('{{ url_for('static', path='/images/banner/banner_3.webp') }}');"></div>
     </div>
-    <div class="hero-watermark">EV NATION</div>
-    <div class="hero-fade-bottom"></div>
-    <div class="hero-content">
-      <div class="hero-tag">⚡ Zero Emissions Future</div>
-      <h1 class="hero-h1">RIDE<em>THE FUTURE</em></h1>
-      <p class="hero-sub">Experience India's most advanced electric scooters — built for performance, designed for the
-        streets, and engineered for a cleaner planet.</p>
-      <div class="hero-actions">
-        <a href="#models" class="btn-primary">Explore Models</a>
-        <a href="#gallery" class="btn-ghost">View Gallery</a>
-      </div>
-      </div>
-    </div>
-    <div class="hero-stats">
-      <div>
-        <div class="stat-num">150<sup>km</sup></div>
-        <div class="stat-label">Max Range</div>
-      </div>
-      <div>
-        <div class="stat-num">85<sup>km/h</sup></div>
-        <div class="stat-label">Top Speed</div>
-      </div>
-      <div>
-        <div class="stat-num">6.5<sup>kW</sup></div>
-        <div class="stat-label">Peak Power</div>
-      </div>
-      <div>
-        <div class="stat-num">3<sup>sec</sup></div>
-        <div class="stat-label">Battery Swap</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TICKER -->
-  <div class="ticker">
-    <div class="ticker-inner">
-      <span class="ticker-item">Zero Emissions</span>
-      <span class="ticker-item">150km Range</span>
-      <span class="ticker-item">3-Sec Battery Swap</span>
-      <span class="ticker-item">Mid-Drive Motor</span>
-      <span class="ticker-item">Smart Navigation</span>
-      <span class="ticker-item">Anti-Theft System</span>
-      <span class="ticker-item">Regen Braking</span>
-      <span class="ticker-item">OTA Updates</span>
-      <span class="ticker-item">Zero Emissions</span>
-      <span class="ticker-item">150km Range</span>
-      <span class="ticker-item">3-Sec Battery Swap</span>
-      <span class="ticker-item">Mid-Drive Motor</span>
-      <span class="ticker-item">Smart Navigation</span>
-      <span class="ticker-item">Anti-Theft System</span>
-      <span class="ticker-item">Regen Braking</span>
-      <span class="ticker-item">OTA Updates</span>
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="hero-watermark">EV NATION</div>
+  <div class="hero-fade-bottom"></div>
+  <div class="hero-content">
+    <div class="hero-tag">⚡ Zero Emissions Future</div>
+    <h1 class="hero-h1">RIDE<em>THE FUTURE</em></h1>
+    <p class="hero-sub">Experience India's most advanced electric scooters — built for performance, designed for the
+      streets, and engineered for a cleaner planet.</p>
+    <div class="hero-actions">
+      <a href="#models" class="btn-primary">Explore Models</a>
+      <a href="#gallery" class="btn-ghost">View Gallery</a>
     </div>
   </div>
-
-  <!-- PRODUCTS SECTION — DYNAMIC -->
-  <section class="products reveal" id="models">
-    <div class="products-head">
-      <div class="section-eyebrow">TAKING RIDES TO A NEWER LEVEL</div>
-      <h2 class="section-title">CHOOSE A SCOOTER</h2>
-      <p>Select from our range of high-performance electric scooters, each designed with precision engineering and
-        sustainable technology.</p>
+  </div>
+  <div class="hero-stats">
+    <div>
+      <div class="stat-num">150<sup>km</sup></div>
+      <div class="stat-label">Max Range</div>
     </div>
-
-    <div class="product-grid">
-      {% if products %}
-        {% for product in products[:6] %}
-        <div class="product-card">
-          <div class="p-img-box">
-            {% if product.primary_image %}
-            <img src="{{ product.primary_image.image_path }}" alt="{{ product.primary_image.alt_text or product.name }}">
-            {% else %}
-            <img src="{{ url_for('static', path='/images/products/product_1.png') }}" alt="{{ product.name }}">
-            {% endif %}
-          </div>
-          <div class="p-body">
-            <div class="p-title-row">
-              <div>
-                <h3>{{ product.name | upper }}</h3>
-              </div>
-            </div>
-            <div class="p-specs">
-              <div class="p-spec-item"><label>MAX RANGE</label><value>{{ product.spec.range or 'N/A' }}</value></div>
-              <div class="p-spec-item"><label>TOP SPEED</label><value>{{ product.spec.speed or 'N/A' }}</value></div>
-              <div class="p-spec-item"><label>MOTOR</label><value>{{ product.spec.motor.split(' ')[0] if product.spec.motor and ' ' in product.spec.motor else (product.spec.motor or 'N/A') }}</value></div>
-              <div class="p-spec-item"><label>CHARGE</label><value>{{ product.spec.charging_time or 'N/A' }}</value></div>
-            </div>
-            <div class="p-footer">
-              <a href="/bikes/{{ product.slug }}" class="btn-product">View Details</a>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      {% else %}
-        <!-- Fallback: show placeholder cards if no products in DB -->
-        {% for i in range(1, 7) %}
-        <div class="product-card">
-          <div class="p-img-box">
-            <img src="{{ url_for('static', path='/images/products/product_' ~ i ~ '.png') }}" alt="EV Scooter Model {{ i }}">
-          </div>
-          <div class="p-body">
-            <div class="p-title-row">
-              <div>
-                <h3>EV NATION MODEL {{ i }}</h3>
-              </div>
-            </div>
-              <div class="p-specs">
-                <div class="p-spec-item"><label>MAX RANGE</label><value>120 km</value></div>
-                <div class="p-spec-item"><label>TOP SPEED</label><value>85 km/h</value></div>
-                <div class="p-spec-item"><label>MOTOR</label><value>Mid-Drive</value></div>
-                <div class="p-spec-item"><label>CHARGE</label><value>4 Hours</value></div>
-              </div>
-            <div class="p-footer">
-              <a href="/collection" class="btn-product">Coming Soon</a>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      {% endif %}
+    <div>
+      <div class="stat-num">85<sup>km/h</sup></div>
+      <div class="stat-label">Top Speed</div>
     </div>
-
-    <div class="collection-btn-container" style="margin-top: 40px; text-align: center;">
-      <a href="/collection" class="btn-primary" style="padding: 20px 60px; font-size: 1rem;">SEE COLLECTION</a>
+    <div>
+      <div class="stat-num">6.5<sup>kW</sup></div>
+      <div class="stat-label">Peak Power</div>
     </div>
-  </section>
-
-  <!-- PERFORMANCE SECTION -->
-  <section class="performance reveal">
-    <div class="performance-grid">
-      <div class="perf-left">
-        <img src="{{ url_for('static', path='/images/after_banner/img1.webp') }}" alt="Performance Portrait">
-      </div>
-      <div class="perf-right">
-        <div class="section-eyebrow">Taking Rides to a Newer Level</div>
-        <h2 class="section-title">GREAT PERFORMANCE<br>THAT MATTERS IN FUTURE</h2>
-        <p class="section-desc">Experience unmatched power and efficiency. Our electric powertrain is engineered to
-          deliver instantaneous torque and a whisper-quiet ride, ensuring every journey is as sustainable as it is
-          thrilling.</p>
-
-        <div class="perf-features">
-          <div class="perf-feat">
-            <div class="perf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="10" rx="2" ry="2"/><line x1="22" y1="11" x2="22" y2="13"/></svg></div>
-            <div>
-              <h3>Cutting Edge Tech</h3>
-              <p>Advanced battery management systems for peak efficiency and longevity.</p>
-            </div>
-          </div>
-          <div class="perf-feat">
-            <div class="perf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg></div>
-            <div>
-              <h3>Perfect Styling</h3>
-              <p>Aerodynamic design meets futuristic aesthetics for a bold road presence.</p>
-            </div>
-          </div>
-          <div class="perf-feat">
-            <div class="perf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg></div>
-            <div>
-              <h3>Distinctive Beauty</h3>
-              <p>Precision-crafted details that define the next generation of EV mobility.</p>
-            </div>
-          </div>
-          <div class="perf-feat">
-            <div class="perf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg></div>
-            <div>
-              <h3>Radiance Polishing</h3>
-              <p>Premium finishes that maintain their showroom glow for years to come.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="perf-bottom-imgs">
-          <img src="{{ url_for('static', path='/images/after_banner/img2.webp') }}" alt="Performance Detail 1">
-          <img src="{{ url_for('static', path='/images/after_banner/img3.webp') }}" alt="Performance Detail 2">
-        </div>
-      </div>
+    <div>
+      <div class="stat-num">3<sup>sec</sup></div>
+      <div class="stat-label">Battery Swap</div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- TEST RIDE / ENQUIRY SECTION -->
-  <section class="test-ride-section">
-    <div class="test-ride-grid">
-      <!-- Left: Changing Scooter Carousel -->
-      <div class="test-ride-carousel reveal">
-        {% if products %}
-          {% for product in products[:3] %}
-          <div class="tr-slide {% if loop.first %}active{% endif %}" style="position: absolute; width: 100%; height: 100%; transition: opacity 0.6s ease-in-out; opacity: {% if loop.first %}1{% else %}0{% endif %};">
-            {% if product.primary_image %}
-            <img src="{{ product.primary_image.image_path }}" style="width: 100%; height: 100%; object-fit: contain;">
-            {% else %}
-            <img src="{{ url_for('static', path='/images/products/product_' ~ loop.index ~ '.png') }}" style="width: 100%; height: 100%; object-fit: contain;">
-            {% endif %}
-          </div>
-          {% endfor %}
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-item">Zero Emissions</span>
+    <span class="ticker-item">150km Range</span>
+    <span class="ticker-item">3-Sec Battery Swap</span>
+    <span class="ticker-item">Mid-Drive Motor</span>
+    <span class="ticker-item">Smart Navigation</span>
+    <span class="ticker-item">Anti-Theft System</span>
+    <span class="ticker-item">Regen Braking</span>
+    <span class="ticker-item">OTA Updates</span>
+    <span class="ticker-item">Zero Emissions</span>
+    <span class="ticker-item">150km Range</span>
+    <span class="ticker-item">3-Sec Battery Swap</span>
+    <span class="ticker-item">Mid-Drive Motor</span>
+    <span class="ticker-item">Smart Navigation</span>
+    <span class="ticker-item">Anti-Theft System</span>
+    <span class="ticker-item">Regen Braking</span>
+    <span class="ticker-item">OTA Updates</span>
+  </div>
+</div>
+
+<!-- PRODUCTS SECTION — DYNAMIC -->
+<section class="products reveal" id="models">
+  <div class="products-head">
+    <div class="section-eyebrow">TAKING RIDES TO A NEWER LEVEL</div>
+    <h2 class="section-title">CHOOSE A SCOOTER</h2>
+    <p>Select from our range of high-performance electric scooters, each designed with precision engineering and
+      sustainable technology.</p>
+  </div>
+
+  <div class="product-grid">
+    {% if products %}
+    {% for product in products[:6] %}
+    <div class="product-card">
+      <div class="p-img-box">
+        {% if product.primary_image %}
+        <img src="{{ product.primary_image.image_path }}" alt="{{ product.primary_image.alt_text or product.name }}">
         {% else %}
-          {% for i in range(1, 4) %}
-          <div class="tr-slide {% if loop.first %}active{% endif %}" style="position: absolute; width: 100%; height: 100%; transition: opacity 0.6s ease-in-out; opacity: {% if loop.first %}1{% else %}0{% endif %};">
-            <img src="{{ url_for('static', path='/images/products/product_' ~ i ~ '.png') }}" style="width: 100%; height: 100%; object-fit: contain;">
-          </div>
-          {% endfor %}
+        <img src="{{ url_for('static', path='/images/products/product_1.png') }}" alt="{{ product.name }}">
         {% endif %}
       </div>
-      
-      <!-- Right: Enquiry Form -->
-      <div class="test-ride-content reveal reveal-d1">
-        <div class="section-eyebrow" style="color: var(--green-lime);">Experience the thrill</div>
-        <h2 class="section-title" style="color: var(--white);">BOOK A<br>TEST RIDE</h2>
-        <p style="font-size: 1.15rem; color: rgba(255,255,255,0.6); margin-bottom: 40px; line-height: 1.7;">Feel the instant torque, seamless handling, and unmatched comfort. Schedule a test ride at your nearest EV Nation hub today.</p>
-        
-        <form id="test-ride-form" class="test-ride-form-grid">
-          <div style="grid-column: 1 / -1;">
-            <select id="tr-product" style="width: 100%; padding: 16px; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem; color: var(--white); background: rgba(255,255,255,0.05);">
-              <option value="" disabled selected style="color: #000;">Select Model</option>
-              {% for product in products %}
-              <option value="{{ product.id }}" style="color: #000;">{{ product.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
+      <div class="p-body">
+        <div class="p-title-row">
           <div>
-            <input id="tr-name" type="text" placeholder="Your Name" required style="width: 100%; padding: 16px; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem; background: rgba(255,255,255,0.05); color: var(--white);">
+            <h3>{{ product.name | upper }}</h3>
           </div>
+        </div>
+        <div class="p-specs">
+          <div class="p-spec-item"><label>MAX RANGE</label>
+            <value>{{ product.spec.range or 'N/A' }}</value>
+          </div>
+          <div class="p-spec-item"><label>TOP SPEED</label>
+            <value>{{ product.spec.speed or 'N/A' }}</value>
+          </div>
+          <div class="p-spec-item"><label>MOTOR</label>
+            <value>{{ product.spec.motor.split(' ')[0] if product.spec.motor and ' ' in product.spec.motor else
+              (product.spec.motor or 'N/A') }}</value>
+          </div>
+          <div class="p-spec-item"><label>CHARGE</label>
+            <value>{{ product.spec.charging_time or 'N/A' }}</value>
+          </div>
+        </div>
+        <div class="p-footer">
+          <a href="/bikes/{{ product.slug }}" class="btn-product">View Details</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <!-- Fallback: show placeholder cards if no products in DB -->
+    {% for i in range(1, 7) %}
+    <div class="product-card">
+      <div class="p-img-box">
+        <img src="{{ url_for('static', path='/images/products/product_' ~ i ~ '.png') }}"
+          alt="EV Scooter Model {{ i }}">
+      </div>
+      <div class="p-body">
+        <div class="p-title-row">
           <div>
-            <input id="tr-phone" type="text" placeholder="Phone Number" required style="width: 100%; padding: 16px; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem; background: rgba(255,255,255,0.05); color: var(--white);">
+            <h3>EV NATION MODEL {{ i }}</h3>
           </div>
-          <!-- Bot trap -->
-          <div style="display: none;" aria-hidden="true">
-            <input type="text" id="tr-bot-check" name="bot_check" tabindex="-1" autocomplete="off">
-          </div>
-          <div id="tr-feedback" style="grid-column: 1 / -1; display: none; padding: 12px; border-radius: 4px; font-size: 0.95rem;"></div>
-          <div style="grid-column: 1 / -1; margin-top: 10px;">
-            <button type="submit" class="btn-primary" style="width: 100%; font-size: 1rem; padding: 18px;">SCHEDULE NOW</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Test ride carousel
-      const trSlides = document.querySelectorAll('.tr-slide');
-      if(trSlides.length > 0) {
-        let trCurrent = 0;
-        setInterval(() => {
-          trSlides[trCurrent].style.opacity = '0';
-          trCurrent = (trCurrent + 1) % trSlides.length;
-          trSlides[trCurrent].style.opacity = '1';
-        }, 3000);
-      }
-
-      // Test ride form submission → Lead API
-      const trForm = document.getElementById('test-ride-form');
-      if (trForm) {
-        trForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const fb = document.getElementById('tr-feedback');
-          const btn = trForm.querySelector('button[type="submit"]');
-          btn.disabled = true;
-          btn.textContent = 'Sending...';
-          fb.style.display = 'none';
-
-          try {
-            const payload = {
-              name: document.getElementById('tr-name').value.trim(),
-              phone: document.getElementById('tr-phone').value.trim(),
-              product_id: parseInt(document.getElementById('tr-product').value) || null,
-              source: 'call',
-              message: 'Test ride enquiry from homepage',
-              bot_check: document.getElementById('tr-bot-check').value.trim() || null,
-            };
-            const r = await fetch('/api/v1/leads', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload),
-            });
-            const d = await r.json();
-            if (!r.ok) throw new Error(d.detail || 'Something went wrong.');
-            fb.textContent = '✓ Request sent! We will reach out soon.';
-            fb.style.background = 'rgba(61,186,111,0.2)';
-            fb.style.color = 'var(--green-lime)';
-            fb.style.display = 'block';
-            trForm.reset();
-          } catch (err) {
-            fb.textContent = err.message;
-            fb.style.background = 'rgba(255,0,0,0.15)';
-            fb.style.color = '#ff6b6b';
-            fb.style.display = 'block';
-          } finally {
-            btn.textContent = 'SCHEDULE NOW';
-            btn.disabled = false;
-          }
-        });
-      }
-    });
-  </script>
-
-  <!-- WHY CHOOSE US -->
-  <section class="benefits-section">
-    <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
-      <div class="section-eyebrow reveal">The EV Nation Advantage</div>
-      <h2 class="section-title reveal" style="color: var(--charcoal); margin-bottom: 60px;">WHY RIDE WITH US?</h2>
-      
-      <div class="benefits-grid">
-        <!-- Benefit 1 -->
-        <div class="benefit-card reveal reveal-d1">
-          <div style="margin-bottom: 20px;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--green-lime)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-          <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--green-deep); margin-bottom: 15px;">Ultra-Low Running Cost</h3>
-          <p style="color: var(--gray); line-height: 1.6;">Say goodbye to fluctuating petrol prices. Ride for as low as ₹0.20 per kilometer and save thousands every year.</p>
         </div>
-        
-        <!-- Benefit 2 -->
-        <div class="benefit-card reveal reveal-d2">
-          <div style="margin-bottom: 20px;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--green-lime)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
-          <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--green-deep); margin-bottom: 15px;">Smart Connectivity</h3>
-          <p style="color: var(--gray); line-height: 1.6;">Track your ride, monitor battery health, and receive over-the-air (OTA) updates directly through the EV Nation app.</p>
+        <div class="p-specs">
+          <div class="p-spec-item"><label>MAX RANGE</label>
+            <value>120 km</value>
+          </div>
+          <div class="p-spec-item"><label>TOP SPEED</label>
+            <value>85 km/h</value>
+          </div>
+          <div class="p-spec-item"><label>MOTOR</label>
+            <value>Mid-Drive</value>
+          </div>
+          <div class="p-spec-item"><label>CHARGE</label>
+            <value>4 Hours</value>
+          </div>
         </div>
-
-        <!-- Benefit 3 -->
-        <div class="benefit-card reveal reveal-d3">
-          <div style="margin-bottom: 20px;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--green-lime)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
-          <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--green-deep); margin-bottom: 15px;">Zero Maintenance</h3>
-          <p style="color: var(--gray); line-height: 1.6;">With no engine oil, spark plugs, or complex mechanical parts, your service visits are almost non-existent.</p>
+        <div class="p-footer">
+          <a href="/collection" class="btn-product">Coming Soon</a>
         </div>
       </div>
     </div>
-  </section>
+    {% endfor %}
+    {% endif %}
+  </div>
 
-  <!-- CHARGING -->
-  <div class="charging-section" id="charging">
-    <div class="charge-img-col">
-      <img src="{{ url_for('static', path='/images/change.webp') }}" alt="EV charging station" loading="lazy">
+  <div class="collection-btn-container" style="margin-top: 40px; text-align: center;">
+    <a href="/collection" class="btn-primary" style="padding: 20px 60px; font-size: 1rem;">SEE COLLECTION</a>
+  </div>
+</section>
+
+<!-- PERFORMANCE SECTION -->
+<section class="performance reveal">
+  <div class="performance-grid">
+    <div class="perf-left">
+      <img src="{{ url_for('static', path='/images/after_banner/img1.webp') }}" alt="Performance Portrait">
     </div>
-    <div class="charge-text-col">
-      <div class="section-eyebrow reveal">Charging Network</div>
-      <h2 class="section-title reveal">CHARGE<br>ANYWHERE</h2>
-      <p class="reveal">Built for the Indian roads. Rapidly expanding swap network across major cities. From 0% to 100%
-        in 3 seconds with battery swapping — or 4 hours via home charging.</p>
-      <div class="charge-bars reveal">
-        <div>
-          <div class="charge-label"><span>Standard AC Home</span><span>7.4 kW</span></div>
-          <div class="charge-bar">
-            <div class="charge-fill" data-width="32"></div>
+    <div class="perf-right">
+      <div class="section-eyebrow">Taking Rides to a Newer Level</div>
+      <h2 class="section-title">GREAT PERFORMANCE<br>THAT MATTERS IN FUTURE</h2>
+      <p class="section-desc">Experience unmatched power and efficiency. Our electric powertrain is engineered to
+        deliver instantaneous torque and a whisper-quiet ride, ensuring every journey is as sustainable as it is
+        thrilling.</p>
+
+      <div class="perf-features">
+        <div class="perf-feat">
+          <div class="perf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="16" height="10" rx="2" ry="2" />
+              <line x1="22" y1="11" x2="22" y2="13" />
+            </svg></div>
+          <div>
+            <h3>Cutting Edge Tech</h3>
+            <p>Advanced battery management systems for peak efficiency and longevity.</p>
           </div>
         </div>
-        <div>
-          <div class="charge-label"><span>Fast DC Public</span><span>50 kW</span></div>
-          <div class="charge-bar">
-            <div class="charge-fill" data-width="58"></div>
+        <div class="perf-feat">
+          <div class="perf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2" />
+              <path d="M9.6 4.6A2 2 0 1 1 11 8H2" />
+              <path d="M12.6 19.4A2 2 0 1 0 14 16H2" />
+            </svg></div>
+          <div>
+            <h3>Perfect Styling</h3>
+            <p>Aerodynamic design meets futuristic aesthetics for a bold road presence.</p>
           </div>
         </div>
-        <div>
-          <div class="charge-label"><span>Hyper DC Network</span><span>350 kW</span></div>
-          <div class="charge-bar">
-            <div class="charge-fill" data-width="95"></div>
+        <div class="perf-feat">
+          <div class="perf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M6 3h12l4 6-10 13L2 9Z" />
+              <path d="M11 3 8 9l4 13 4-13-3-6" />
+              <path d="M2 9h20" />
+            </svg></div>
+          <div>
+            <h3>Distinctive Beauty</h3>
+            <p>Precision-crafted details that define the next generation of EV mobility.</p>
+          </div>
+        </div>
+        <div class="perf-feat">
+          <div class="perf-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path
+                d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+              <path d="M5 3v4" />
+              <path d="M19 17v4" />
+              <path d="M3 5h4" />
+              <path d="M17 19h4" />
+            </svg></div>
+          <div>
+            <h3>Radiance Polishing</h3>
+            <p>Premium finishes that maintain their showroom glow for years to come.</p>
           </div>
         </div>
       </div>
-      <div class="charge-cta reveal">
-        <a href="#contact" class="btn-primary">Contact Us</a>
-        <a href="/collection" class="btn-outline-white">View Models</a>
+
+      <div class="perf-bottom-imgs">
+        <img src="{{ url_for('static', path='/images/after_banner/img2.webp') }}" alt="Performance Detail 1">
+        <img src="{{ url_for('static', path='/images/after_banner/img3.webp') }}" alt="Performance Detail 2">
       </div>
     </div>
   </div>
+</section>
 
-  <!-- GALLERY -->
-  <section class="gallery" id="gallery">
-    <div class="gallery-head">
-      <div class="section-eyebrow reveal">Visual Journey</div>
-      <h2 class="section-title reveal">THE WORLD<br>IN MOTION</h2>
-    </div>
-    <div class="gallery-grid">
+<!-- TEST RIDE / ENQUIRY SECTION -->
+<section class="test-ride-section">
+  <div class="test-ride-grid">
+    <!-- Left: Changing Scooter Carousel -->
+    <div class="test-ride-carousel reveal">
       {% if products %}
-        {% for product in products[:6] %}
-        <div class="g-cell reveal {% if loop.index % 3 == 2 %}reveal-d1{% elif loop.index % 3 == 0 %}reveal-d2{% endif %}">
-          {% if product.primary_image %}
-          <a href="/bikes/{{ product.slug }}"><img src="{{ product.primary_image.image_path }}" alt="{{ product.name }}" loading="lazy"></a>
-          {% else %}
-          <img src="{{ url_for('static', path='/images/products/product_' ~ loop.index ~ '.png') }}" alt="{{ product.name }}" loading="lazy">
-          {% endif %}
-        </div>
-        {% endfor %}
-      {% else %}
-        {% for i in range(1, 7) %}
-        <div class="g-cell reveal {% if i % 3 == 2 %}reveal-d1{% elif i % 3 == 0 %}reveal-d2{% endif %}">
-          <img src="{{ url_for('static', path='/images/products/product_' ~ i ~ '.png') }}" alt="EV Scooter" loading="lazy">
-        </div>
-        {% endfor %}
-      {% endif %}
-      <!-- Static gallery images -->
-      {% for i in range(1, 7) %}
-      <div class="g-cell reveal {% if i % 3 == 2 %}reveal-d1{% elif i % 3 == 0 %}reveal-d2{% endif %}">
-        <img src="{{ url_for('static', path='/images/gallery/image-' ~ i ~ '.webp') }}" alt="EV Nation Gallery" loading="lazy">
+      {% for product in products[:3] %}
+      <div class="tr-slide {% if loop.first %}active{% endif %}"
+        style="position: absolute; width: 100%; height: 100%; transition: opacity 0.6s ease-in-out; opacity: {% if loop.first %}1{% else %}0{% endif %};">
+        {% if product.primary_image %}
+        <img src="{{ product.primary_image.image_path }}" style="width: 100%; height: 100%; object-fit: contain;">
+        {% else %}
+        <img src="{{ url_for('static', path='/images/products/product_' ~ loop.index ~ '.png') }}"
+          style="width: 100%; height: 100%; object-fit: contain;">
+        {% endif %}
       </div>
       {% endfor %}
+      {% else %}
+      {% for i in range(1, 4) %}
+      <div class="tr-slide {% if loop.first %}active{% endif %}"
+        style="position: absolute; width: 100%; height: 100%; transition: opacity 0.6s ease-in-out; opacity: {% if loop.first %}1{% else %}0{% endif %};">
+        <img src="{{ url_for('static', path='/images/products/product_' ~ i ~ '.png') }}"
+          style="width: 100%; height: 100%; object-fit: contain;">
+      </div>
+      {% endfor %}
+      {% endif %}
     </div>
-  </section>
 
-  <!-- QUOTE -->
-  <div class="quote-band">
-    <div class="quote-text reveal">"The most exciting two-wheeler in years — EV Nation has redefined urban commuting for the
-      next generation."</div>
-    <div class="quote-attr reveal">— EV India Magazine · 2025 Scooter of the Year</div>
+    <!-- Right: Enquiry Form -->
+    <div class="test-ride-content reveal reveal-d1">
+      <div class="section-eyebrow" style="color: var(--green-lime);">Experience the thrill</div>
+      <h2 class="section-title" style="color: var(--white);">BOOK A<br>TEST RIDE</h2>
+      <p style="font-size: 1.15rem; color: rgba(255,255,255,0.6); margin-bottom: 40px; line-height: 1.7;">Feel the
+        instant torque, seamless handling, and unmatched comfort. Schedule a test ride at your nearest EV Nation hub
+        today.</p>
+
+      <form id="test-ride-form" class="test-ride-form-grid">
+        <div style="grid-column: 1 / -1;">
+          <select id="tr-product"
+            style="width: 100%; padding: 16px; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem; color: var(--white); background: rgba(255,255,255,0.05);">
+            <option value="" disabled selected style="color: #000;">Select Model</option>
+            {% for product in products %}
+            <option value="{{ product.id }}" style="color: #000;">{{ product.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <input id="tr-name" type="text" placeholder="Your Name" required
+            style="width: 100%; padding: 16px; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem; background: rgba(255,255,255,0.05); color: var(--white);">
+        </div>
+        <div>
+          <input id="tr-phone" type="text" placeholder="Phone Number" required
+            style="width: 100%; padding: 16px; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem; background: rgba(255,255,255,0.05); color: var(--white);">
+        </div>
+        <!-- Bot trap -->
+        <div style="display: none;" aria-hidden="true">
+          <input type="text" id="tr-bot-check" name="bot_check" tabindex="-1" autocomplete="off">
+        </div>
+        <div id="tr-feedback"
+          style="grid-column: 1 / -1; display: none; padding: 12px; border-radius: 4px; font-size: 0.95rem;"></div>
+        <div style="grid-column: 1 / -1; margin-top: 10px;">
+          <button type="submit" class="btn-primary" style="width: 100%; font-size: 1rem; padding: 18px;">SCHEDULE
+            NOW</button>
+        </div>
+      </form>
+    </div>
   </div>
+</section>
 
-  <!-- CONTACT SECTION -->
-  <section class="contact-section" id="contact">
-    <div class="contact-header reveal">
-      <div class="section-eyebrow">Get in Touch</div>
-      <h2 class="section-title">READY TO RIDE?</h2>
-      <p class="contact-intro">Our team is here to answer any questions about our models, charging solutions, or corporate fleets. Drop us a line.</p>
-    </div>
-
-    <div class="contact-grid">
-      <!-- LEFT: Map + info -->
-      <div class="contact-left reveal">
-        <div class="contact-map">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3456.2700171717!2d77.596222!3d29.9716691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ec1de197337d5%3A0x4581d1f39b9f930b!2sEv%20Nation%20%7C%7C%20E%20scooter!5e0!3m2!1sen!2sde!4v1777838788684!5m2!1sen!2sde"
-            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade" title="EV Nation Location">
-          </iframe>
-        </div>
-        <div class="contact-info-strip">
-          <div class="contact-info-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span>Sarak Doodhli, Near Reliance Petrol Pump,<br>Dehradun Road, Saharanpur (U.P.)</span>
-          </div>
-          <div class="contact-info-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-            <span>9045263337 &nbsp;|&nbsp; 8650555588</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT: Form -->
-      <div class="contact-form reveal reveal-d1">
-        <form id="contact-form">
-          <div style="margin-bottom: 20px;">
-            <label style="display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: var(--green-mid); margin-bottom: 8px;">Full Name</label>
-            <input id="cf-name" type="text" required style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem;">
-          </div>
-          <div style="margin-bottom: 20px;">
-            <label style="display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: var(--green-mid); margin-bottom: 8px;">Phone Number</label>
-            <input id="cf-phone" type="text" required style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem;">
-          </div>
-          <!-- Bot trap -->
-          <div style="display: none;" aria-hidden="true">
-            <input type="text" id="cf-bot-check" name="bot_check" tabindex="-1" autocomplete="off">
-          </div>
-          <div style="margin-bottom: 30px;">
-            <label style="display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: var(--green-mid); margin-bottom: 8px;">Message</label>
-            <textarea id="cf-message" rows="4" style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem; resize: vertical;"></textarea>
-          </div>
-          <div id="cf-feedback" style="display: none; padding: 12px; border-radius: 4px; font-size: 0.95rem; margin-bottom: 16px;"></div>
-          <button type="submit" class="btn-primary" style="width: 100%; font-size: 1rem; padding: 16px;">Send Message</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <script>
-    // ── Gallery Marquee (phone only) ──
-    function initGalleryMarquee() {
-      if (window.innerWidth > 480) return;
-      const grid = document.querySelector('.gallery-grid');
-      if (!grid || grid.classList.contains('marquee-ready')) return;
-
-      const cells = Array.from(grid.querySelectorAll('.g-cell'));
-      if (cells.length === 0) return;
-
-      // Row 1: all items in original order → scrolls left
-      // Row 2: all items in reverse order → scrolls right
-      const row1Items = cells;
-      const row2Items = [...cells].reverse();
-
-      function makeRow(items, direction) {
-        const row = document.createElement('div');
-        row.className = 'gallery-marquee-row';
-
-        const inner = document.createElement('div');
-        inner.className = 'gallery-marquee-inner ' + (direction === 'left' ? 'scroll-left' : 'scroll-right');
-
-        // Duplicate items twice so the loop is seamless
-        [0, 1].forEach(() => {
-          items.forEach(cell => {
-            const clone = cell.cloneNode(true);
-            clone.classList.remove('reveal', 'reveal-d1', 'reveal-d2', 'visible');
-            inner.appendChild(clone);
-          });
-        });
-
-        row.appendChild(inner);
-        return row;
-      }
-
-      const wrap = document.createElement('div');
-      wrap.className = 'gallery-marquee-wrap';
-      wrap.appendChild(makeRow(row1Items, 'left'));
-      wrap.appendChild(makeRow(row2Items, 'right'));
-
-      grid.classList.add('marquee-ready');
-      grid.parentNode.insertBefore(wrap, grid.nextSibling);
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Test ride carousel
+    const trSlides = document.querySelectorAll('.tr-slide');
+    if (trSlides.length > 0) {
+      let trCurrent = 0;
+      setInterval(() => {
+        trSlides[trCurrent].style.opacity = '0';
+        trCurrent = (trCurrent + 1) % trSlides.length;
+        trSlides[trCurrent].style.opacity = '1';
+      }, 3000);
     }
 
-    document.addEventListener('DOMContentLoaded', initGalleryMarquee);
+    // Test ride form submission → Lead API
+    const trForm = document.getElementById('test-ride-form');
+    if (trForm) {
+      trForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fb = document.getElementById('tr-feedback');
+        const btn = trForm.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+        fb.style.display = 'none';
 
-    // Contact form → Lead API
-    document.getElementById('contact-form')?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fb = document.getElementById('cf-feedback');
-      const btn = e.target.querySelector('button[type="submit"]');
-      btn.disabled = true;
-      btn.textContent = 'Sending...';
-      fb.style.display = 'none';
+        try {
+          const payload = {
+            name: document.getElementById('tr-name').value.trim(),
+            phone: document.getElementById('tr-phone').value.trim(),
+            product_id: parseInt(document.getElementById('tr-product').value) || null,
+            source: 'call',
+            message: 'Test ride enquiry from homepage',
+            bot_check: document.getElementById('tr-bot-check').value.trim() || null,
+          };
+          const r = await fetch('/api/v1/leads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const d = await r.json();
+          if (!r.ok) throw new Error(d.detail || 'Something went wrong.');
+          fb.textContent = '✓ Request sent! We will reach out soon.';
+          fb.style.background = 'rgba(61,186,111,0.2)';
+          fb.style.color = 'var(--green-lime)';
+          fb.style.display = 'block';
+          trForm.reset();
+        } catch (err) {
+          fb.textContent = err.message;
+          fb.style.background = 'rgba(255,0,0,0.15)';
+          fb.style.color = '#ff6b6b';
+          fb.style.display = 'block';
+        } finally {
+          btn.textContent = 'SCHEDULE NOW';
+          btn.disabled = false;
+        }
+      });
+    }
+  });
+</script>
 
-      try {
-        const payload = {
-          name: document.getElementById('cf-name').value.trim(),
-          phone: document.getElementById('cf-phone').value.trim(),
-          source: 'call',
-          message: document.getElementById('cf-message').value.trim() || null,
-          bot_check: document.getElementById('cf-bot-check').value.trim() || null,
-        };
-        const r = await fetch('/api/v1/leads', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+<!-- WHY CHOOSE US -->
+<section class="benefits-section">
+  <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+    <div class="section-eyebrow reveal">The EV Nation Advantage</div>
+    <h2 class="section-title reveal" style="color: var(--charcoal); margin-bottom: 60px;">WHY RIDE WITH US?</h2>
+
+    <div class="benefits-grid">
+      <!-- Benefit 1 -->
+      <div class="benefit-card reveal reveal-d1">
+        <div style="margin-bottom: 20px;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+            stroke="var(--green-lime)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+          </svg></div>
+        <h3
+          style="font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--green-deep); margin-bottom: 15px;">
+          Ultra-Low Running Cost</h3>
+        <p style="color: var(--gray); line-height: 1.6;">Say goodbye to fluctuating petrol prices. Ride for as low as
+          ₹0.20 per kilometer and save thousands every year.</p>
+      </div>
+
+      <!-- Benefit 2 -->
+      <div class="benefit-card reveal reveal-d2">
+        <div style="margin-bottom: 20px;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+            stroke="var(--green-lime)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+            <line x1="12" y1="18" x2="12.01" y2="18" />
+          </svg></div>
+        <h3
+          style="font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--green-deep); margin-bottom: 15px;">
+          Smart Connectivity</h3>
+        <p style="color: var(--gray); line-height: 1.6;">Track your ride, monitor battery health, and receive
+          over-the-air (OTA) updates directly through the EV Nation app.</p>
+      </div>
+
+      <!-- Benefit 3 -->
+      <div class="benefit-card reveal reveal-d3">
+        <div style="margin-bottom: 20px;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+            stroke="var(--green-lime)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <path d="m9 12 2 2 4-4" />
+          </svg></div>
+        <h3
+          style="font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--green-deep); margin-bottom: 15px;">
+          Zero Maintenance</h3>
+        <p style="color: var(--gray); line-height: 1.6;">With no engine oil, spark plugs, or complex mechanical parts,
+          your service visits are almost non-existent.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHARGING -->
+<div class="charging-section" id="charging">
+  <div class="charge-img-col">
+    <img src="{{ url_for('static', path='/images/change.webp') }}" alt="EV charging station" loading="lazy">
+  </div>
+  <div class="charge-text-col">
+    <div class="section-eyebrow reveal">Charging Network</div>
+    <h2 class="section-title reveal">CHARGE<br>ANYWHERE</h2>
+    <p class="reveal">Built for the Indian roads. Rapidly expanding swap network across major cities. From 0% to 100%
+      in 3 seconds with battery swapping — or 4 hours via home charging.</p>
+    <div class="charge-bars reveal">
+      <div>
+        <div class="charge-label"><span>Standard AC Home</span><span>7.4 kW</span></div>
+        <div class="charge-bar">
+          <div class="charge-fill" data-width="32"></div>
+        </div>
+      </div>
+      <div>
+        <div class="charge-label"><span>Fast DC Public</span><span>50 kW</span></div>
+        <div class="charge-bar">
+          <div class="charge-fill" data-width="58"></div>
+        </div>
+      </div>
+      <div>
+        <div class="charge-label"><span>Hyper DC Network</span><span>350 kW</span></div>
+        <div class="charge-bar">
+          <div class="charge-fill" data-width="95"></div>
+        </div>
+      </div>
+    </div>
+    <div class="charge-cta reveal">
+      <a href="#contact" class="btn-primary">Contact Us</a>
+      <a href="/collection" class="btn-outline-white">View Models</a>
+    </div>
+  </div>
+</div>
+
+<!-- GALLERY -->
+<section class="gallery" id="gallery">
+  <div class="gallery-head">
+    <div class="section-eyebrow reveal">Visual Journey</div>
+    <h2 class="section-title reveal">THE WORLD<br>IN MOTION</h2>
+  </div>
+  <div class="gallery-grid">
+    {% if products %}
+    {% for product in products[:6] %}
+    <div class="g-cell reveal {% if loop.index % 3 == 2 %}reveal-d1{% elif loop.index % 3 == 0 %}reveal-d2{% endif %}">
+      {% if product.primary_image %}
+      <a href="/bikes/{{ product.slug }}"><img src="{{ product.primary_image.image_path }}" alt="{{ product.name }}"
+          loading="lazy"></a>
+      {% else %}
+      <img src="{{ url_for('static', path='/images/products/product_' ~ loop.index ~ '.png') }}"
+        alt="{{ product.name }}" loading="lazy">
+      {% endif %}
+    </div>
+    {% endfor %}
+    {% else %}
+    {% for i in range(1, 7) %}
+    <div class="g-cell reveal {% if i % 3 == 2 %}reveal-d1{% elif i % 3 == 0 %}reveal-d2{% endif %}">
+      <img src="{{ url_for('static', path='/images/products/product_' ~ i ~ '.png') }}" alt="EV Scooter" loading="lazy">
+    </div>
+    {% endfor %}
+    {% endif %}
+    <!-- Static gallery images -->
+    {% for i in range(1, 7) %}
+    <div class="g-cell reveal {% if i % 3 == 2 %}reveal-d1{% elif i % 3 == 0 %}reveal-d2{% endif %}">
+      <img src="{{ url_for('static', path='/images/gallery/image-' ~ i ~ '.webp') }}" alt="EV Nation Gallery"
+        loading="lazy">
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="quote-band">
+  <div class="quote-text reveal">"The most exciting two-wheeler in years — EV Nation has redefined urban commuting for
+    the
+    next generation."</div>
+  <div class="quote-attr reveal">— EV India Magazine · 2025 Scooter of the Year</div>
+</div>
+
+<!-- CONTACT SECTION -->
+<section class="contact-section" id="contact">
+  <div class="contact-header reveal">
+    <div class="section-eyebrow">Get in Touch</div>
+    <h2 class="section-title">READY TO RIDE?</h2>
+    <p class="contact-intro">Our team is here to answer any questions about our models, charging solutions, or corporate
+      fleets. Drop us a line.</p>
+  </div>
+
+  <div class="contact-grid">
+    <!-- LEFT: Map + info -->
+    <div class="contact-left reveal">
+      <div class="contact-map">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3456.2700171717!2d77.596222!3d29.9716691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ec1de197337d5%3A0x4581d1f39b9f930b!2sEv%20Nation%20%7C%7C%20E%20scooter!5e0!3m2!1sen!2sde!4v1777838788684!5m2!1sen!2sde"
+          width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade" title="EV Nation Location">
+        </iframe>
+      </div>
+      <div class="contact-info-strip">
+        <div class="contact-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          <span>Sarak Doodhli, Near Reliance Petrol Pump,<br>Dehradun Road, Saharanpur (U.P.)</span>
+        </div>
+        <div class="contact-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+          </svg>
+          <span>9045263337 &nbsp;|&nbsp; 8650555588</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Form -->
+    <div class="contact-form reveal reveal-d1">
+      <form id="contact-form">
+        <div style="margin-bottom: 20px;">
+          <label
+            style="display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: var(--green-mid); margin-bottom: 8px;">Full
+            Name</label>
+          <input id="cf-name" type="text" required
+            style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem;">
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label
+            style="display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: var(--green-mid); margin-bottom: 8px;">Phone
+            Number</label>
+          <input id="cf-phone" type="text" required
+            style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem;">
+        </div>
+        <!-- Bot trap -->
+        <div style="display: none;" aria-hidden="true">
+          <input type="text" id="cf-bot-check" name="bot_check" tabindex="-1" autocomplete="off">
+        </div>
+        <div style="margin-bottom: 30px;">
+          <label
+            style="display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: var(--green-mid); margin-bottom: 8px;">Message</label>
+          <textarea id="cf-message" rows="4"
+            style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Barlow', sans-serif; font-size: 1rem; resize: vertical;"></textarea>
+        </div>
+        <div id="cf-feedback"
+          style="display: none; padding: 12px; border-radius: 4px; font-size: 0.95rem; margin-bottom: 16px;"></div>
+        <button type="submit" class="btn-primary" style="width: 100%; font-size: 1rem; padding: 16px;">Send
+          Message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  // ── Gallery Marquee (phone only) ──
+  function initGalleryMarquee() {
+    if (window.innerWidth > 480) return;
+    const grid = document.querySelector('.gallery-grid');
+    if (!grid || grid.classList.contains('marquee-ready')) return;
+
+    const cells = Array.from(grid.querySelectorAll('.g-cell'));
+    if (cells.length === 0) return;
+
+    // Row 1: all items in original order → scrolls left
+    // Row 2: all items in reverse order → scrolls right
+    const row1Items = cells;
+    const row2Items = [...cells].reverse();
+
+    function makeRow(items, direction) {
+      const row = document.createElement('div');
+      row.className = 'gallery-marquee-row';
+
+      const inner = document.createElement('div');
+      inner.className = 'gallery-marquee-inner ' + (direction === 'left' ? 'scroll-left' : 'scroll-right');
+
+      // Duplicate items twice so the loop is seamless
+      [0, 1].forEach(() => {
+        items.forEach(cell => {
+          const clone = cell.cloneNode(true);
+          clone.classList.remove('reveal', 'reveal-d1', 'reveal-d2', 'visible');
+          inner.appendChild(clone);
         });
-        const d = await r.json();
-        if (!r.ok) throw new Error(d.detail || 'Something went wrong.');
-        fb.textContent = '✓ Message sent! We will get back to you soon.';
-        fb.style.background = '#d6f5e3';
-        fb.style.color = 'var(--green-deep)';
-        fb.style.display = 'block';
-        e.target.reset();
-      } catch (err) {
-        fb.textContent = err.message;
-        fb.style.background = '#ffe0e0';
-        fb.style.color = '#c00';
-        fb.style.display = 'block';
-      } finally {
-        btn.textContent = 'Send Message';
-        btn.disabled = false;
-      }
-    });
-  </script>
+      });
+
+      row.appendChild(inner);
+      return row;
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'gallery-marquee-wrap';
+    wrap.appendChild(makeRow(row1Items, 'left'));
+    wrap.appendChild(makeRow(row2Items, 'right'));
+
+    grid.classList.add('marquee-ready');
+    grid.parentNode.insertBefore(wrap, grid.nextSibling);
+  }
+
+  document.addEventListener('DOMContentLoaded', initGalleryMarquee);
+
+  // Contact form → Lead API
+  document.getElementById('contact-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fb = document.getElementById('cf-feedback');
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    fb.style.display = 'none';
+
+    try {
+      const payload = {
+        name: document.getElementById('cf-name').value.trim(),
+        phone: document.getElementById('cf-phone').value.trim(),
+        source: 'call',
+        message: document.getElementById('cf-message').value.trim() || null,
+        bot_check: document.getElementById('cf-bot-check').value.trim() || null,
+      };
+      const r = await fetch('/api/v1/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.detail || 'Something went wrong.');
+      fb.textContent = '✓ Message sent! We will get back to you soon.';
+      fb.style.background = '#d6f5e3';
+      fb.style.color = 'var(--green-deep)';
+      fb.style.display = 'block';
+      e.target.reset();
+    } catch (err) {
+      fb.textContent = err.message;
+      fb.style.background = '#ffe0e0';
+      fb.style.color = '#c00';
+      fb.style.display = 'block';
+    } finally {
+      btn.textContent = 'Send Message';
+      btn.disabled = false;
+    }
+  });
+</script>
 {% endblock %}
