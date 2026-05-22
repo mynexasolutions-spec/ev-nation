@@ -12,11 +12,10 @@ def bootstrap_application() -> None:
     try:
         Base.metadata.create_all(bind=get_engine())
         _ensure_bootstrap_admin()
-    except OperationalError as exc:
-        raise RuntimeError(
-            "Database connection failed during startup. "
-            "Check DATABASE_URL or start your database server."
-        ) from exc
+    except Exception as exc:
+        import traceback
+        traceback.print_exc()
+        print(f"WARNING: Database bootstrap failed: {exc}. The app will start but DB-dependent features may not work.")
 
 
 def _ensure_bootstrap_admin() -> None:

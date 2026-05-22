@@ -9,10 +9,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 def _default_sqlite_url() -> str:
-    if _ON_VERCEL:
-        return "sqlite:////tmp/ev_nation.db"
-    local_path = Path.home() / "AppData" / "Local" / "EV_Nation" / "ev_nation.db"
-    return f"sqlite:///{local_path.as_posix()}"
+    import sys
+    if sys.platform == "win32":
+        local_path = Path.home() / "AppData" / "Local" / "EV_Nation" / "ev_nation.db"
+        return f"sqlite:///{local_path.as_posix()}"
+    return "sqlite:////tmp/ev_nation.db"
 
 
 class Settings(BaseSettings):
@@ -36,7 +37,7 @@ class Settings(BaseSettings):
     bootstrap_admin_email: str = "admin@evnation.local"
     bootstrap_admin_password: str = "Admin12345"
     bootstrap_admin_full_name: str | None = "Local Admin"
-    media_dir: str = "/tmp/media" if _ON_VERCEL else str(_PROJECT_ROOT / "media")
+    media_dir: str = str(_PROJECT_ROOT / "media")
     
     # Razorpay
     razorpay_key_id: str = "rzp_test_change_me"
