@@ -46,57 +46,6 @@
     color: var(--white);
   }
 
-  /* ── FEATURED GRID ── */
-  .featured-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-bottom: 56px;
-  }
-  .featured-card-large { grid-column: 1 / -1; }
-
-  .featured-card {
-    border-radius: 14px;
-    overflow: hidden;
-    background: var(--white);
-    box-shadow: 0 6px 28px rgba(0,0,0,0.07);
-    display: flex;
-    flex-direction: column;
-    text-decoration: none;
-    transition: transform 0.25s, box-shadow 0.25s;
-  }
-  .featured-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.13); }
-
-  .featured-img {
-    width: 100%;
-    aspect-ratio: 16/8;
-    object-fit: cover;
-    display: block;
-  }
-  .featured-card-large .featured-img { aspect-ratio: 16/7; }
-  .fc-body { padding: 22px 24px 26px; flex: 1; }
-  .fc-cat {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.72rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--green-mid);
-    margin-bottom: 8px;
-    display: block;
-  }
-  .fc-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.5rem;
-    letter-spacing: 0.04em;
-    color: var(--green-deep);
-    line-height: 1.15;
-    margin-bottom: 10px;
-  }
-  .featured-card-large .fc-title { font-size: 2rem; }
-  .fc-desc { font-size: 0.9rem; color: var(--gray); line-height: 1.6; }
-  .fc-meta { font-size: 0.78rem; color: #aaa; margin-top: 14px; }
-
   /* ── ALL POSTS GRID ── */
   .posts-heading {
     font-family: 'Bebas Neue', sans-serif;
@@ -145,8 +94,10 @@
   }
   .pc-desc { font-size: 0.86rem; color: var(--gray); line-height: 1.6; flex: 1; }
   .pc-meta { font-size: 0.75rem; color: #bbb; margin-top: 12px; }
-  .pc-read { display: inline-block; margin-top: 14px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green-mid); text-decoration: none; }
-  .pc-read:hover { color: var(--green-deep); }
+  .pc-read { display: inline-block; margin-top: 16px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.88rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white); background: var(--green-deep); padding: 9px 20px; border-radius: 6px; text-decoration: none; transition: background 0.2s; align-self: flex-start; }
+  .pc-read:hover { background: var(--green-mid); }
+  .pc-img-wrap { position: relative; }
+  .feat-badge { position: absolute; top: 10px; left: 10px; background: var(--green-lime); color: var(--green-deep); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 9px; border-radius: 4px; z-index: 1; }
 
   .no-posts { text-align: center; padding: 80px 0; color: var(--gray); }
   .no-posts h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; margin-bottom: 12px; }
@@ -227,8 +178,6 @@
   }
   @media (max-width: 768px) {
     .blog-layout { padding: 36px 20px 64px; gap: 40px; }
-    .featured-grid { grid-template-columns: 1fr; }
-    .featured-card-large { grid-column: auto; }
     .posts-grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 480px) {
@@ -262,47 +211,26 @@
 
       {% if posts %}
 
-      <!-- FEATURED SECTION -->
-      {% set feat = posts | selectattr('is_featured') | list %}
-      {% if feat and not selected_category %}
-      <h2 class="posts-heading">Featured</h2>
-      <div class="featured-grid">
-        {% for p in feat[:3] %}
-        <a href="/blog/{{ p.slug }}" class="featured-card {% if loop.first %}featured-card-large{% endif %}">
-          {% if p.primary_image %}
-          <img src="{{ p.primary_image }}" alt="{{ p.title }}" class="featured-img">
-          {% else %}
-          <div style="width:100%;{% if loop.first %}aspect-ratio:16/7{% else %}aspect-ratio:16/8{% endif %};background:linear-gradient(135deg,var(--green-deep),#2d5e3b);"></div>
-          {% endif %}
-          <div class="fc-body">
-            <span class="fc-cat">{{ p.category.name if p.category else 'General' }}</span>
-            <div class="fc-title">{{ p.title }}</div>
-            {% if p.short_description %}<div class="fc-desc">{{ p.short_description }}</div>{% endif %}
-            <div class="fc-meta">{{ p.created_at.strftime('%B %d, %Y') }}{% if p.read_time %} · {{ p.read_time }} min read{% endif %}</div>
-          </div>
-        </a>
-        {% endfor %}
-      </div>
-      {% endif %}
-
-      <!-- ALL POSTS -->
-      <h2 class="posts-heading">{% if selected_category %}Posts{% else %}All Posts{% endif %}</h2>
+      <!-- POSTS GRID — always 2 columns -->
       <div class="posts-grid">
         {% for p in posts %}
         <a href="/blog/{{ p.slug }}" class="post-card">
-          {% if p.primary_image %}
-          <img src="{{ p.primary_image }}" alt="{{ p.title }}">
-          {% else %}
-          <div class="post-card-img-placeholder">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          <div class="pc-img-wrap">
+            {% if p.primary_image %}
+            <img src="{{ p.primary_image }}" alt="{{ p.title }}">
+            {% else %}
+            <div class="post-card-img-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+            </div>
+            {% endif %}
+            {% if p.is_featured %}<span class="feat-badge">Featured</span>{% endif %}
           </div>
-          {% endif %}
           <div class="pc-body">
             <span class="pc-cat">{{ p.category.name if p.category else 'General' }}</span>
             <div class="pc-title">{{ p.title }}</div>
             {% if p.short_description %}<div class="pc-desc">{{ p.short_description }}</div>{% endif %}
             <div class="pc-meta">{{ p.created_at.strftime('%B %d, %Y') }}{% if p.read_time %} · {{ p.read_time }} min read{% endif %}</div>
-            <span class="pc-read">Read Article →</span>
+            <span class="pc-read">Read Article</span>
           </div>
         </a>
         {% endfor %}
