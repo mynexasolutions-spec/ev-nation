@@ -18,9 +18,13 @@ scp -i "$PEM" -o StrictHostKeyChecking=no -r \
   requirements.txt \
   "$SERVER:$REMOTE_DIR/"
 
+echo "==> Running database migrations..."
+ssh -i "$PEM" -o StrictHostKeyChecking=no "$SERVER" \
+  "cd $REMOTE_DIR && ./venv/bin/alembic upgrade head"
+
 echo "==> Restarting service..."
 ssh -i "$PEM" -o StrictHostKeyChecking=no "$SERVER" \
   "sudo systemctl restart $SERVICE && sleep 3 && sudo systemctl is-active $SERVICE"
 
 echo ""
-echo "✅ Deployment complete! Site is live at http://evnationsre.com"
+echo "✅ Deployment complete! Site is live at https://evnationsre.com"
